@@ -69,11 +69,18 @@ public class EmbedCollaboratorPayloadDialog extends AbstractDialog {
 
     private void onOK() {
         String selectedLocation = (String) comboBoxAlgorithm.getSelectedItem();
+        String JWK_URL = "";
+
+                if("jku".equals(selectedLocation)) {
+                    JWK_URL = "https://" + collaboratorPayloadGenerator.generatePayload().toString() + "/jwks.json";
+                } else if("x5u".equals(selectedLocation)) {
+                    JWK_URL = "https://" + collaboratorPayloadGenerator.generatePayload().toString() + "/cert.pem";
+                }
 
         jws = Attacks.embedCollaboratorPayload(
                 jws,
                 selectedLocation,
-                collaboratorPayloadGenerator.generatePayload().toString()
+                JWK_URL
         );
 
         dispose();
