@@ -177,8 +177,6 @@ public class KeysModel {
                 deleteKey(id);
             }
         }
-
-        IntStream.of(indices).forEach(rowIndex -> modelListener.notifyKeyDeleted(rowIndex));
     }
 
     /**

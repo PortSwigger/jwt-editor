@@ -30,6 +30,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.util.function.Supplier;
 
 import static com.blackberry.jwteditor.view.rsta.CustomTokenColors.customTokenColors;
 import static com.blackberry.jwteditor.view.rsta.jwt.JWTTokenMaker.*;
@@ -46,20 +47,15 @@ public class RstaFactory {
         this.fontProvider = new FontProvider(userInterface);
         this.logging = logging;
 
-        // Ensure Burp key events not captured - https://github.com/bobbylight/RSyntaxTextArea/issues/269#issuecomment-776329702
-        JTextComponent.removeKeymap("RTextAreaKeymap");
-        UIManager.put("RSyntaxTextAreaUI.actionMap", null);
-        UIManager.put("RSyntaxTextAreaUI.inputMap", null);
-        UIManager.put("RTextAreaUI.actionMap", null);
-        UIManager.put("RTextAreaUI.inputMap", null);
-
         AbstractTokenMakerFactory tokenMakerFactory = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
         tokenMakerFactory.putMapping(MAPPING, TOKEN_MAKER_FQCN);
         JWTTokenMaker.errorLogger = logging::logToError;
     }
 
     public RSyntaxTextArea buildDefaultTextArea() {
-        return new CustomizedRSyntaxTextArea(darkModeDetector, fontProvider, logging::logToError);
+        return fixKeyEventCapture(
+                () -> new CustomizedRSyntaxTextArea(darkModeDetector, fontProvider, logging::logToError)
+        );
     }
 
     public RSyntaxTextArea buildSerializedJWTTextArea() {
@@ -75,14 +71,30 @@ public class RstaFactory {
                 .withForeground(JWT_SEPARATOR4, Color.decode("#A6A282"))
                 .build();
 
-        RSyntaxTextArea textArea = new CustomizedRSyntaxTextArea(
-                darkModeDetector,
-                fontProvider,
-                logging::logToError,
-                customTokenColors
+        RSyntaxTextArea textArea = fixKeyEventCapture(
+                () -> new CustomizedRSyntaxTextArea(
+                        darkModeDetector,
+                        fontProvider,
+                        logging::logToError,
+                        customTokenColors
+                )
         );
 
         textArea.setSyntaxEditingStyle(JWTTokenizerConstants.MAPPING);
+
+        return textArea;
+    }
+
+    // Ensure Burp key events not captured - https://github.com/bobbylight/RSyntaxTextArea/issues/269#issuecomment-776329702
+    private RSyntaxTextArea fixKeyEventCapture(Supplier<RSyntaxTextArea> rSyntaxTextAreaSupplier) {
+        JTextComponent.removeKeymap("RTextAreaKeymap");
+
+        RSyntaxTextArea textArea = rSyntaxTextAreaSupplier.get();
+
+        UIManager.put("RSyntaxTextAreaUI.actionMap", null);
+        UIManager.put("RSyntaxTextAreaUI.inputMap", null);
+        UIManager.put("RTextAreaUI.actionMap", null);
+        UIManager.put("RTextAreaUI.inputMap", null);
 
         return textArea;
     }

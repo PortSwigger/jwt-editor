@@ -53,7 +53,8 @@ class BurpConfigPersistenceTest {
         assertThat(burpConfig.proxyConfig().highlightColor()).isEqualTo(DEFAULT_HIGHLIGHT_COLOR);
         assertThat(burpConfig.intruderConfig()).isNotNull();
         assertThat(burpConfig.intruderConfig().fuzzParameter()).isEqualTo("name");
-        assertThat(burpConfig.intruderConfig().fuzzLocation()).isEqualTo(PAYLOAD);
+        assertThat(burpConfig.intruderConfig().resign()).isFalse();
+        assertThat(burpConfig.intruderConfig().signingKeyId()).isNull();
         assertThat(burpConfig.scannerConfig()).isNotNull();
         assertThat(burpConfig.scannerConfig().enableHeaderJWSInsertionPointLocation()).isFalse();
         assertThat(burpConfig.scannerConfig().insertionPointLocationParameterName()).isEqualTo("kid");
@@ -61,7 +62,7 @@ class BurpConfigPersistenceTest {
 
     @Test
     void givenDefaultConfig_whenSaved_thenJsonCorrect() {
-        String expectedJson = "{\"scanner_insertion_point_provider_enabled\":false,\"intruder_payload_processor_parameter_name\":\"name\",\"proxy_history_highlight_color\":\"GREEN\",\"proxy_listener_enabled\":true,\"scanner_insertion_point_provider_parameter_name\":\"kid\",\"intruder_payload_processor_fuzz_location\":\"PAYLOAD\"}";
+        String expectedJson = "{\"scanner_insertion_point_provider_enabled\":false,\"intruder_payload_processor_parameter_name\":\"name\",\"proxy_history_highlight_color\":\"GREEN\",\"proxy_listener_enabled\":true,\"scanner_insertion_point_provider_parameter_name\":\"kid\",\"intruder_payload_processor_resign\":false,\"intruder_payload_processor_fuzz_location\":\"PAYLOAD\"}";
         BurpConfigPersistence configPersistence = new BurpConfigPersistence(callbacks);
 
         configPersistence.save(new BurpConfig());
@@ -97,6 +98,8 @@ class BurpConfigPersistenceTest {
         assertThat(burpConfig.intruderConfig()).isNotNull();
         assertThat(burpConfig.intruderConfig().fuzzParameter()).isEqualTo("name");
         assertThat(burpConfig.intruderConfig().fuzzLocation()).isEqualTo(PAYLOAD);
+        assertThat(burpConfig.intruderConfig().resign()).isFalse();
+        assertThat(burpConfig.intruderConfig().signingKeyId()).isNull();
         assertThat(burpConfig.scannerConfig()).isNotNull();
         assertThat(burpConfig.scannerConfig().enableHeaderJWSInsertionPointLocation()).isFalse();
         assertThat(burpConfig.scannerConfig().insertionPointLocationParameterName()).isEqualTo("kid");
@@ -184,6 +187,40 @@ class BurpConfigPersistenceTest {
         assertThat(burpConfig.intruderConfig()).isNotNull();
         assertThat(burpConfig.intruderConfig().fuzzLocation()).isEqualTo(PAYLOAD);
         assertThat(burpConfig.intruderConfig().fuzzParameter()).isEqualTo("name");
+        assertThat(burpConfig.intruderConfig().resign()).isFalse();
+        assertThat(burpConfig.intruderConfig().signingKeyId()).isNull();
+    }
+
+    @Test
+    void givenInvalidSavedIntruderResignConfig_whenLoadOrCreateCalled_thenParsedCorrectly() {
+        String invalidJson = "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\", \"intruder_payload_processor_resign\": []}";
+        BurpConfigPersistence configPersistence = new BurpConfigPersistence(callbacks);
+        when(callbacks.getString(BURP_SETTINGS_NAME)).thenReturn(invalidJson);
+
+        BurpConfig burpConfig = configPersistence.loadOrCreateNew();
+
+        assertThat(burpConfig).isNotNull();
+        assertThat(burpConfig.intruderConfig()).isNotNull();
+        assertThat(burpConfig.intruderConfig().fuzzLocation()).isEqualTo(HEADER);
+        assertThat(burpConfig.intruderConfig().fuzzParameter()).isEqualTo("sub");
+        assertThat(burpConfig.intruderConfig().resign()).isFalse();
+        assertThat(burpConfig.intruderConfig().signingKeyId()).isNull();
+    }
+
+    @Test
+    void givenInvalidSavedIntruderSigningKeyIdConfig_whenLoadOrCreateCalled_thenParsedCorrectly() {
+        String invalidJson = "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\", \"intruder_payload_processor_signing_key_id\": []}";
+        BurpConfigPersistence configPersistence = new BurpConfigPersistence(callbacks);
+        when(callbacks.getString(BURP_SETTINGS_NAME)).thenReturn(invalidJson);
+
+        BurpConfig burpConfig = configPersistence.loadOrCreateNew();
+
+        assertThat(burpConfig).isNotNull();
+        assertThat(burpConfig.intruderConfig()).isNotNull();
+        assertThat(burpConfig.intruderConfig().fuzzLocation()).isEqualTo(HEADER);
+        assertThat(burpConfig.intruderConfig().fuzzParameter()).isEqualTo("sub");
+        assertThat(burpConfig.intruderConfig().resign()).isFalse();
+        assertThat(burpConfig.intruderConfig().signingKeyId()).isNull();
     }
 
     private static Stream<Arguments> validIntruderConfigJson() {
@@ -191,19 +228,37 @@ class BurpConfigPersistenceTest {
                 arguments(
                         "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\"}",
                         HEADER,
-                        "sub"
+                        "sub",
+                        false,
+                        null
                 ),
                 arguments(
                         "{\"intruder_payload_processor_fuzz_location\":\"payload\",\"intruder_payload_processor_parameter_name\":\"role\"}",
                         PAYLOAD,
-                        "role"
+                        "role",
+                        false,
+                        null
+                ),
+                arguments(
+                        "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\",\"intruder_payload_processor_resign\":true}",
+                        HEADER,
+                        "sub",
+                        true,
+                        null
+                ),
+                arguments(
+                        "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\",\"intruder_payload_processor_signing_key_id\":\"131da5fb-8484-4717-b0d2-b79925978596\"}",
+                        HEADER,
+                        "sub",
+                        false,
+                        "131da5fb-8484-4717-b0d2-b79925978596"
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource("validIntruderConfigJson")
-    void givenValidIntruderSavedConfig_whenLoadOrCreateCalled_thenAppropriateConfigReturned(String json, FuzzLocation expectedLocation, String expectedParameterName) {
+    void givenValidIntruderSavedConfig_whenLoadOrCreateCalled_thenAppropriateConfigReturned(String json, FuzzLocation expectedLocation, String expectedParameterName, boolean expectedResign, String expectedSigningKeyId) {
         BurpConfigPersistence configPersistence = new BurpConfigPersistence(callbacks);
         when(callbacks.getString(BURP_SETTINGS_NAME)).thenReturn(json);
 
@@ -213,6 +268,8 @@ class BurpConfigPersistenceTest {
         assertThat(burpConfig.intruderConfig()).isNotNull();
         assertThat(burpConfig.intruderConfig().fuzzLocation()).isEqualTo(expectedLocation);
         assertThat(burpConfig.intruderConfig().fuzzParameter()).isEqualTo(expectedParameterName);
+        assertThat(burpConfig.intruderConfig().resign()).isEqualTo(expectedResign);
+        assertThat(burpConfig.intruderConfig().signingKeyId()).isEqualTo(expectedSigningKeyId);
     }
 
     @Test
@@ -354,7 +411,7 @@ class BurpConfigPersistenceTest {
 
     @Test
     void givenValidConfig_whenRoundTripped_thenJsonIsCorrect() {
-        String json = "{\"scanner_insertion_point_provider_enabled\":true,\"intruder_payload_processor_parameter_name\":\"iss\",\"proxy_history_highlight_color\":\"CYAN\",\"proxy_listener_enabled\":false,\"scanner_insertion_point_provider_parameter_name\":\"x5u\",\"intruder_payload_processor_fuzz_location\":\"HEADER\"}";
+        String json = "{\"scanner_insertion_point_provider_enabled\":false,\"intruder_payload_processor_parameter_name\":\"name\",\"proxy_history_highlight_color\":\"GREEN\",\"proxy_listener_enabled\":true,\"scanner_insertion_point_provider_parameter_name\":\"kid\",\"intruder_payload_processor_resign\":false,\"intruder_payload_processor_fuzz_location\":\"PAYLOAD\"}";
         BurpConfigPersistence configPersistence = new BurpConfigPersistence(callbacks);
         when(callbacks.getString(BURP_SETTINGS_NAME)).thenReturn(json);
 

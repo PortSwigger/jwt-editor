@@ -19,8 +19,11 @@ limitations under the License.
 package com.blackberry.jwteditor;
 
 import com.blackberry.jwteditor.model.keys.KeysModel;
+import com.blackberry.jwteditor.model.keys.KeysModelListener.InertKeyModelListener;
 import com.blackberry.jwteditor.model.keys.PasswordKey;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.blackberry.jwteditor.KeysModelBuilder.keysModel;
 import static data.PemData.*;
@@ -97,5 +100,26 @@ class KeysModelTest {
         model.deleteKeys(new int[]{0, 3, 1, 2});
 
         assertThat(model.keys()).isEmpty();
+    }
+
+    @Test
+    void deleteMultipleKeys_listenerOnlyFiresOncePerKey() {
+        AtomicInteger noOfListenerInvocations = new AtomicInteger();
+        KeysModel model = keysModel()
+                .withRSAKey(RSA1024Private)
+                .withRSAKey(RSA1024Public)
+                .withKey(new PasswordKey("testKeyId", "secret", 8, 1337))
+                .withKey(new PasswordKey("another", "shrubbery", 8, 1337))
+                .build();
+        model.addKeyModelListener(new InertKeyModelListener() {
+            @Override
+            public void notifyKeyDeleted(int rowIndex) {
+                noOfListenerInvocations.incrementAndGet();
+            }
+        });
+
+        model.deleteKeys(new int[]{0, 3, 1, 2});
+
+        assertThat(noOfListenerInvocations.get()).isEqualTo(4);
     }
 }

@@ -23,6 +23,8 @@ import static burp.intruder.FuzzLocation.PAYLOAD;
 public class IntruderConfig {
     private String fuzzParameter;
     private FuzzLocation fuzzLocation;
+    private String signingKeyId;
+    private boolean resign;
 
     public IntruderConfig() {
         this.fuzzParameter = "name";
@@ -43,5 +45,21 @@ public class IntruderConfig {
 
     public void setFuzzLocation(FuzzLocation fuzzLocation) {
         this.fuzzLocation = fuzzLocation;
+    }
+
+    public String signingKeyId() {
+        return signingKeyId;
+    }
+
+    public void setSigningKeyId(String signingKeyId) {
+        this.signingKeyId = signingKeyId;
+    }
+
+    public boolean resign() {
+        return resign;
+    }
+
+    public void setResign(boolean resign) {
+        this.resign = resign;
     }
 }

@@ -27,9 +27,6 @@ import burp.scanner.ScannerConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Interface for loading and saving ProxyConfig
- */
 public class BurpConfigPersistence {
     static final String BURP_SETTINGS_NAME = "com.blackberry.jwteditor.settings";
 
@@ -37,6 +34,8 @@ public class BurpConfigPersistence {
     private static final String PROXY_HISTORY_HIGHLIGHT_COLOR_KEY = "proxy_history_highlight_color";
     private static final String INTRUDER_FUZZ_PARAMETER_TYPE = "intruder_payload_processor_fuzz_location";
     private static final String INTRUDER_FUZZ_PARAMETER_NAME = "intruder_payload_processor_parameter_name";
+    private static final String INTRUDER_FUZZ_RESIGNING = "intruder_payload_processor_resign";
+    private static final String INTRUDER_FUZZ_SIGNING_KEY_ID = "intruder_payload_processor_signing_key_id";
     private static final String SCANNER_INSERTION_POINT_PROVIDER_ENABLED_KEY = "scanner_insertion_point_provider_enabled";
     private static final String SCANNER_INSERTION_PARAMETER_NAME = "scanner_insertion_point_provider_parameter_name";
 
@@ -46,11 +45,6 @@ public class BurpConfigPersistence {
         this.preferences = preferences;
     }
 
-    /**
-     * Loads and returns existing proxy config or creates a new instance if no configuration exists
-     *
-     * @return instance of proxy config
-     */
     public BurpConfig loadOrCreateNew() {
         String json = preferences.getString(BURP_SETTINGS_NAME);
 
@@ -78,6 +72,14 @@ public class BurpConfigPersistence {
 
                 String fuzzLocationName = (String) parsedObject.get(INTRUDER_FUZZ_PARAMETER_TYPE);
                 intruderConfig.setFuzzLocation(FuzzLocation.from(fuzzLocationName));
+
+                if (parsedObject.has(INTRUDER_FUZZ_SIGNING_KEY_ID) && parsedObject.get(INTRUDER_FUZZ_SIGNING_KEY_ID) instanceof String keyId) {
+                    intruderConfig.setSigningKeyId(keyId);
+                }
+
+                if (parsedObject.has(INTRUDER_FUZZ_RESIGNING) && parsedObject.get(INTRUDER_FUZZ_RESIGNING) instanceof Boolean resign) {
+                    intruderConfig.setResign(resign);
+                }
             }
 
             if (parsedObject.has(SCANNER_INSERTION_POINT_PROVIDER_ENABLED_KEY) && parsedObject.has(SCANNER_INSERTION_PARAMETER_NAME)) {
@@ -95,11 +97,6 @@ public class BurpConfigPersistence {
         }
     }
 
-    /**
-     * Saves Burp configuration
-     *
-     * @param model Burp config to be saved
-     */
     public void save(BurpConfig model) {
         // Serialise the Burp config and save
         JSONObject burpConfigJson = new JSONObject();
@@ -108,6 +105,8 @@ public class BurpConfigPersistence {
         burpConfigJson.put(PROXY_HISTORY_HIGHLIGHT_COLOR_KEY, model.proxyConfig().highlightColor().burpColor);
         burpConfigJson.put(INTRUDER_FUZZ_PARAMETER_NAME, model.intruderConfig().fuzzParameter());
         burpConfigJson.put(INTRUDER_FUZZ_PARAMETER_TYPE, model.intruderConfig().fuzzLocation());
+        burpConfigJson.put(INTRUDER_FUZZ_RESIGNING, model.intruderConfig().resign());
+        burpConfigJson.put(INTRUDER_FUZZ_SIGNING_KEY_ID, model.intruderConfig().signingKeyId());
         burpConfigJson.put(SCANNER_INSERTION_POINT_PROVIDER_ENABLED_KEY, model.scannerConfig().enableHeaderJWSInsertionPointLocation());
         burpConfigJson.put(SCANNER_INSERTION_PARAMETER_NAME, model.scannerConfig().insertionPointLocationParameterName());
 

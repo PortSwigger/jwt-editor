@@ -41,7 +41,7 @@ import java.text.ParseException;
 import java.util.Set;
 
 import static com.blackberry.jwteditor.model.jose.JWSFactory.jwsFromParts;
-import static com.nimbusds.jose.HeaderParameterNames.ALGORITHM;
+import static com.nimbusds.jose.HeaderParameterNames.*;
 import static com.nimbusds.jose.JWSAlgorithm.*;
 
 /**
@@ -53,6 +53,8 @@ public class Attacks {
     private static final byte[] EMPTY_KEY = new byte[64];
     private static final byte ASN1_SEQUENCE_TYPE = 0x30;
     private static final byte ASN1_INTEGER_TYPE = 0x2;
+    private static final String X5U_TEMPLATE = "https://%s/cert.pem";
+    private static final String JWK_TEMPLATE = "https://%s/jwks.json";
 
     /**
      * Perform a HMAC key confusion attack
@@ -173,9 +175,16 @@ public class Attacks {
         return JWSFactory.sign(key, header, payload, jwsHeader);
     }
 
-    public static JWS embedCollaboratorPayload(JWS jws, String location, String payload) {
+    public static JWS embedCollaboratorPayload(JWS jws, String location, String collaboratorPayload) {
         JSONObject headerJsonObject = new JSONObject(jws.getHeader());
-        headerJsonObject.put(location, payload);
+
+        String url = switch (location) {
+            case X_509_CERT_URL -> X5U_TEMPLATE.formatted(collaboratorPayload);
+            case JWK_SET_URL -> JWK_TEMPLATE.formatted(collaboratorPayload);
+            default -> collaboratorPayload;
+        };
+
+        headerJsonObject.put(location, url);
         Base64URL headerBase64 = Base64URL.encode(headerJsonObject.toString());
 
         return jwsFromParts(headerBase64, jws.getEncodedPayload(), jws.getEncodedSignature());

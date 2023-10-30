@@ -40,7 +40,7 @@ class EmbeddedCollaboratorPayloadAttackTest {
 
         JWS attackJws = Attacks.embedCollaboratorPayload(jws, X_509_CERT_URL, COLLABORATOR_PAYLOAD);
 
-        assertThat(attackJws.serialize()).isEqualTo("eyJ4NXUiOiJtb2UycXZmNzQ3a25sZzgxcWtjdTBrejZ2eDFvcGVkMy5vYXN0aWZ5LmNvbSIsInR5cCI6IkpXVCIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+        assertThat(attackJws.serialize()).isEqualTo("eyJ4NXUiOiJodHRwczovL21vZTJxdmY3NDdrbmxnODFxa2N1MGt6NnZ4MW9wZWQzLm9hc3RpZnkuY29tL2NlcnQucGVtIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
     }
 
     @Test
@@ -48,7 +48,15 @@ class EmbeddedCollaboratorPayloadAttackTest {
         JWS jws = JWSFactory.parse(TEST_JWS);
 
         JWS attackJws = Attacks.embedCollaboratorPayload(jws, JWK_SET_URL, COLLABORATOR_PAYLOAD);
+        assertThat(attackJws.serialize()).isEqualTo("eyJqa3UiOiJodHRwczovL21vZTJxdmY3NDdrbmxnODFxa2N1MGt6NnZ4MW9wZWQzLm9hc3RpZnkuY29tL2p3a3MuanNvbiIsInR5cCI6IkpXVCIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+    }
 
-        assertThat(attackJws.serialize()).isEqualTo("eyJqa3UiOiJtb2UycXZmNzQ3a25sZzgxcWtjdTBrejZ2eDFvcGVkMy5vYXN0aWZ5LmNvbSIsInR5cCI6IkpXVCIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+    @Test
+    void canEmbedCollaboratorPayloadWithinUnknownHeader() throws Exception {
+        JWS jws = JWSFactory.parse(TEST_JWS);
+
+        JWS attackJws = Attacks.embedCollaboratorPayload(jws, "mayne", COLLABORATOR_PAYLOAD);
+
+        assertThat(attackJws.serialize()).isEqualTo("eyJtYXluZSI6Im1vZTJxdmY3NDdrbmxnODFxa2N1MGt6NnZ4MW9wZWQzLm9hc3RpZnkuY29tIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
     }
 }
