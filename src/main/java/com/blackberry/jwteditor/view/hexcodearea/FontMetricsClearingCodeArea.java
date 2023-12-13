@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 
-class FontMetricsClearingCodeArea extends CodeArea {
+class FontMetricsClearingCodeArea extends GarbageCollectableCodeArea {
     private final Logging logging;
 
     FontMetricsClearingCodeArea(Logging logging) {
@@ -55,7 +55,7 @@ class FontMetricsClearingCodeArea extends CodeArea {
             }
 
             // Reset colors in case Burp's theme has changed
-            CodeArea codeArea = new CodeArea();
+            CodeArea codeArea = new GarbageCollectableCodeArea();
             setMainColors(codeArea.getMainColors());
             setAlternateColors(codeArea.getAlternateColors());
             setSelectionColors(codeArea.getSelectionColors());

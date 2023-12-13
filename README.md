@@ -2,7 +2,7 @@
 
 JWT Editor is a Burp Suite extension for editing, signing, verifying, encrypting and decrypting JSON Web Tokens (JWTs).
 
-It provides automatic detection and in-line editing of JWTs within HTTP requests/responses, signing and encrypting of tokens and automation of several well-known attacks against JWT implementations.
+It provides automatic detection and in-line editing of JWTs within HTTP requests/responses and WebSocket messages, signing and encrypting of tokens and automation of several well-known attacks against JWT implementations.
 
 It was written originally by Fraser Winterborn, formerly of BlackBerry Security Research Group. The original source code can be found [here](https://github.com/blackberry/jwt-editor).
 
@@ -25,7 +25,7 @@ It was written originally by Fraser Winterborn, formerly of BlackBerry Security 
 ## Build Instructions
 * Ensure that Java JDK 17 or newer is installed
 * From root of project, run the command `./gradlew jar`
-* This should place the JAR file `jwt-editor-2.0.1.jar` within the `build/libs` directory
+* This should place the JAR file `jwt-editor-2.0.2.jar` within the `build/libs` directory
 * This can be loaded into Burp by navigating to the `Extensions` tab, `Installed` sub-tab, clicking `Add` and loading the JAR file
 * This BApp is using the newer Montoya API so it's best to use the latest version of Burp (try the earlier adopter channel if there are issues with the latest stable release)
 
@@ -36,12 +36,12 @@ The `Keys View` allows cryptographic keys to be imported/exported, generated and
 
 <img src="gitimg/key_view.png" width="400"/>
 
-Keys are persisted within a `.jwt-editor` folder within the user's home directory for Standalone mode, or within the Burp Suite user options when used as a Burp extension.
+Keys are persisted within the Burp Suite user options.
 
 ## Editor View
 <img src="gitimg/editor.png" width="600"/>
 
-The `Editor View` allows modification of the JWTs loaded into the tool via either the `Entry View` in Standalone mode, or Burp Suite's HTTP Request/Response view in the Proxy, History and Repeater tools.
+The `Editor View` allows modification of JWTs within Burp Suite's HTTP Request/Response view in the Proxy, Repeater and other tools.
 
 The editor view has two layouts, `JWS` and `JWE`, which are selected depending on whether a JSON Web Signature or JSON Web Encryption is detected.
 

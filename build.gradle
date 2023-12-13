@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.blackberry'
-version = '2.0.1'
+version = '2.0.2'
 description = 'jwt-editor'
 
 repositories {
@@ -73,6 +73,17 @@ jar {
     archiveBaseName = project.name
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect {
+            it.isDirectory()
+                    ? it
+                    : zipTree(it).matching({
+                         exclude 'org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler.class',
+                                 'org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler$1.class',
+                                 'org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler$2.class',
+                                 'org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler$BinaryDataClipboardData.class',
+                                 'org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler$ClipboardData.class',
+                                 'org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler$CodeDataClipboardData.class'
+                    })
+        }
     }
 }
