@@ -22,9 +22,13 @@ import com.blackberry.jwteditor.view.utils.FontProvider;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 import static com.blackberry.jwteditor.view.rsta.CustomTokenColors.customTokenColors;
@@ -61,12 +65,32 @@ class CustomizedRSyntaxTextArea extends RSyntaxTextArea {
         this.addHierarchyListener(e -> {
             if (e.getChangeFlags() == SHOWING_CHANGED && e.getComponent().isShowing()) {
                 applyThemeAndFont();
+                stopBracketMatchingTimer();
             }
         });
 
         setUseFocusableTips(false);
         setBracketMatchingEnabled(false);
         setShowMatchedBracketPopup(false);
+        setAnimateBracketMatching(false);
+    }
+
+    private void stopBracketMatchingTimer() {
+        try {
+            Field bracketRepaintTimer = CustomizedRSyntaxTextArea.class.getSuperclass().getDeclaredField("bracketRepaintTimer");
+            bracketRepaintTimer.setAccessible(true);
+
+            Object bracketRepaintTimerRef = bracketRepaintTimer.get(this);
+
+            if (bracketRepaintTimerRef instanceof Timer timer) {
+                timer.stop();
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            e.printStackTrace(printWriter);
+            errorLogger.accept(stringWriter.toString());
+        }
     }
 
     @Override
