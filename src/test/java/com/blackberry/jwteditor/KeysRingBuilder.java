@@ -67,11 +67,6 @@ class KeysRingBuilder {
         return this;
     }
 
-    KeysRingBuilder withKey(Key key) {
-        keys.add(key);
-        return this;
-    }
-
     KeyRing build() {
         return new KeyRing(keys);
     }

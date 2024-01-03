@@ -27,7 +27,7 @@ import com.blackberry.jwteditor.utils.JSONUtils;
 import com.blackberry.jwteditor.utils.PEMUtils;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
-import com.blackberry.jwteditor.view.utils.DocumentAdapter;
+import com.blackberry.jwteditor.view.utils.DebouncingDocumentAdapter;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -40,11 +40,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-/**
- * "New RSA Key /EC Key /OKP " dialog for Keys tab
- */
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import static javax.swing.SwingUtilities.invokeLater;
+
 public class AsymmetricKeyDialog extends KeyDialog {
     private final AsymmetricKeyDialogMode mode;
     private final RstaFactory rstaFactory;
@@ -61,7 +62,7 @@ public class AsymmetricKeyDialog extends KeyDialog {
     private JRadioButton radioButtonPEM;
     private JLabel labelError;
     private JTextField textFieldKeyId;
-    private JPanel panelKeyId;
+    private JLabel keySizeLabel;
 
     private JWK jwk;
 
@@ -71,15 +72,11 @@ public class AsymmetricKeyDialog extends KeyDialog {
             RstaFactory rstaFactory,
             AsymmetricKeyDialogMode mode,
             JWK jwk) {
-        super(parent, mode.resourceTitleId());
+        super(parent, mode.resourceTitleId(), jwk == null ? null : jwk.getKeyID(), presenters);
+
         this.mode = mode;
         this.rstaFactory = rstaFactory;
         this.jwk = jwk;
-        this.presenters = presenters;
-
-        if (jwk != null) {
-            originalId = jwk.getKeyID();
-        }
 
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
@@ -88,20 +85,29 @@ public class AsymmetricKeyDialog extends KeyDialog {
         buttonCancel.addActionListener(e -> onCancel());
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(
+                e -> onCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+        );
 
+        keySizeLabel.setText(Utils.getResourceString(mode.resourceLabelId()));
         comboBoxKeySize.setModel(new DefaultComboBoxModel<>(mode.keyOptions()));
         comboBoxKeySize.setSelectedItem(mode.selectedKeyOption(jwk));
 
         // Add event listeners for the generate button being pressed, the key format radio button changing, or the text
         // content being updated
         radioButtonJWK.addChangeListener(e -> onKeyFormatChanged());
-        buttonGenerate.addActionListener(e -> generate());
+        buttonGenerate.addActionListener(e -> generateKey());
 
-        DocumentListener documentListener = new DocumentAdapter(e -> checkInput());
+        DocumentListener documentListener = new DebouncingDocumentAdapter(e -> parseJson());
 
         textAreaKey.getDocument().addDocumentListener(documentListener);
         textFieldKeyId.getDocument().addDocumentListener(documentListener);
+
+        if (jwk != null) {
+            textFieldKeyId.setText(jwk.getKeyID());
+        }
 
         // If not in edit mode setting the contents of the text field before the window has opened causes the horizontal
         // scroll pane not to initialize properly, so do this after the window open event
@@ -113,19 +119,11 @@ public class AsymmetricKeyDialog extends KeyDialog {
         });
     }
 
-    /**
-     * Enable/disable the OK button
-     *
-     * @param enabled whether the OK button should be enabled
-     */
     private void setFormEnabled(boolean enabled) {
         buttonOK.setEnabled(enabled);
     }
 
-    /**
-     * Check the contents of the text input
-     */
-    private void checkInput() {
+    private void parseJson() {
         if (textAreaKeyInitialBackgroundColor == null) {
             textAreaKeyInitialBackgroundColor = textAreaKey.getBackground();
             textAreaKeyInitialCurrentLineHighlightColor = textAreaKey.getCurrentLineHighlightColor();
@@ -145,7 +143,7 @@ public class AsymmetricKeyDialog extends KeyDialog {
 
         boolean keyError = false;
         boolean keyIDError = false;
-        if (key.length() == 0) {
+        if (key.isEmpty()) {
             // Disable OK if the text entry is empty
             setFormEnabled(false);
         } else {
@@ -170,7 +168,7 @@ public class AsymmetricKeyDialog extends KeyDialog {
                     tempJWK = mode.pemToJWK(key, textFieldKeyId.getText());
 
                     // Check the key id entry is set in PEM mode
-                    if (textFieldKeyId.getText().length() == 0) {
+                    if (textFieldKeyId.getText().isEmpty()) {
                         keyIDError = true;
                         labelError.setText(Utils.getResourceString("error_missing_kid"));
                     }
@@ -185,7 +183,7 @@ public class AsymmetricKeyDialog extends KeyDialog {
             } catch (ParseException | IllegalArgumentException | PemException e) {
                 // Set the error state if any parse errors are encountered
                 keyError = true;
-                if (textFieldKeyId.getText().length() == 0) {
+                if (textFieldKeyId.getText().isEmpty()) {
                     keyIDError = true;
                 }
                 labelError.setText(Utils.getResourceString("error_invalid_key"));
@@ -224,7 +222,6 @@ public class AsymmetricKeyDialog extends KeyDialog {
             // Ordering is important here, these must come after the conversion above, otherwise they will trigger the
             // event handlers and clear the stored jwk
             textAreaKey.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
-            panelKeyId.setVisible(false);
         }
         // Change from JWK to PEM
         else {
@@ -248,16 +245,13 @@ public class AsymmetricKeyDialog extends KeyDialog {
             // Ordering is important here, these must come after the conversion above, otherwise they will clear the
             // event handlers and clear the stored jwk
             textAreaKey.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
-            panelKeyId.setVisible(true);
         }
     }
 
-    /**
-     * Handle clicks to the Generate button
-     */
-    private void generate() {
+    private void generateKey() {
         // Get the selected key size
         Object parameters = comboBoxKeySize.getSelectedItem();
+        String keyId = textFieldKeyId.getText().isEmpty() ? UUID.randomUUID().toString() : textFieldKeyId.getText();
 
         enableOrDisableControls(false);
 
@@ -265,7 +259,7 @@ public class AsymmetricKeyDialog extends KeyDialog {
         new SwingWorker<JWK, Void>() {
             @Override
             protected JWK doInBackground() throws Exception {
-                return mode.generateNewKey(parameters);
+                return mode.generateNewKey(keyId, parameters);
             }
 
             /**
@@ -278,12 +272,14 @@ public class AsymmetricKeyDialog extends KeyDialog {
                     JWK jwk = get();
 
                     // Set the key text fields based on whether JWK/PEM is selected in the radio button
-                    if (radioButtonJWK.isSelected()) {
-                        textAreaKey.setText(JSONUtils.prettyPrintJSON(jwk.toJSONString()));
-                    } else {
+                    String keyData = radioButtonJWK.isSelected()
+                            ? JSONUtils.prettyPrintJSON(jwk.toJSONString())
+                            : PEMUtils.jwkToPem(jwk);
+
+                    invokeLater(() -> {
                         textFieldKeyId.setText(jwk.getKeyID());
-                        textAreaKey.setText(PEMUtils.jwkToPem(jwk));
-                    }
+                        textAreaKey.setText(keyData);
+                    });
                 } catch (PemException | InterruptedException | ExecutionException e) {
                     labelError.setText(Utils.getResourceString("error_key_generation"));
                 }

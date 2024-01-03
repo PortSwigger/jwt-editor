@@ -249,6 +249,10 @@ public class KeysView {
         keysTableModel.deleteRow(rowIndex);
     }
 
+    public void deleteKey(Key key) {
+        keysTableModel.deleteKey(key);
+    }
+
     public Window getParent() {
         return parent;
     }

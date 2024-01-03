@@ -31,21 +31,50 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Provider;
 import java.security.Security;
-import java.util.UUID;
 
 enum AsymmetricKeyDialogMode {
-    EC(KeyType.EC, "keys_new_title_ec", Curve.P_256, Curve.P_256, Curve.SECP256K1, Curve.P_384, Curve.P_521),
-    RSA(KeyType.RSA, "keys_new_title_rsa", 2048, 512, 1024, 2048, 3072, 4096),
-    OKP(KeyType.OKP, "keys_new_title_okp", Curve.X25519, Curve.X25519, Curve.Ed25519, Curve.X448, Curve.Ed448);
+    EC(
+            KeyType.EC,
+            "keys_new_title_ec",
+            "keys_label_ec",
+            Curve.P_256,
+            Curve.P_256,
+            Curve.SECP256K1,
+            Curve.P_384,
+            Curve.P_521
+    ),
+    RSA(
+            KeyType.RSA,
+            "keys_new_title_rsa",
+            "keys_label_rsa",
+            2048,
+            512,
+            1024,
+            2048,
+            3072,
+            4096
+    ),
+    OKP(
+            KeyType.OKP,
+            "keys_new_title_okp",
+            "keys_label_okp",
+            Curve.X25519,
+            Curve.X25519,
+            Curve.Ed25519,
+            Curve.X448,
+            Curve.Ed448
+    );
 
     private final KeyType keyType;
     private final String resourceTitleId;
+    private final String resourceLabelId;
     private final Object defaultOption;
     private final Object[] keyOptions;
 
-    AsymmetricKeyDialogMode(KeyType keyType, String resourceTitleId, Object defaultOption, Object... keyOptions) {
+    AsymmetricKeyDialogMode(KeyType keyType, String resourceTitleId, String resourceLabelId, Object defaultOption, Object... keyOptions) {
         this.keyType = keyType;
         this.resourceTitleId = resourceTitleId;
+        this.resourceLabelId = resourceLabelId;
         this.defaultOption = defaultOption;
         this.keyOptions = keyOptions;
     }
@@ -78,8 +107,7 @@ enum AsymmetricKeyDialogMode {
         };
     }
 
-    JWK generateNewKey(Object parameters) throws KeyStoreException, JOSEException {
-        String kid = UUID.randomUUID().toString();
+    JWK generateNewKey(String keyId, Object keyParameter) throws KeyStoreException, JOSEException {
 
         Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
 
@@ -87,13 +115,17 @@ enum AsymmetricKeyDialogMode {
         KeyStore keyStore = provider == null ? null : KeyStore.getInstance(KeyStore.getDefaultType(), provider);
 
         return switch (this) {
-            case EC -> new ECKeyGenerator((Curve) parameters).keyStore(keyStore).keyID(kid).generate();
-            case RSA -> new RSAKeyGenerator((Integer) parameters, true).keyStore(keyStore).keyID(kid).generate();
-            case OKP -> new OKPGenerator((Curve) parameters).keyStore(keyStore).keyID(kid).generate();
+            case EC -> new ECKeyGenerator((Curve) keyParameter).keyStore(keyStore).keyID(keyId).generate();
+            case RSA -> new RSAKeyGenerator((Integer) keyParameter, true).keyStore(keyStore).keyID(keyId).generate();
+            case OKP -> new OKPGenerator((Curve) keyParameter).keyStore(keyStore).keyID(keyId).generate();
         };
     }
 
     String resourceTitleId() {
         return resourceTitleId;
+    }
+
+    String resourceLabelId() {
+        return resourceLabelId;
     }
 }

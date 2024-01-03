@@ -25,6 +25,5 @@ public enum KeyType {
     RSA,
     EC,
     OKP,
-    OCT,
-    PASSWORD
+    OCT
 }

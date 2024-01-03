@@ -320,7 +320,7 @@ public abstract class EditorView implements ExtensionProvidedEditor {
     public void setJOSEObjects(List<String> joseObjectStrings) {
         comboBoxJOSEObject.setModel(new MaxLengthStringComboBoxModel(MAX_JOSE_OBJECT_STRING_LENGTH, joseObjectStrings));
 
-        if (joseObjectStrings.size() > 0) {
+        if (!joseObjectStrings.isEmpty()) {
             comboBoxJOSEObject.setSelectedIndex(0);
         }
     }

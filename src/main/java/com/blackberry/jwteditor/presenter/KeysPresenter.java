@@ -78,6 +78,14 @@ public class KeysPresenter extends Presenter {
             }
 
             @Override
+            public void notifyKeyDeleted(Key key) {
+                if (key != null) {
+                    view.deleteKey(key);
+                    keysModelPersistence.save(keysModel);
+                }
+            }
+
+            @Override
             public void notifyKeyDeleted(int rowIndex) {
                 view.deleteKey(rowIndex);
                 keysModelPersistence.save(keysModel);

@@ -32,6 +32,7 @@ public class MessageDialogFactory {
     public MessageDialogFactory(Component parent) {
         this.parent = parent;
     }
+
     public void showErrorDialog(String titleKey, String messageKey, Object... args) {
         showDialog(ERROR_MESSAGE, titleKey, messageKey, args);
     }

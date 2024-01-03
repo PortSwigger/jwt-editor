@@ -61,7 +61,8 @@ public class AsymmetricKeyDialogFactory {
         return new AsymmetricKeyDialog(
                 parent,
                 presenters,
-                rstaFactory, EC,
+                rstaFactory,
+                EC,
                 ecKey
         );
     }
