@@ -259,7 +259,7 @@ public class EditorPresenter extends Presenter {
             }
         }
 
-        if (attackKeys.size() == 0) {
+        if (attackKeys.isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_signing_keys", "error_no_signing_keys");
             return;
         }
@@ -349,7 +349,7 @@ public class EditorPresenter extends Presenter {
         KeysPresenter keysPresenter = (KeysPresenter) presenters.get(KeysPresenter.class);
 
         // Check there are signing keys in the keystore
-        if (keysPresenter.getSigningKeys().size() == 0) {
+        if (keysPresenter.getSigningKeys().isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_signing_keys", "error_no_signing_keys");
             return;
         }
@@ -395,7 +395,7 @@ public class EditorPresenter extends Presenter {
         KeysPresenter keysPresenter = (KeysPresenter) presenters.get(KeysPresenter.class);
 
         // Check there are encryption keys in the keystore
-        if (keysPresenter.getEncryptionKeys().size() == 0) {
+        if (keysPresenter.getEncryptionKeys().isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_encryption_keys", "error_no_encryption_keys");
             return;
         }

@@ -9,7 +9,6 @@ import com.nimbusds.jose.util.Base64URL;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.util.List;
 
 import static burp.api.montoya.core.Range.range;
@@ -59,31 +58,23 @@ class JWSHeaderInsertionPoint implements AuditInsertionPoint {
 
     @Override
     public HttpRequest buildHttpRequestWithPayload(ByteArray payload) {
-        try {
-            byte[] updatedJWSBytes = buildWeaponizedJWS(payload);
+        byte[] updatedJWSBytes = buildWeaponizedJWS(payload);
 
-            int l = baseRequestPrefix.length + updatedJWSBytes.length + baseRequestPostfix.length;
-            byte[] modifiedRequest = new byte[l];
-            System.arraycopy(baseRequestPrefix, 0, modifiedRequest, 0, baseRequestPrefix.length);
-            System.arraycopy(updatedJWSBytes, 0, modifiedRequest, baseRequestPrefix.length, updatedJWSBytes.length);
-            System.arraycopy(baseRequestPostfix, 0, modifiedRequest, baseRequestPrefix.length + updatedJWSBytes.length, baseRequestPostfix.length);
+        int l = baseRequestPrefix.length + updatedJWSBytes.length + baseRequestPostfix.length;
+        byte[] modifiedRequest = new byte[l];
+        System.arraycopy(baseRequestPrefix, 0, modifiedRequest, 0, baseRequestPrefix.length);
+        System.arraycopy(updatedJWSBytes, 0, modifiedRequest, baseRequestPrefix.length, updatedJWSBytes.length);
+        System.arraycopy(baseRequestPostfix, 0, modifiedRequest, baseRequestPrefix.length + updatedJWSBytes.length, baseRequestPostfix.length);
 
-            return httpRequest(baseRequest.httpService(), ByteArray.byteArray(modifiedRequest));
-        } catch (ParseException e) {
-            throw new IllegalStateException(e);
-        }
+        return httpRequest(baseRequest.httpService(), ByteArray.byteArray(modifiedRequest));
     }
 
     @Override
     public List<Range> issueHighlights(ByteArray payload) {
-        try {
-            return singletonList(range(startOffset, startOffset + buildWeaponizedJWS(payload).length));
-        } catch (ParseException e) {
-            throw new IllegalStateException(e);
-        }
+        return singletonList(range(startOffset, startOffset + buildWeaponizedJWS(payload).length));
     }
 
-    private byte[] buildWeaponizedJWS(ByteArray payload) throws ParseException {
+    private byte[] buildWeaponizedJWS(ByteArray payload) {
         headerJsonObject.put(headerParameterName, payload.toString());
         Base64URL headerBase64 = Base64URL.encode(headerJsonObject.toString());
 

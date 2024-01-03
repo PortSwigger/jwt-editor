@@ -37,7 +37,6 @@ import com.nimbusds.jose.util.Base64URL;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.text.ParseException;
 import java.util.Set;
 
 import static com.blackberry.jwteditor.model.jose.JWSFactory.jwsFromParts;
@@ -106,7 +105,7 @@ public class Attacks {
     }
 
     //  CVE-2019-20933 => https://github.com/LorenzoTullini/InfluxDB-Exploit-CVE-2019-20933
-    public static JWS signWithEmptyKey(JWS jws, JWSAlgorithm algorithm) throws UnsupportedKeyException, ParseException, SigningException {
+    public static JWS signWithEmptyKey(JWS jws, JWSAlgorithm algorithm) throws UnsupportedKeyException, SigningException {
         if (!SYMMETRIC_ALGORITHMS.contains(algorithm)) {
             throw new IllegalArgumentException("Invalid algorithm %s. Can only use symmetric algorithms.".formatted(algorithm));
         }
@@ -121,7 +120,7 @@ public class Attacks {
     }
 
     //  CVE-2022-21449 => https://neilmadden.blog/2022/04/19/psychic-signatures-in-java/
-    public static JWS signWithPsychicSignature(JWS jws, JWSAlgorithm algorithm) throws ParseException {
+    public static JWS signWithPsychicSignature(JWS jws, JWSAlgorithm algorithm) {
         if (!ECDSA_ALGORITHMS.contains(algorithm)) {
             throw new IllegalArgumentException("Invalid algorithm %s. Can only use NIST elliptic curve algorithms.".formatted(algorithm));
         }

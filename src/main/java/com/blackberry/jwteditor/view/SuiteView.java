@@ -45,7 +45,6 @@ public class SuiteView {
     private final boolean isProVersion;
 
     private JPanel panel;
-    private JLabel configurationButton;
     private KeysView keysView;
     private ConfigView configView;
 

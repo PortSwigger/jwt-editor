@@ -41,6 +41,11 @@ class KeysTableModel extends AbstractTableModel {
         fireTableRowsInserted(nextRowIndex, nextRowIndex);
     }
 
+    void deleteKey(Key key) {
+        int index = data.indexOf(key);
+        deleteRow(index);
+    }
+
     void deleteRow(int rowIndex) {
         data.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);

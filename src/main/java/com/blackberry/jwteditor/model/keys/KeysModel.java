@@ -125,10 +125,13 @@ public class KeysModel {
      * @param key key to add
      */
     public void addKey(Key key) {
+        Key oldKey;
+
         synchronized (lock) {
-            keys.put(key.getID(), key);
+            oldKey = keys.put(key.getID(), key);
         }
 
+        modelListener.notifyKeyDeleted(oldKey);
         modelListener.notifyKeyInserted(key);
     }
 

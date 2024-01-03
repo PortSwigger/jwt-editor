@@ -29,7 +29,6 @@ import com.nimbusds.jose.JWSAlgorithm;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.text.ParseException;
 
 import static com.nimbusds.jose.JWSAlgorithm.*;
 
@@ -72,7 +71,7 @@ public class EmptyKeySigningDialog extends AbstractDialog {
 
         try {
             jws = Attacks.signWithEmptyKey(jws, selectedAlgorithm);
-        } catch (SigningException | ParseException | UnsupportedKeyException e) {
+        } catch (SigningException | UnsupportedKeyException e) {
             jws = null;
             JOptionPane.showMessageDialog(
                     this,

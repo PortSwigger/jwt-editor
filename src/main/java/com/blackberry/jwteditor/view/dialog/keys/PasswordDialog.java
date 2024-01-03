@@ -45,19 +45,18 @@ public class PasswordDialog extends KeyDialog {
 
     private PasswordKey key;
 
-    public PasswordDialog(Window parent, PresenterStore presenters){
-        this(parent, presenters, UUID.randomUUID().toString(), "", 8, 1000);
-        originalId = null;
+    public PasswordDialog(Window parent, PresenterStore presenters) {
+        this(parent, presenters, null, "", 8, 1000);
     }
 
-    public PasswordDialog(Window parent, PresenterStore presenters, PasswordKey key){
+    public PasswordDialog(Window parent, PresenterStore presenters, PasswordKey key) {
         this(parent, presenters, key.getID(), key.getPassword(), key.getSaltLength(), key.getIterations());
     }
 
     private PasswordDialog(Window parent, PresenterStore presenters, String keyId, String password, int saltLength, int iterations) {
-        super(parent, TITLE_RESOURCE_ID);
-        this.presenters = presenters;
-        originalId = keyId;
+        super(parent, TITLE_RESOURCE_ID, keyId, presenters);
+
+        keyId = keyId == null ? UUID.randomUUID().toString() : keyId;
 
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
@@ -99,7 +98,7 @@ public class PasswordDialog extends KeyDialog {
      */
     private void checkInput() {
         // Check that the password and key id values are set, enable/disable OK based on the result
-        buttonOK.setEnabled(textFieldKeyId.getText().length() > 0 && textFieldPassword.getText().length() > 0);
+        buttonOK.setEnabled(!textFieldKeyId.getText().isEmpty() && !textFieldPassword.getText().isEmpty());
     }
 
     /**

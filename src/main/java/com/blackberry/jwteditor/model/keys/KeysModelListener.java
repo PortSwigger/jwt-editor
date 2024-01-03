@@ -5,6 +5,8 @@ public interface KeysModelListener {
 
     void notifyKeyDeleted(int rowIndex);
 
+    void notifyKeyDeleted(Key key);
+
     class InertKeyModelListener implements KeysModelListener {
         @Override
         public void notifyKeyInserted(Key key) {
@@ -12,6 +14,10 @@ public interface KeysModelListener {
 
         @Override
         public void notifyKeyDeleted(int rowIndex) {
+        }
+
+        @Override
+        public void notifyKeyDeleted(Key key) {
         }
     }
 }

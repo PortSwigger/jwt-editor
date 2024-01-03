@@ -19,14 +19,12 @@ package com.blackberry.jwteditor.view.dialog.operations;
 
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.operations.Attacks;
-import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.dialog.AbstractDialog;
 import com.nimbusds.jose.JWSAlgorithm;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.text.ParseException;
 
 import static com.nimbusds.jose.JWSAlgorithm.*;
 
@@ -66,19 +64,7 @@ public class PsychicSignatureDialog extends AbstractDialog {
 
     private void onOK() {
         JWSAlgorithm selectedAlgorithm = (JWSAlgorithm) comboBoxAlgorithm.getSelectedItem();
-
-        try {
-            jws = Attacks.signWithPsychicSignature(jws, selectedAlgorithm);
-        } catch (ParseException e) {
-            jws = null;
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    Utils.getResourceString("error_title_unable_to_sign"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-        }
-
+        jws = Attacks.signWithPsychicSignature(jws, selectedAlgorithm);
         dispose();
     }
 }
