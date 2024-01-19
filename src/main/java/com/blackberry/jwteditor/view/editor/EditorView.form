@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="1f1b4" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="1f1b4" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="0" column="0" row-span="4" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -42,380 +42,395 @@
               </component>
             </children>
           </grid>
-          <grid id="209cf" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
+          <splitpane id="d5f0c">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-            <border type="line" title-resource-bundle="strings" title-key="editor_view_label_serialized_jwt">
-              <color color="-4473925"/>
-            </border>
-            <children>
-              <scrollpane id="94470">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <minimum-size width="-1" height="75"/>
-                  </grid>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="61c9" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaSerialized" custom-create="true">
-                    <constraints/>
-                    <properties>
-                      <background color="-2631721"/>
-                      <currentLineHighlightColor color="-1"/>
-                      <editable value="false"/>
-                      <highlightCurrentLine value="false"/>
-                      <lineWrap value="true"/>
-                      <text value=""/>
-                    </properties>
-                    <clientProperties>
-                      <html.disable class="java.lang.Boolean" value="true"/>
-                    </clientProperties>
-                  </component>
-                </children>
-              </scrollpane>
-              <grid id="bf819" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="3" right="0"/>
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="d1a3b" class="javax.swing.JButton" binding="buttonDecrypt">
-                    <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text resource-bundle="strings" key="decrypt"/>
-                    </properties>
-                  </component>
-                  <hspacer id="675aa">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                  </hspacer>
-                  <component id="ee981" class="javax.swing.JButton" binding="buttonCopy">
-                    <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text resource-bundle="strings" key="copy"/>
-                    </properties>
-                  </component>
-                  <component id="33256" class="javax.swing.JButton" binding="buttonVerify">
-                    <constraints>
-                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text resource-bundle="strings" key="verify"/>
-                    </properties>
-                  </component>
-                </children>
-              </grid>
-            </children>
-          </grid>
-          <tabbedpane id="841f1" binding="tabbedPane" default-binding="true">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="200" height="200"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <orientation value="0"/>
+            </properties>
             <border type="none"/>
             <children>
-              <grid id="3375d" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="true" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
+              <grid id="209cf" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="JWS" noi18n="true"/>
+                  <splitpane position="left"/>
                 </constraints>
                 <properties/>
-                <border type="empty">
-                  <size top="5" left="0" bottom="0" right="0"/>
+                <border type="line" title-resource-bundle="strings" title-key="editor_view_label_serialized_jwt">
+                  <color color="-4473925"/>
                 </border>
                 <children>
-                  <grid id="347ba" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                    </constraints>
+                  <scrollpane id="94470">
+                    <constraints border-constraint="Center"/>
                     <properties/>
-                    <border type="line" title-resource-bundle="strings" title-key="header">
-                      <color color="-4473925"/>
-                    </border>
+                    <border type="none"/>
                     <children>
-                      <scrollpane id="a060f">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="1433b" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaJWSHeader" custom-create="true">
-                            <constraints/>
-                            <properties>
-                              <currentLineHighlightColor color="-1"/>
-                              <syntaxEditingStyle value="text/json"/>
-                            </properties>
-                            <clientProperties>
-                              <html.disable class="java.lang.Boolean" value="true"/>
-                            </clientProperties>
-                          </component>
-                        </children>
-                      </scrollpane>
-                      <grid id="c7ea0" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                        <margin top="0" left="0" bottom="0" right="7"/>
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="f0266" class="javax.swing.JButton" binding="buttonJWSHeaderFormatJSON">
-                            <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text resource-bundle="strings" key="editor_view_button_pretty_print"/>
-                            </properties>
-                          </component>
-                          <vspacer id="81742">
-                            <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                          </vspacer>
-                          <component id="efb48" class="javax.swing.JCheckBox" binding="checkBoxJWSHeaderCompactJSON">
-                            <constraints>
-                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text resource-bundle="strings" key="editor_view_checkbox_compact"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </grid>
+                      <component id="61c9" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaSerialized" custom-create="true">
+                        <constraints/>
+                        <properties>
+                          <background color="-2631721"/>
+                          <currentLineHighlightColor color="-1"/>
+                          <editable value="false"/>
+                          <highlightCurrentLine value="false"/>
+                          <lineWrap value="true"/>
+                          <text value=""/>
+                        </properties>
+                      </component>
                     </children>
-                  </grid>
-                  <grid id="3321b" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                    </constraints>
+                  </scrollpane>
+                  <grid id="bf819" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="3" right="0"/>
+                    <constraints border-constraint="South"/>
                     <properties/>
-                    <border type="line" title-resource-bundle="strings" title-key="payload">
-                      <color color="-4473925"/>
-                    </border>
+                    <border type="none"/>
                     <children>
-                      <scrollpane id="736ed">
+                      <component id="d1a3b" class="javax.swing.JButton" binding="buttonDecrypt">
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="5efe9" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaPayload" custom-create="true">
-                            <constraints/>
-                            <properties>
-                              <currentLineHighlightColor color="-1"/>
-                              <syntaxEditingStyle value="text/json"/>
-                            </properties>
-                            <clientProperties>
-                              <html.disable class="java.lang.Boolean" value="true"/>
-                            </clientProperties>
-                          </component>
-                        </children>
-                      </scrollpane>
-                      <grid id="b93bc" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
-                        <margin top="0" left="0" bottom="0" right="7"/>
+                        <properties>
+                          <text resource-bundle="strings" key="decrypt"/>
+                        </properties>
+                      </component>
+                      <hspacer id="675aa">
                         <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="cc8cf" class="javax.swing.JButton" binding="buttonJWSPayloadFormatJSON">
-                            <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text resource-bundle="strings" key="editor_view_button_pretty_print"/>
-                            </properties>
-                          </component>
-                          <vspacer id="6ce5">
-                            <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                          </vspacer>
-                          <component id="d0ab5" class="javax.swing.JCheckBox" binding="checkBoxJWSPayloadCompactJSON">
-                            <constraints>
-                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text resource-bundle="strings" key="editor_view_checkbox_compact"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </grid>
+                      </hspacer>
+                      <component id="ee981" class="javax.swing.JButton" binding="buttonCopy">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text resource-bundle="strings" key="copy"/>
+                        </properties>
+                      </component>
+                      <component id="33256" class="javax.swing.JButton" binding="buttonVerify">
+                        <constraints>
+                          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text resource-bundle="strings" key="verify"/>
+                        </properties>
+                      </component>
                     </children>
-                  </grid>
-                  <grid id="71218" binding="panelSignature" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties/>
-                    <border type="line" title-resource-bundle="strings" title-key="signature">
-                      <color color="-4473925"/>
-                    </border>
-                    <children/>
                   </grid>
                 </children>
               </grid>
-              <grid id="eb5ca" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="true" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
+              <tabbedpane id="841f1" binding="tabbedPane" default-binding="true">
                 <constraints>
-                  <tabbedpane title="JWE"/>
+                  <splitpane position="right"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <grid id="b14c3" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="3375d" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <tabbedpane title="JWS" noi18n="true"/>
                     </constraints>
                     <properties/>
-                    <border type="line" title-resource-bundle="strings" title-key="header">
-                      <color color="-4473925"/>
+                    <border type="empty">
+                      <size top="5" left="0" bottom="0" right="0"/>
                     </border>
                     <children>
-                      <scrollpane id="b035c">
+                      <splitpane id="8027f">
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                            <preferred-size width="200" height="200"/>
+                          </grid>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <orientation value="0"/>
+                        </properties>
                         <border type="none"/>
                         <children>
-                          <component id="5cc42" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaJWEHeader" custom-create="true">
-                            <constraints/>
-                            <properties>
-                              <currentLineHighlightColor color="-1"/>
-                              <syntaxEditingStyle value="text/json"/>
-                            </properties>
-                            <clientProperties>
-                              <html.disable class="java.lang.Boolean" value="true"/>
-                            </clientProperties>
-                          </component>
+                          <grid id="fe749" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <splitpane position="left"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <grid id="347ba" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                                <margin top="0" left="0" bottom="0" right="0"/>
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties/>
+                                <border type="line" title-resource-bundle="strings" title-key="header">
+                                  <color color="-4473925"/>
+                                </border>
+                                <children>
+                                  <scrollpane id="a060f">
+                                    <constraints>
+                                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="1433b" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaJWSHeader" custom-create="true">
+                                        <constraints/>
+                                        <properties>
+                                          <currentLineHighlightColor color="-1"/>
+                                          <syntaxEditingStyle value="text/json"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </scrollpane>
+                                  <grid id="c7ea0" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                                    <margin top="0" left="0" bottom="0" right="7"/>
+                                    <constraints>
+                                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="f0266" class="javax.swing.JButton" binding="buttonJWSHeaderFormatJSON">
+                                        <constraints>
+                                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text resource-bundle="strings" key="editor_view_button_pretty_print"/>
+                                        </properties>
+                                      </component>
+                                      <vspacer id="81742">
+                                        <constraints>
+                                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                      </vspacer>
+                                      <component id="efb48" class="javax.swing.JCheckBox" binding="checkBoxJWSHeaderCompactJSON">
+                                        <constraints>
+                                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text resource-bundle="strings" key="editor_view_checkbox_compact"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                </children>
+                              </grid>
+                              <grid id="3321b" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                                <margin top="0" left="0" bottom="0" right="0"/>
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties/>
+                                <border type="line" title-resource-bundle="strings" title-key="payload">
+                                  <color color="-4473925"/>
+                                </border>
+                                <children>
+                                  <scrollpane id="736ed">
+                                    <constraints>
+                                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="5efe9" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaPayload" custom-create="true">
+                                        <constraints/>
+                                        <properties>
+                                          <currentLineHighlightColor color="-1"/>
+                                          <syntaxEditingStyle value="text/json"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </scrollpane>
+                                  <grid id="b93bc" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+                                    <margin top="0" left="0" bottom="0" right="7"/>
+                                    <constraints>
+                                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                                    </constraints>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="cc8cf" class="javax.swing.JButton" binding="buttonJWSPayloadFormatJSON">
+                                        <constraints>
+                                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text resource-bundle="strings" key="editor_view_button_pretty_print"/>
+                                        </properties>
+                                      </component>
+                                      <vspacer id="6ce5">
+                                        <constraints>
+                                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                      </vspacer>
+                                      <component id="d0ab5" class="javax.swing.JCheckBox" binding="checkBoxJWSPayloadCompactJSON">
+                                        <constraints>
+                                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                        </constraints>
+                                        <properties>
+                                          <text resource-bundle="strings" key="editor_view_checkbox_compact"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                </children>
+                              </grid>
+                            </children>
+                          </grid>
+                          <grid id="71218" binding="panelSignature" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <splitpane position="right"/>
+                            </constraints>
+                            <properties/>
+                            <border type="line" title-resource-bundle="strings" title-key="signature">
+                              <color color="-4473925"/>
+                            </border>
+                            <children/>
+                          </grid>
                         </children>
-                      </scrollpane>
-                      <grid id="7cf1b" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
-                        <margin top="0" left="0" bottom="0" right="7"/>
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="1fecf" class="javax.swing.JButton" binding="buttonJWEHeaderFormatJSON">
-                            <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text resource-bundle="strings" key="editor_view_button_pretty_print"/>
-                            </properties>
-                          </component>
-                          <vspacer id="d8ed8">
-                            <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                          </vspacer>
-                          <component id="f5579" class="javax.swing.JCheckBox" binding="checkBoxJWEHeaderCompactJSON">
-                            <constraints>
-                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text resource-bundle="strings" key="editor_view_checkbox_compact"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </grid>
+                      </splitpane>
                     </children>
                   </grid>
-                  <grid id="55fb4" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="eb5ca" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="true" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <tabbedpane title="JWE"/>
                     </constraints>
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <grid id="59466" binding="panelKey" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="b14c3" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
-                        <border type="line" title-resource-bundle="strings" title-key="encrypted_key">
+                        <border type="line" title-resource-bundle="strings" title-key="header">
                           <color color="-4473925"/>
                         </border>
-                        <children/>
+                        <children>
+                          <scrollpane id="b035c">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="5cc42" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaJWEHeader" custom-create="true">
+                                <constraints/>
+                                <properties>
+                                  <currentLineHighlightColor color="-1"/>
+                                  <syntaxEditingStyle value="text/json"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </scrollpane>
+                          <grid id="7cf1b" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+                            <margin top="0" left="0" bottom="0" right="7"/>
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="1fecf" class="javax.swing.JButton" binding="buttonJWEHeaderFormatJSON">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text resource-bundle="strings" key="editor_view_button_pretty_print"/>
+                                </properties>
+                              </component>
+                              <vspacer id="d8ed8">
+                                <constraints>
+                                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                              </vspacer>
+                              <component id="f5579" class="javax.swing.JCheckBox" binding="checkBoxJWEHeaderCompactJSON">
+                                <constraints>
+                                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text resource-bundle="strings" key="editor_view_checkbox_compact"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
                       </grid>
-                      <grid id="adccd" binding="panelIV" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="55fb4" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
-                        <border type="line" title-resource-bundle="strings" title-key="initialization_vector">
-                          <color color="-4473925"/>
-                        </border>
-                        <children/>
+                        <border type="none"/>
+                        <children>
+                          <grid id="59466" binding="panelKey" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="line" title-resource-bundle="strings" title-key="encrypted_key">
+                              <color color="-4473925"/>
+                            </border>
+                            <children/>
+                          </grid>
+                          <grid id="adccd" binding="panelIV" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="line" title-resource-bundle="strings" title-key="initialization_vector">
+                              <color color="-4473925"/>
+                            </border>
+                            <children/>
+                          </grid>
+                        </children>
                       </grid>
-                    </children>
-                  </grid>
-                  <grid id="bb681" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties/>
-                    <border type="none"/>
-                    <children>
-                      <grid id="61b1a" binding="panelCiphertext" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="bb681" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
-                        <border type="line" title-resource-bundle="strings" title-key="ciphertext">
-                          <color color="-4473925"/>
-                        </border>
-                        <children/>
-                      </grid>
-                      <grid id="35f1c" binding="panelTag" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                        <margin top="0" left="0" bottom="0" right="0"/>
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties/>
-                        <border type="line" title-resource-bundle="strings" title-key="auth_tag">
-                          <color color="-4473925"/>
-                        </border>
-                        <children/>
+                        <border type="none"/>
+                        <children>
+                          <grid id="61b1a" binding="panelCiphertext" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="line" title-resource-bundle="strings" title-key="ciphertext">
+                              <color color="-4473925"/>
+                            </border>
+                            <children/>
+                          </grid>
+                          <grid id="35f1c" binding="panelTag" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="line" title-resource-bundle="strings" title-key="auth_tag">
+                              <color color="-4473925"/>
+                            </border>
+                            <children/>
+                          </grid>
+                        </children>
                       </grid>
                     </children>
                   </grid>
                 </children>
-              </grid>
+              </tabbedpane>
             </children>
-          </tabbedpane>
+          </splitpane>
           <grid id="b3ff" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
