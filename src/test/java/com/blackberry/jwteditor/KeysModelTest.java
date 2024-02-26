@@ -18,12 +18,16 @@ limitations under the License.
 
 package com.blackberry.jwteditor;
 
+import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.model.keys.KeysModel;
-import com.blackberry.jwteditor.model.keys.KeysModelListener.InertKeyModelListener;
+import com.blackberry.jwteditor.model.keys.KeysModelListener;
+import com.blackberry.jwteditor.model.keys.KeysModelListener.InertKeysModelListener;
 import com.blackberry.jwteditor.model.keys.PasswordKey;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.blackberry.jwteditor.KeysModelBuilder.keysModel;
 import static data.PemData.*;
@@ -111,7 +115,7 @@ class KeysModelTest {
                 .withKey(new PasswordKey("testKeyId", "secret", 8, 1337))
                 .withKey(new PasswordKey("another", "shrubbery", 8, 1337))
                 .build();
-        model.addKeyModelListener(new InertKeyModelListener() {
+        model.addKeyModelListener(new InertKeysModelListener() {
             @Override
             public void notifyKeyDeleted(int rowIndex) {
                 noOfListenerInvocations.incrementAndGet();
@@ -121,5 +125,53 @@ class KeysModelTest {
         model.deleteKeys(new int[]{0, 3, 1, 2});
 
         assertThat(noOfListenerInvocations.get()).isEqualTo(4);
+    }
+
+    @Test
+    void addKeyWithNewId_listenerOnlyNotifiedOfKeyInserted() {
+        AtomicBoolean keyDeleted = new AtomicBoolean();
+        AtomicReference<Key> insertedKey = new AtomicReference<>();
+        Key key = new PasswordKey("testKeyId", "secret", 8, 1337);
+        KeysModel model = new KeysModel();
+
+        model.addKeyModelListener(new KeysModelListener() {
+            @Override
+            public void notifyKeyInserted(Key key) {
+                insertedKey.compareAndSet(null, key);
+            }
+
+            @Override
+            public void notifyKeyDeleted(int rowIndex) {
+                keyDeleted.set(true);
+            }
+
+            @Override
+            public void notifyKeyDeleted(Key key) {
+                keyDeleted.set(true);
+            }
+        });
+
+        model.addKey(key);
+
+        assertThat(insertedKey.get()).isSameAs(key);
+        assertThat(keyDeleted).isFalse();
+    }
+
+    @Test
+    void addKeyWithExistingId_listenerNotifiedOfKeyDeletion() {
+        AtomicReference<Key> deletedKey = new AtomicReference<>();
+        Key oldKey = new PasswordKey("testKeyId", "secret", 8, 1337);
+        KeysModel model = keysModel().withKey(oldKey).build();
+
+        model.addKeyModelListener(new InertKeysModelListener() {
+            @Override
+            public void notifyKeyDeleted(Key key) {
+                deletedKey.set(key);
+            }
+        });
+
+        model.addKey(new PasswordKey("testKeyId", "sci", 8, 1337));
+
+        assertThat(deletedKey.get()).isSameAs(oldKey);
     }
 }

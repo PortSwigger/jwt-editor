@@ -105,7 +105,7 @@ public class JWTEditorExtension implements BurpExtension {
         );
 
         Intruder intruder = api.intruder();
-        intruder.registerPayloadProcessor(new JWSPayloadProcessor(burpConfig.intruderConfig()));
+        intruder.registerPayloadProcessor(new JWSPayloadProcessor(burpConfig.intruderConfig(), api.logging(), keysModel));
 
         if (api.burpSuite().version().edition() != COMMUNITY_EDITION) {
             api.scanner().registerInsertionPointProvider(new JWSHeaderInsertionPointProvider(burpConfig.scannerConfig()));

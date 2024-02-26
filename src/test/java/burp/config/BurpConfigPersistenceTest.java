@@ -21,6 +21,7 @@ package burp.config;
 import burp.api.montoya.persistence.Preferences;
 import burp.intruder.FuzzLocation;
 import burp.proxy.HighlightColor;
+import com.nimbusds.jose.JWSAlgorithm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,6 +35,8 @@ import static burp.intruder.FuzzLocation.PAYLOAD;
 import static burp.proxy.HighlightColor.CYAN;
 import static burp.proxy.HighlightColor.RED;
 import static burp.proxy.ProxyConfig.DEFAULT_HIGHLIGHT_COLOR;
+import static com.nimbusds.jose.JWSAlgorithm.ES256;
+import static com.nimbusds.jose.JWSAlgorithm.EdDSA;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
@@ -230,6 +233,7 @@ class BurpConfigPersistenceTest {
                         HEADER,
                         "sub",
                         false,
+                        null,
                         null
                 ),
                 arguments(
@@ -237,28 +241,31 @@ class BurpConfigPersistenceTest {
                         PAYLOAD,
                         "role",
                         false,
+                        null,
                         null
                 ),
                 arguments(
-                        "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\",\"intruder_payload_processor_resign\":true}",
+                        "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\",\"intruder_payload_processor_resign\":true, \"intruder_payload_processor_signing_key_id\": \"uuid\", \"intruder_payload_processor_signing_algorithm\": \"EdDSA\"}",
                         HEADER,
                         "sub",
                         true,
-                        null
+                        "uuid",
+                        EdDSA
                 ),
                 arguments(
-                        "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\",\"intruder_payload_processor_signing_key_id\":\"131da5fb-8484-4717-b0d2-b79925978596\"}",
+                        "{\"intruder_payload_processor_fuzz_location\":\"header\",\"intruder_payload_processor_parameter_name\":\"sub\",\"intruder_payload_processor_signing_key_id\":\"131da5fb-8484-4717-b0d2-b79925978596\", \"intruder_payload_processor_signing_algorithm\": \"ES256\"}",
                         HEADER,
                         "sub",
                         false,
-                        "131da5fb-8484-4717-b0d2-b79925978596"
+                        "131da5fb-8484-4717-b0d2-b79925978596",
+                        ES256
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource("validIntruderConfigJson")
-    void givenValidIntruderSavedConfig_whenLoadOrCreateCalled_thenAppropriateConfigReturned(String json, FuzzLocation expectedLocation, String expectedParameterName, boolean expectedResign, String expectedSigningKeyId) {
+    void givenValidIntruderSavedConfig_whenLoadOrCreateCalled_thenAppropriateConfigReturned(String json, FuzzLocation expectedLocation, String expectedParameterName, boolean expectedResign, String expectedSigningKeyId, JWSAlgorithm expectedSigningAlgorithm) {
         BurpConfigPersistence configPersistence = new BurpConfigPersistence(callbacks);
         when(callbacks.getString(BURP_SETTINGS_NAME)).thenReturn(json);
 
@@ -270,6 +277,7 @@ class BurpConfigPersistenceTest {
         assertThat(burpConfig.intruderConfig().fuzzParameter()).isEqualTo(expectedParameterName);
         assertThat(burpConfig.intruderConfig().resign()).isEqualTo(expectedResign);
         assertThat(burpConfig.intruderConfig().signingKeyId()).isEqualTo(expectedSigningKeyId);
+        assertThat(burpConfig.intruderConfig().signingAlgorithm()).isEqualTo(expectedSigningAlgorithm);
     }
 
     @Test

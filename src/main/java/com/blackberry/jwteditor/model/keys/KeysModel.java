@@ -19,11 +19,11 @@ limitations under the License.
 package com.blackberry.jwteditor.model.keys;
 
 import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
-import com.blackberry.jwteditor.model.keys.KeysModelListener.InertKeyModelListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +37,12 @@ import static java.util.Collections.unmodifiableCollection;
 public class KeysModel {
     private final Map<String, Key> keys;
     private final Object lock;
-    
-    private KeysModelListener modelListener;
+
+    private final List<KeysModelListener> modelListeners;
 
     public KeysModel() {
         this.keys = new LinkedHashMap<>();
-        this.modelListener = new InertKeyModelListener();
+        this.modelListeners = new ArrayList<>();
         this.lock = new Object();
     }
 
@@ -53,7 +53,7 @@ public class KeysModel {
     }
 
     public void addKeyModelListener(KeysModelListener modelListener) {
-        this.modelListener = modelListener;
+        this.modelListeners.add(modelListener);
     }
 
     /**
@@ -131,8 +131,13 @@ public class KeysModel {
             oldKey = keys.put(key.getID(), key);
         }
 
-        modelListener.notifyKeyDeleted(oldKey);
-        modelListener.notifyKeyInserted(key);
+        for (KeysModelListener modelListener : modelListeners) {
+            if (oldKey != null) {
+                modelListener.notifyKeyDeleted(oldKey);
+            }
+
+            modelListener.notifyKeyInserted(key);
+        }
     }
 
     private int findIndexOfKeyWithId(String id) {
@@ -163,7 +168,9 @@ public class KeysModel {
         }
 
         if (rowIndex >= 0) {
-            modelListener.notifyKeyDeleted(rowIndex);
+            for (KeysModelListener modelListener : this.modelListeners) {
+                modelListener.notifyKeyDeleted(rowIndex);
+            }
         }
     }
 

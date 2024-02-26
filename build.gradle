@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.blackberry'
-version = '2.1.1'
+version = '2.2'
 description = 'jwt-editor'
 
 repositories {
@@ -36,7 +36,7 @@ dependencies {
             'com.nimbusds:nimbus-jose-jwt:9.21',
             'org.exbin.deltahex:deltahex-swing:0.1.2',
             'com.fifesoft:rsyntaxtextarea:3.3.4',
-            'org.json:json:20231013',
+            'org.json:json:20240205',
             'org.apache.commons:commons-lang3:3.14.0'
     )
     testImplementation(

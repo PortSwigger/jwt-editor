@@ -94,6 +94,6 @@ public class SuiteView {
                 keysModel,
                 rstaFactory
         );
-        configView = new ConfigView(burpConfig, userInterface, isProVersion);
+        configView = new ConfigView(burpConfig, userInterface, isProVersion, keysModel);
     }
 }
