@@ -24,6 +24,7 @@ import burp.intruder.IntruderConfig;
 import burp.proxy.HighlightColor;
 import burp.proxy.ProxyConfig;
 import burp.scanner.ScannerConfig;
+import com.nimbusds.jose.JWSAlgorithm;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,6 +37,7 @@ public class BurpConfigPersistence {
     private static final String INTRUDER_FUZZ_PARAMETER_NAME = "intruder_payload_processor_parameter_name";
     private static final String INTRUDER_FUZZ_RESIGNING = "intruder_payload_processor_resign";
     private static final String INTRUDER_FUZZ_SIGNING_KEY_ID = "intruder_payload_processor_signing_key_id";
+    private static final String INTRUDER_FUZZ_SIGNING_ALGORITHM = "intruder_payload_processor_signing_algorithm";
     private static final String SCANNER_INSERTION_POINT_PROVIDER_ENABLED_KEY = "scanner_insertion_point_provider_enabled";
     private static final String SCANNER_INSERTION_PARAMETER_NAME = "scanner_insertion_point_provider_parameter_name";
 
@@ -77,6 +79,11 @@ public class BurpConfigPersistence {
                     intruderConfig.setSigningKeyId(keyId);
                 }
 
+                if (parsedObject.has(INTRUDER_FUZZ_SIGNING_ALGORITHM) && parsedObject.get(INTRUDER_FUZZ_SIGNING_ALGORITHM) instanceof String algorithm) {
+                    JWSAlgorithm jwsAlgorithm = JWSAlgorithm.parse(algorithm);
+                    intruderConfig.setSigningAlgorithm(jwsAlgorithm);
+                }
+
                 if (parsedObject.has(INTRUDER_FUZZ_RESIGNING) && parsedObject.get(INTRUDER_FUZZ_RESIGNING) instanceof Boolean resign) {
                     intruderConfig.setResign(resign);
                 }
@@ -107,6 +114,11 @@ public class BurpConfigPersistence {
         burpConfigJson.put(INTRUDER_FUZZ_PARAMETER_TYPE, model.intruderConfig().fuzzLocation());
         burpConfigJson.put(INTRUDER_FUZZ_RESIGNING, model.intruderConfig().resign());
         burpConfigJson.put(INTRUDER_FUZZ_SIGNING_KEY_ID, model.intruderConfig().signingKeyId());
+
+        JWSAlgorithm signingAlgorithm = model.intruderConfig().signingAlgorithm();
+        String signingAlgorithmName = signingAlgorithm == null ? null : signingAlgorithm.getName();
+        burpConfigJson.put(INTRUDER_FUZZ_SIGNING_ALGORITHM, signingAlgorithmName);
+
         burpConfigJson.put(SCANNER_INSERTION_POINT_PROVIDER_ENABLED_KEY, model.scannerConfig().enableHeaderJWSInsertionPointLocation());
         burpConfigJson.put(SCANNER_INSERTION_PARAMETER_NAME, model.scannerConfig().insertionPointLocationParameterName());
 

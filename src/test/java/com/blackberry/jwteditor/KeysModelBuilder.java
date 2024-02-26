@@ -18,63 +18,58 @@ limitations under the License.
 
 package com.blackberry.jwteditor;
 
-import com.blackberry.jwteditor.exceptions.PemException;
-import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
-import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.model.keys.KeysModel;
-import com.blackberry.jwteditor.utils.PEMUtils;
-import com.nimbusds.jose.jwk.JWK;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-class KeysModelBuilder {
+import static com.blackberry.jwteditor.KeyLoader.*;
+
+public class KeysModelBuilder {
     private final AtomicInteger keyId = new AtomicInteger();
     private final KeysModel model = new KeysModel();
 
-    KeysModelBuilder withECKey(String pem) {
-        try {
-            JWK jwk = PEMUtils.pemToECKey(pem, Integer.toString(keyId.incrementAndGet()));
-            model.addKey(JWKKeyFactory.from(jwk));
-        } catch (PemException | UnsupportedKeyException e) {
-            throw new IllegalStateException(e);
-        }
+    public KeysModelBuilder withECKey(String pem) {
+        return withECKey(pem, nextKeyId());
+    }
 
+    public KeysModelBuilder withECKey(String pem, String keyId) {
+        model.addKey(loadECKey(pem, keyId));
         return this;
     }
 
-    KeysModelBuilder withRSAKey(String pem) {
-        try {
-            JWK jwk = PEMUtils.pemToRSAKey(pem, Integer.toString(keyId.incrementAndGet()));
-            model.addKey(JWKKeyFactory.from(jwk));
-        } catch (PemException | UnsupportedKeyException e) {
-            throw new IllegalStateException(e);
-        }
+    public KeysModelBuilder withRSAKey(String pem) {
+        return withRSAKey(pem, nextKeyId());
+    }
 
+    public KeysModelBuilder withRSAKey(String pem, String keyId) {
+        model.addKey(loadRSAKey(pem, keyId));
         return this;
     }
 
-    KeysModelBuilder withOKPKey(String pem) {
-        try {
-            JWK jwk = PEMUtils.pemToOctetKeyPair(pem, Integer.toString(keyId.incrementAndGet()));
-            model.addKey(JWKKeyFactory.from(jwk));
-        } catch (PemException | UnsupportedKeyException e) {
-            throw new IllegalStateException(e);
-        }
+    public KeysModelBuilder withOKPKey(String pem) {
+        return withOKPKey(pem, nextKeyId());
+    }
 
+    public KeysModelBuilder withOKPKey(String pem, String keyId) {
+        model.addKey(loadOKPKey(pem, keyId));
         return this;
     }
 
-    KeysModelBuilder withKey(Key key) {
+    public KeysModelBuilder withKey(Key key) {
         model.addKey(key);
         return this;
     }
 
-    KeysModel build() {
+    public KeysModel build() {
         return model;
     }
 
-    static KeysModelBuilder keysModel() {
+    private String nextKeyId() {
+        return Integer.toString(keyId.incrementAndGet());
+    }
+
+    public static KeysModelBuilder keysModel() {
         return new KeysModelBuilder();
     }
 }
