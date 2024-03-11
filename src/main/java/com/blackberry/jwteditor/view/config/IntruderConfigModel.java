@@ -71,7 +71,9 @@ class IntruderConfigModel {
     }
 
     String signingKeyId() {
-        return intruderConfig.signingKeyId();
+        String keyId = intruderConfig.signingKeyId();
+
+        return keyId == null && hasSigningKeys() ? signingKeyIds()[0] : keyId;
     }
 
     public void setSigningKeyId(String signingKeyId) {
@@ -88,19 +90,23 @@ class IntruderConfigModel {
     }
 
     JWSAlgorithm[] signingAlgorithms() {
-        if (intruderConfig.signingKeyId() == null) {
+        String keyId = signingKeyId();
+
+        if (keyId == null) {
             return NO_ALGORITHMS;
         }
 
         return keysModel.getSigningKeys().stream()
-                .filter(k -> k.getID().equals(intruderConfig.signingKeyId()))
+                .filter(k -> k.getID().equals(keyId))
                 .findFirst()
                 .orElseThrow()
                 .getSigningAlgorithms();
     }
 
     JWSAlgorithm signingAlgorithm() {
-        return intruderConfig.signingAlgorithm();
+        JWSAlgorithm signingAlgorithm = intruderConfig.signingAlgorithm();
+
+        return signingAlgorithm == null && hasSigningKeys() ? signingAlgorithms()[0] : signingAlgorithm;
     }
 
     void setSigningAlgorithm(JWSAlgorithm signingAlgorithm) {

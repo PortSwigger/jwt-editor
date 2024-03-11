@@ -21,7 +21,6 @@ package burp.intruder;
 import com.nimbusds.jose.JWSAlgorithm;
 
 import static burp.intruder.FuzzLocation.PAYLOAD;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class IntruderConfig {
     private String fuzzParameter;
@@ -57,7 +56,6 @@ public class IntruderConfig {
 
     public void setSigningKeyId(String signingKeyId) {
         this.signingKeyId = signingKeyId;
-        this.resign = resign && canSign();
     }
 
     public boolean resign() {
@@ -65,7 +63,7 @@ public class IntruderConfig {
     }
 
     public void setResign(boolean resign) {
-        this.resign = resign && canSign();
+        this.resign = resign;
     }
 
     public JWSAlgorithm signingAlgorithm() {
@@ -74,10 +72,5 @@ public class IntruderConfig {
 
     public void setSigningAlgorithm(JWSAlgorithm signingAlgorithm) {
         this.signingAlgorithm = signingAlgorithm;
-        this.resign = resign && canSign();
-    }
-
-    private boolean canSign() {
-        return isNotEmpty(signingKeyId) && signingAlgorithm != null;
     }
 }
