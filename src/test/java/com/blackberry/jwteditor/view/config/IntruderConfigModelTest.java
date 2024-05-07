@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -22,7 +21,6 @@ import static data.PemData.*;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntruderConfigModelTest {
     private static final String KEY_ID = "id";
@@ -159,10 +157,11 @@ class IntruderConfigModelTest {
     }
 
     @Test
-    void givenKeysModelHasSigningKey_whenSetInvalidSigningKeyId_thenExceptionThrown() {
+    void givenKeysModelHasSigningKeyAndInvalidSigningKeyId_whenGetSigningAlgorithms_thenNoAlgorithmsReturned() {
         keysModel.addKey(loadRSAKey(RSA1024Private, "kid1"));
+        model.setSigningKeyId("invalid");
 
-        assertThrows(NoSuchElementException.class, () -> model.setSigningKeyId("invalid"));
+        assertThat(model.signingAlgorithms()).isEmpty();
     }
 
     @Test

@@ -92,15 +92,15 @@ class IntruderConfigModel {
     JWSAlgorithm[] signingAlgorithms() {
         String keyId = signingKeyId();
 
-        if (keyId == null) {
+        if (keyId == null || keysModel.getSigningKeys().isEmpty()) {
             return NO_ALGORITHMS;
         }
 
         return keysModel.getSigningKeys().stream()
                 .filter(k -> k.getID().equals(keyId))
                 .findFirst()
-                .orElseThrow()
-                .getSigningAlgorithms();
+                .map(Key::getSigningAlgorithms)
+                .orElse(NO_ALGORITHMS);
     }
 
     JWSAlgorithm signingAlgorithm() {

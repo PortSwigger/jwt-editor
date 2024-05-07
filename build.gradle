@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.blackberry'
-version = '2.2'
+version = '2.2.1'
 description = 'jwt-editor'
 
 repositories {

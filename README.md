@@ -10,12 +10,15 @@ Additionally it facilitates several well-known attacks against JWT implementatio
 
 * A top level tab titled `JWT Editor`
 * A custom tab `JSON Web Token` tab within HTTP messages containing JWTs
-* JWT highlighting within proxied HTTP and web socket messages
+* JWT highlighting within proxied HTTP and WebSocket messages
 * JWS Intruder payload provider
 * JWS Scanner insertion point provider
 
 
 ## Changelog
+
+**2.2.1 2024-05-06**
+- Fix issue where an invalid Intruder signing key could prevent the extension from loading (Thanks to [@sebastianosrt](https://github.com/sebastianosrt) for reporting this).
 
 **2.2 2024-02-29**
 - Allow resigning of JWS tokens during fuzzing (Thanks to [@BafDyce](https://github.com/BafDyce)).
@@ -42,7 +45,7 @@ Additionally it facilitates several well-known attacks against JWT implementatio
 Forked from [Fraser Winterborn](https://uk.linkedin.com/in/fraser-winterborn-198b8a129)'s version (original [repository](https://github.com/blackberry/jwt-editor)).
 * Payload processing rule to support fuzzing within JWS.
 * Insertion point provider for JWS header parameters.
-* JWT highlighting within websocket messages.
+* JWT highlighting within WebSocket messages.
 * Update to Java 17 and PortSwigger's new Montoya API.
 * Add ability to enable/disable JWT highlighting within proxied messages and to change highlight color.
 * Add ability to inject Collaborator payloads into x5u and jku headers.
@@ -152,7 +155,7 @@ This option is automatically enabled if it is detected that the original JWT did
 *JWT Editor* can be built from source.
 * Ensure that Java JDK 17 or newer is installed
 * From root of project, run the command `./gradlew jar`
-* This should place the JAR file `jwt-editor-2.2.jar` within the `build/libs` directory
+* This should place the JAR file `jwt-editor-2.2.1.jar` within the `build/libs` directory
 * This can be loaded into Burp Suite by navigating to the `Extensions` tab, `Installed` sub-tab, clicking `Add` and loading the JAR file
 * This BApp is using the newer Montoya API so it's best to use the latest version of Burp Suite (try the earlier adopter channel if there are issues with the latest stable release)
 
