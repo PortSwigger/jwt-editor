@@ -48,7 +48,9 @@ class AnnotationsModifier {
         Counts counts = countJOSEObjects(messageString);
 
         if (!counts.isZero()) {
-            annotations.setHighlightColor(proxyConfig.highlightColor().burpColor);
+            if (proxyConfig.highlightJWT()){
+                annotations.setHighlightColor(proxyConfig.highlightColor().burpColor);
+            }
             annotations.setNotes(counts.comment());
         }
     }
