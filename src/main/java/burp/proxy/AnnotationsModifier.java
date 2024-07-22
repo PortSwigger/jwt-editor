@@ -36,12 +36,16 @@ class AnnotationsModifier {
     }
 
     void updateAnnotationsIfApplicable(Annotations annotations, ByteArray data) {
-        String message = byteUtils.convertToString(data.getBytes());
-        updateAnnotationsIfApplicable(annotations, message);
+        if (proxyConfig.highlightJWT()) {
+            String message = byteUtils.convertToString(data.getBytes());
+            updateAnnotationsIfApplicable(annotations, message);
+        }
     }
 
     void updateAnnotationsIfApplicable(Annotations annotations, String message) {
-        updateAnnotations(annotations, message);
+        if (proxyConfig.highlightJWT()) {
+            updateAnnotations(annotations, message);
+        }
     }
 
     private void updateAnnotations(Annotations annotations, String messageString) {
