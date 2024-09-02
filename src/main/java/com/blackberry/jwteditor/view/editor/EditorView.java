@@ -20,14 +20,15 @@ package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
 import burp.api.montoya.ui.Selection;
-import burp.api.montoya.ui.editor.extension.ExtensionProvidedEditor;
 import com.blackberry.jwteditor.presenter.EditorPresenter;
+import com.blackberry.jwteditor.presenter.Information;
 import com.blackberry.jwteditor.presenter.PresenterStore;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 import com.blackberry.jwteditor.view.utils.MaxLengthStringComboBoxModel;
+import com.blackberry.jwteditor.view.utils.RunEDTActionOnFirstRenderHierarchyListener;
 import org.exbin.deltahex.EditationAllowed;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.ByteArrayEditableData;
@@ -39,23 +40,19 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.util.List;
 
 import static java.awt.Color.RED;
 import static java.awt.EventQueue.invokeLater;
-import static java.awt.event.HierarchyEvent.SHOWING_CHANGED;
 import static org.exbin.deltahex.EditationAllowed.ALLOWED;
 import static org.exbin.deltahex.EditationAllowed.READ_ONLY;
 
 /**
  * View class for the Editor tab
  */
-public abstract class EditorView implements ExtensionProvidedEditor {
-    public static final int TAB_JWS = 0;
-    public static final int TAB_JWE = 1;
-
+public abstract class EditorView {
+    private static final int JWS_TAB_INDEX = 0;
+    private static final int JWE_TAB_INDEX = 1;
     private static final int MAX_JOSE_OBJECT_STRING_LENGTH = 68;
 
     final EditorPresenter presenter;
@@ -63,9 +60,10 @@ public abstract class EditorView implements ExtensionProvidedEditor {
     private final RstaFactory rstaFactory;
     private final boolean editable;
     private final HexCodeAreaFactory hexCodeAreaFactory;
+    private final InformationPanel informationPanel;
     private final boolean isProVersion;
 
-    private int mode;
+    private EditorMode mode;
     private JTabbedPane tabbedPane;
     private JComboBox<String> comboBoxJOSEObject;
     private JButton buttonSign;
@@ -91,7 +89,9 @@ public abstract class EditorView implements ExtensionProvidedEditor {
     private JButton buttonJWSPayloadFormatJSON;
     private JCheckBox checkBoxJWSPayloadCompactJSON;
     private JSplitPane upperSplitPane;
+    private JSplitPane midSplitPane;
     private JSplitPane lowerSplitPane;
+    private JScrollPane informationScrollPane;
 
     private CodeArea codeAreaSignature;
     private CodeArea codeAreaEncryptedKey;
@@ -105,6 +105,7 @@ public abstract class EditorView implements ExtensionProvidedEditor {
             HexCodeAreaFactory hexAreaCodeFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
             ErrorLoggingActionListenerFactory actionListenerFactory,
+            InformationPanelFactory informationPanelFactory,
             boolean editable,
             boolean isProVersion) {
         this.rstaFactory = rstaFactory;
@@ -112,8 +113,18 @@ public abstract class EditorView implements ExtensionProvidedEditor {
         this.hexCodeAreaFactory = hexAreaCodeFactory;
         this.isProVersion = isProVersion;
         this.presenter = new EditorPresenter(this, collaboratorPayloadGenerator, actionListenerFactory, presenters);
+        this.informationPanel = informationPanelFactory.build();
 
-        panel.addHierarchyListener(new ResizeSplitPanesOnFirstRenderHierarchyListener());
+        informationScrollPane.setViewportView(informationPanel);
+
+        panel.addHierarchyListener(new RunEDTActionOnFirstRenderHierarchyListener(
+                panel,
+                () -> {
+                    upperSplitPane.setDividerLocation(0.25);
+                    lowerSplitPane.setDividerLocation(0.5);
+                    invokeLater(() -> midSplitPane.setDividerLocation(0.693));
+                }
+        ));
 
         // Event handler for Header / JWS payload change events
         DocumentListener documentListener = new DocumentListener() {
@@ -345,18 +356,25 @@ public abstract class EditorView implements ExtensionProvidedEditor {
      * Get the UI mode - JWS or JWE
      * @return UI mode value
      */
-    public int getMode() {
+    public EditorMode getMode() {
         return mode;
     }
 
-    /**
-     * Set the UI to JWS mode
-     */
-    public void setJWSMode() {
-        mode = TAB_JWS;
-        tabbedPane.setSelectedIndex(TAB_JWS);
-        tabbedPane.setEnabledAt(TAB_JWS, true);
-        tabbedPane.setEnabledAt(TAB_JWE, false);
+    public void setMode(EditorMode mode)
+    {
+        this.mode = mode;
+
+        if (mode == EditorMode.JWS) {
+            configureUIForJWS();
+        } else {
+            configureUIForJWE();
+        }
+    }
+
+    private void configureUIForJWS() {
+        tabbedPane.setSelectedIndex(JWS_TAB_INDEX);
+        tabbedPane.setEnabledAt(JWS_TAB_INDEX, true);
+        tabbedPane.setEnabledAt(JWE_TAB_INDEX, false);
         buttonAttack.setEnabled(editable);
         buttonSign.setEnabled(editable);
         buttonVerify.setEnabled(true);
@@ -373,14 +391,10 @@ public abstract class EditorView implements ExtensionProvidedEditor {
         codeAreaSignature.setEditationAllowed(editable ? ALLOWED : READ_ONLY);
     }
 
-    /**
-     * Set the UI to JWE mode
-     */
-    public void setJWEMode() {
-        mode = TAB_JWE;
-        tabbedPane.setSelectedIndex(TAB_JWE);
-        tabbedPane.setEnabledAt(TAB_JWS, false);
-        tabbedPane.setEnabledAt(TAB_JWE, true);
+    private void configureUIForJWE() {
+        tabbedPane.setSelectedIndex(JWE_TAB_INDEX);
+        tabbedPane.setEnabledAt(JWS_TAB_INDEX, false);
+        tabbedPane.setEnabledAt(JWE_TAB_INDEX, true);
         buttonAttack.setEnabled(false);
         buttonSign.setEnabled(false);
         buttonVerify.setEnabled(false);
@@ -452,26 +466,22 @@ public abstract class EditorView implements ExtensionProvidedEditor {
         return checkBoxJWEHeaderCompactJSON.isSelected();
     }
 
-    @Override
     public String caption() {
         return Utils.getResourceString("burp_editor_tab");
     }
 
-    @Override
     public Component uiComponent() {
         return panel;
     }
 
-    @Override
     public Selection selectedData() {
         return null;
     }
 
     /**
-     * Has the HTTP message been altered by the extension
+     * Has the message been altered by the extension
      * @return true if the extension has altered the message
      */
-    @Override
     public boolean isModified() {
         return presenter.isModified();
     }
@@ -546,19 +556,7 @@ public abstract class EditorView implements ExtensionProvidedEditor {
         textAreaPayload = rstaFactory.buildDefaultTextArea();
     }
 
-    private class ResizeSplitPanesOnFirstRenderHierarchyListener implements HierarchyListener {
-        @Override
-        public void hierarchyChanged(HierarchyEvent e) {
-            if (e.getChangeFlags() != SHOWING_CHANGED || !e.getComponent().isShowing()) {
-                return;
-            }
-
-            invokeLater(() -> {
-                        upperSplitPane.setDividerLocation(0.25);
-                        lowerSplitPane.setDividerLocation(0.75);
-                    });
-
-            panel.removeHierarchyListener(this);
-        }
+    public void setInformation(List<Information> information) {
+        informationPanel.updateInformation(information);
     }
 }

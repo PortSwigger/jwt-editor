@@ -19,6 +19,7 @@ limitations under the License.
 package burp.api.montoya.core;
 
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -132,6 +133,16 @@ public class FakeByteArray implements ByteArray {
     }
 
     @Override
+    public int indexOf(Pattern pattern) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int indexOf(Pattern pattern, int startIndexInclusive, int endIndexExclusive) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public int countMatches(ByteArray searchTerm) {
         throw new UnsupportedOperationException();
     }
@@ -158,6 +169,16 @@ public class FakeByteArray implements ByteArray {
 
     @Override
     public int countMatches(String searchTerm, boolean caseSensitive, int startIndexInclusive, int endIndexExclusive) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int countMatches(Pattern pattern) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int countMatches(Pattern pattern, int startIndexInclusive, int endIndexExclusive) {
         throw new UnsupportedOperationException();
     }
 

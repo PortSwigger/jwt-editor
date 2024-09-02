@@ -23,12 +23,12 @@ import com.blackberry.jwteditor.model.keys.Key;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
 
+import static com.blackberry.jwteditor.utils.StringUtils.countOccurrences;
 import static com.nimbusds.jose.HeaderParameterNames.*;
 import static java.util.Arrays.stream;
 
@@ -94,7 +94,7 @@ public class JWSFactory {
      * @throws ParseException if parsing fails
      */
     public static JWS parse(String compactJWS) throws ParseException {
-        if (StringUtils.countMatches(compactJWS, ".") != 2) {
+        if (countOccurrences(compactJWS, '.') != 2) {
             throw new ParseException("Invalid number of encoded sections", 0);
         }
 

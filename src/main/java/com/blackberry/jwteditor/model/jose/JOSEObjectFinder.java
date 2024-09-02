@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import static com.nimbusds.jose.Header.MAX_HEADER_STRING_LENGTH;
 import static com.nimbusds.jose.HeaderParameterNames.ALGORITHM;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JOSEObjectFinder {
     public static final String BASE64_REGEX = "[A-Za-z0-9-_]";
@@ -78,7 +77,7 @@ public class JOSEObjectFinder {
 
     private static Set<String> findCandidateJoseObjectsWithin(String text) {
         Matcher m = JOSE_OBJECT_PATTERN.matcher(text);
-        Set<String> strings = new HashSet<>();
+        Set<String> strings = new LinkedHashSet<>();
 
         while (m.find()) {
             String token = m.group();
@@ -124,7 +123,7 @@ public class JOSEObjectFinder {
 
             String algValue = JSONObjectUtils.getString(headerJson, ALGORITHM);
 
-            if (isBlank(algValue)) {
+            if (algValue == null || algValue.isBlank()) {
                 throw new ParseException("Missing \"alg\" in header JSON object", 0);
             }
 

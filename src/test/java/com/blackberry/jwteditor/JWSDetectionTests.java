@@ -21,6 +21,7 @@ package com.blackberry.jwteditor;
 import com.blackberry.jwteditor.model.jose.JOSEObject;
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.model.jose.MutableJOSEObject;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -88,7 +89,7 @@ class JWSDetectionTests {
         List<MutableJOSEObject> joseObjects = extractJOSEObjects(joseObjectString);
 
         assertThat(joseObjects).hasSize(1);
-        assertThat(joseObjects.get(0).getModified()).isInstanceOf(JWS.class);
+        assertThat(joseObjects.getFirst().getModified()).isInstanceOf(JWS.class);
     }
 
     @ParameterizedTest
@@ -98,7 +99,7 @@ class JWSDetectionTests {
         List<MutableJOSEObject> joseObjects = extractJOSEObjects(text);
 
         assertThat(joseObjects).hasSize(1);
-        assertThat(joseObjects.get(0).getModified()).isInstanceOf(JWS.class);
+        assertThat(joseObjects.getFirst().getModified()).isInstanceOf(JWS.class);
     }
 
     @ParameterizedTest
@@ -108,7 +109,7 @@ class JWSDetectionTests {
         List<MutableJOSEObject> joseObjects = extractJOSEObjects(text);
 
         assertThat(joseObjects).hasSize(1);
-        assertThat(joseObjects.get(0).getModified()).isInstanceOf(JWS.class);
+        assertThat(joseObjects.getFirst().getModified()).isInstanceOf(JWS.class);
     }
 
     @ParameterizedTest
@@ -171,5 +172,17 @@ class JWSDetectionTests {
         Optional<JOSEObject> joseObject = parseJOSEObject(joseObjectString);
 
         assertThat(joseObject).isEmpty();
+    }
+
+    @Test
+    void testParseMultipleJWS() {
+        String jws1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUZXN0In0.Nabf3xakZubPnCzHT-fx0vG1iuNPeJKuSzHxUiQKf-8";
+        String jws2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUZXN0In0.";
+        String jws3 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw";
+        String data = jws1 + " " + jws2 + " " + jws3;
+
+        List<MutableJOSEObject> joseObjects = extractJOSEObjects(data);
+
+        assertThat(joseObjects).extracting("original").containsExactly(jws1, jws2, jws3);
     }
 }

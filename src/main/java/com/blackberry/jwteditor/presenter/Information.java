@@ -1,7 +1,7 @@
 /*
 Author : Dolph Flynn
 
-Copyright 2023 Dolph Flynn
+Copyright 2024 Dolph Flynn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.view.utils;
+package com.blackberry.jwteditor.presenter;
 
-import burp.api.montoya.logging.Logging;
+import com.blackberry.jwteditor.model.jose.TimeClaim;
 
-import java.awt.event.ActionListener;
+public record Information(String text, boolean isWarning) {
 
-public class ErrorLoggingActionListenerFactory {
-    private final Logging logging;
+    static Information from(TimeClaim timeClaim) {
+        StringBuilder sb = new StringBuilder(timeClaim.type().toString()).append(" - ");
 
-    public ErrorLoggingActionListenerFactory(Logging logging) {
-        this.logging = logging;
-    }
+        if (timeClaim.hasDate()) {
+            sb.append(timeClaim.date());
+        } else {
+            sb.append("invalid value: ").append(timeClaim.value());
+        }
 
-    public ActionListener from(ActionListener actionListener) {
-        return new ErrorLoggingActionListener(logging, actionListener);
+        return new Information(sb.toString(), !timeClaim.isValid());
     }
 }

@@ -1,7 +1,7 @@
 /*
 Author : Dolph Flynn
 
-Copyright 2023 Dolph Flynn
+Copyright 2024 Dolph Flynn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.view.utils;
+package com.blackberry.jwteditor.utils;
 
-import burp.api.montoya.logging.Logging;
+import com.nimbusds.jose.util.Base64URL;
+import org.json.JSONException;
 
-import java.awt.event.ActionListener;
+import static com.blackberry.jwteditor.utils.JSONUtils.compactJSON;
 
-public class ErrorLoggingActionListenerFactory {
-    private final Logging logging;
-
-    public ErrorLoggingActionListenerFactory(Logging logging) {
-        this.logging = logging;
-    }
-
-    public ActionListener from(ActionListener actionListener) {
-        return new ErrorLoggingActionListener(logging, actionListener);
+public class Base64URLUtils {
+    public static Base64URL base64UrlEncodeJson(String json, boolean compactJson) {
+        try {
+            return compactJson ? Base64URL.encode(compactJSON(json)) : Base64URL.encode(json);
+        } catch (JSONException e) {
+            return Base64URL.encode(json);
+        }
     }
 }

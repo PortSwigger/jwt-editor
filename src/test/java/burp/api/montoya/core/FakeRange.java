@@ -40,6 +40,11 @@ public class FakeRange implements Range {
     }
 
     @Override
+    public boolean contains(int i) {
+        return i >= start && i < end;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

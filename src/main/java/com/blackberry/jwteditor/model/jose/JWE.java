@@ -27,6 +27,9 @@ import com.nimbusds.jose.util.Base64URL;
 import java.security.Provider;
 import java.security.Security;
 import java.text.ParseException;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Class representing a JWE
@@ -62,6 +65,11 @@ public class JWE extends JOSEObject {
     @Override
     public String serialize() {
         return"%s.%s.%s.%s.%s".formatted(header.toString(), encryptedKey.toString(), iv.toString(), ciphertext.toString(), tag.toString());
+    }
+
+    @Override
+    public List<TimeClaim> timeClaims() {
+        return emptyList();
     }
 
     /**

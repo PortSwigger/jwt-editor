@@ -19,11 +19,12 @@ limitations under the License.
 package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
+import burp.api.montoya.http.HttpService;
 import burp.api.montoya.http.message.HttpRequestResponse;
-import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.ui.UserInterface;
-import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpResponseEditor;
+import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
 import com.blackberry.jwteditor.presenter.PresenterStore;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
@@ -31,9 +32,10 @@ import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 
 import static burp.api.montoya.internal.ObjectFactoryLocator.FACTORY;
 
-public class ResponseEditorView extends EditorView implements ExtensionProvidedHttpResponseEditor {
+public class HttpRequestEditorView extends HttpEditorView implements ExtensionProvidedHttpRequestEditor {
+    private volatile HttpService httpService;
 
-    public ResponseEditorView(
+    public HttpRequestEditorView(
             PresenterStore presenters,
             RstaFactory rstaFactory,
             Logging logging,
@@ -47,6 +49,7 @@ public class ResponseEditorView extends EditorView implements ExtensionProvidedH
                 new HexCodeAreaFactory(logging, userInterface),
                 collaboratorPayloadGenerator,
                 new ErrorLoggingActionListenerFactory(logging),
+                new InformationPanelFactory(userInterface, logging),
                 editable,
                 isProVersion
         );
@@ -54,18 +57,19 @@ public class ResponseEditorView extends EditorView implements ExtensionProvidedH
 
     @Override
     public void setRequestResponse(HttpRequestResponse requestResponse) {
-        HttpResponse httpResponse = requestResponse.response();
-        presenter.setMessage(httpResponse.toByteArray().toString());
+        HttpRequest httpRequest = requestResponse.request();
+        httpService = httpRequest.httpService();
+        presenter.setMessage(httpRequest.toByteArray().toString());
     }
 
     @Override
     public boolean isEnabledFor(HttpRequestResponse requestResponse) {
-        String content = requestResponse.response().toByteArray().toString();
+        String content = requestResponse.request().toByteArray().toString();
         return presenter.isEnabled(content);
     }
 
     @Override
-    public HttpResponse getResponse() {
-        return FACTORY.httpResponse(presenter.getMessage());
+    public HttpRequest getRequest() {
+        return FACTORY.httpRequest(httpService, presenter.getMessage());
     }
 }

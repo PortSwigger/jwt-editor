@@ -33,6 +33,11 @@ public class FakeAnnotations implements Annotations {
     }
 
     @Override
+    public boolean hasNotes() {
+        return notes != null;
+    }
+
+    @Override
     public HighlightColor highlightColor() {
         return highlightColor;
     }
@@ -40,6 +45,11 @@ public class FakeAnnotations implements Annotations {
     @Override
     public void setHighlightColor(HighlightColor highlightColor) {
         this.highlightColor = highlightColor;
+    }
+
+    @Override
+    public boolean hasHighlightColor() {
+        return highlightColor != null;
     }
 
     @Override

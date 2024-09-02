@@ -20,6 +20,8 @@ package com.blackberry.jwteditor.model.jose;
 
 import com.nimbusds.jose.util.Base64URL;
 
+import java.util.List;
+
 /**
  * Abstract class representing common elements of JWE/JWT
  */
@@ -47,8 +49,10 @@ public abstract class JOSEObject {
     }
 
     /**
-     * Serialize the JWT/JWE to a string in compact serializiation form
+     * Serialize the JWT/JWE to a string in compact serialization form
      * @return the compact serialized JWE/JWS
      */
     public abstract String serialize();
+
+    public abstract List<TimeClaim> timeClaims();
 }

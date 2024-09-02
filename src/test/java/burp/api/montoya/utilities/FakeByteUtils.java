@@ -18,9 +18,11 @@ limitations under the License.
 
 package burp.api.montoya.utilities;
 
+import java.util.regex.Pattern;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class FakeByteUtils implements ByteUtils{
+public class FakeByteUtils implements ByteUtils {
     @Override
     public int indexOf(byte[] bytes, byte[] bytes1) {
         throw new UnsupportedOperationException();
@@ -37,6 +39,16 @@ public class FakeByteUtils implements ByteUtils{
     }
 
     @Override
+    public int indexOf(byte[] data, Pattern pattern) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int indexOf(byte[] data, Pattern pattern, int from, int to) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public int countMatches(byte[] bytes, byte[] bytes1) {
         throw new UnsupportedOperationException();
     }
@@ -48,6 +60,16 @@ public class FakeByteUtils implements ByteUtils{
 
     @Override
     public int countMatches(byte[] bytes, byte[] bytes1, boolean b, int i, int i1) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int countMatches(byte[] data, Pattern pattern) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int countMatches(byte[] data, Pattern pattern, int from, int to) {
         throw new UnsupportedOperationException();
     }
 

@@ -19,7 +19,6 @@ limitations under the License.
 package com.blackberry.jwteditor.presenter;
 
 import com.blackberry.jwteditor.model.jose.MutableJOSEObject;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,26 +55,13 @@ class EditorModel {
 
     String getMessage() {
         synchronized (lock) {
-            // Create two lists, one containing the original, the other containing the modified version at the same index
-            List<String> searchList = new ArrayList<>();
-            List<String> replacementList = new ArrayList<>();
-
-            // Add a replacement pair to the lists if the JOSEObjectPair has changed
             for (MutableJOSEObject mutableJoseObject : mutableJoseObjects) {
                 if (mutableJoseObject.changed()) {
-                    searchList.add(mutableJoseObject.getOriginal());
-                    replacementList.add(mutableJoseObject.getModified().serialize());
+                    message = message.replace(mutableJoseObject.getOriginal(), mutableJoseObject.getModified().serialize());
                 }
             }
 
-            // Convert the lists to arrays
-            String[] search = new String[searchList.size()];
-            searchList.toArray(search);
-            String[] replacement = new String[replacementList.size()];
-            replacementList.toArray(replacement);
-
-            // Use the Apache Commons StringUtils library to do in-place replacement
-            return StringUtils.replaceEach(message, search, replacement);
+            return message;
         }
     }
 

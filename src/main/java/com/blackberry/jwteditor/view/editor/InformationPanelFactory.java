@@ -1,7 +1,7 @@
 /*
 Author : Dolph Flynn
 
-Copyright 2023 Dolph Flynn
+Copyright 2024 Dolph Flynn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.view.utils;
+package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.logging.Logging;
+import burp.api.montoya.ui.UserInterface;
 
-import java.awt.event.ActionListener;
-
-public class ErrorLoggingActionListenerFactory {
+public class InformationPanelFactory {
+    private final UserInterface userInterface;
     private final Logging logging;
 
-    public ErrorLoggingActionListenerFactory(Logging logging) {
+    public InformationPanelFactory(UserInterface userInterface, Logging logging) {
+        this.userInterface = userInterface;
         this.logging = logging;
     }
 
-    public ActionListener from(ActionListener actionListener) {
-        return new ErrorLoggingActionListener(logging, actionListener);
+    InformationPanel build() {
+        return new InformationPanel(userInterface::currentDisplayFont, logging);
     }
 }

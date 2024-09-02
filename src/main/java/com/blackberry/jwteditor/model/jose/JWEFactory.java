@@ -22,13 +22,13 @@ import com.blackberry.jwteditor.exceptions.EncryptionException;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
-import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Provider;
 import java.security.Security;
 import java.text.ParseException;
 
+import static com.blackberry.jwteditor.utils.StringUtils.countOccurrences;
 import static java.util.Arrays.stream;
 
 public class JWEFactory {
@@ -75,7 +75,7 @@ public class JWEFactory {
      * @throws ParseException if the value is not a valid JWE
      */
     public static JWE parse(String compactJWE) throws ParseException {
-        if (StringUtils.countMatches(compactJWE, ".") != 4) {
+        if (countOccurrences(compactJWE, '.') != 4) {
             throw new ParseException("Invalid number of encoded fields", 0);
         }
 

@@ -205,12 +205,14 @@
 
 This software includes software from others as follows:
 
-A class from: https://github.com/exbin/bined-lib-java
-Included in src/main/java/com/blackberry/jwteditor/view/HexCodeAreaCommandHandler.java
-Copyright (C) ExBin Project
-Licensed under Apache-2.0 as above
+* Two class from: https://github.com/exbin/bined-lib-java included at:
+  * src/main/java/com/blackberry/jwteditor/view/HexCodeAreaCommandHandler.java
+  * src/main/java/org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler.java
 
-Some classes from https://bitbucket.org/connect2id/nimbus-jose-jwt
-Included in: src/main/java/com/blackberry/jwteditor/cryptography/okp/
-Copyright 2012-2018, Connect2id Ltd.
-Licensed under Apache-2.0 as above
+  Copyright (C) ExBin Project - Licensed under Apache-2.0 as above.
+
+
+* Some classes from https://bitbucket.org/connect2id/nimbus-jose-jwt included within:
+  * src/main/java/com/blackberry/jwteditor/cryptography/okp/
+
+  Copyright 2012-2018 Connect2id Ltd - Licensed under Apache-2.0 as above.

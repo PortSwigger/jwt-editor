@@ -22,12 +22,15 @@ import burp.api.montoya.core.Annotations;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.core.FakeByteArray;
 import burp.api.montoya.core.Marker;
+import burp.api.montoya.http.handler.TimingData;
 import burp.api.montoya.http.message.ContentType;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class FakeHttpRequestResponse implements HttpRequestResponse {
     private final HttpRequest httpRequest;
@@ -52,7 +55,17 @@ public class FakeHttpRequestResponse implements HttpRequestResponse {
     }
 
     @Override
+    public Optional<TimingData> timingData() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String url() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasResponse() {
         throw new UnsupportedOperationException();
     }
 
@@ -78,6 +91,16 @@ public class FakeHttpRequestResponse implements HttpRequestResponse {
 
     @Override
     public List<Marker> responseMarkers() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean contains(String searchTerm, boolean caseSensitive) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean contains(Pattern pattern) {
         throw new UnsupportedOperationException();
     }
 

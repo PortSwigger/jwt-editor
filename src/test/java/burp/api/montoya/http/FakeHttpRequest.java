@@ -23,11 +23,13 @@ import burp.api.montoya.core.Marker;
 import burp.api.montoya.http.message.ContentType;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.requests.HttpTransformation;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class FakeHttpRequest implements HttpRequest {
     private final ByteArray request;
@@ -40,6 +42,11 @@ public class FakeHttpRequest implements HttpRequest {
     public FakeHttpRequest(HttpService httpService, ByteArray request) {
         this.httpService = httpService;
         this.request = request;
+    }
+
+    @Override
+    public boolean isInScope() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -59,6 +66,21 @@ public class FakeHttpRequest implements HttpRequest {
 
     @Override
     public String path() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String query() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String pathWithoutQuery() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String fileExtension() {
         throw new UnsupportedOperationException();
     }
 
@@ -83,6 +105,66 @@ public class FakeHttpRequest implements HttpRequest {
     }
 
     @Override
+    public List<ParsedHttpParameter> parameters(HttpParameterType type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasParameters() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasParameters(HttpParameterType type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ParsedHttpParameter parameter(String name, HttpParameterType type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String parameterValue(String name, HttpParameterType type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasParameter(String name, HttpParameterType type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasParameter(HttpParameter parameter) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasHeader(HttpHeader header) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasHeader(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasHeader(String name, String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public HttpHeader header(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String headerValue(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ByteArray body() {
         throw new UnsupportedOperationException();
     }
@@ -99,6 +181,16 @@ public class FakeHttpRequest implements HttpRequest {
 
     @Override
     public List<Marker> markers() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean contains(String searchTerm, boolean caseSensitive) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean contains(Pattern pattern) {
         throw new UnsupportedOperationException();
     }
 
@@ -143,7 +235,7 @@ public class FakeHttpRequest implements HttpRequest {
     }
 
     @Override
-    public HttpRequest withAddedParameters(List<HttpParameter> parameters) {
+    public HttpRequest withAddedParameters(List<? extends HttpParameter> parameters) {
         throw new UnsupportedOperationException();
     }
 
@@ -153,7 +245,7 @@ public class FakeHttpRequest implements HttpRequest {
     }
 
     @Override
-    public HttpRequest withRemovedParameters(List<HttpParameter> parameters) {
+    public HttpRequest withRemovedParameters(List<? extends HttpParameter> parameters) {
         throw new UnsupportedOperationException();
     }
 
@@ -163,7 +255,7 @@ public class FakeHttpRequest implements HttpRequest {
     }
 
     @Override
-    public HttpRequest withUpdatedParameters(List<HttpParameter> parameters) {
+    public HttpRequest withUpdatedParameters(List<? extends HttpParameter> parameters) {
         throw new UnsupportedOperationException();
     }
 

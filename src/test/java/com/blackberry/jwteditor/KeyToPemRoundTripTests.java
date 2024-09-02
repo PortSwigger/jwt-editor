@@ -78,8 +78,12 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.PEMToJWKTests#ecPrivateValidPEMs")
     void ecKeyPEMtoJWK(String pem) throws PemException {
         JWK ecKey = PEMUtils.pemToECKey(pem);
+
+        // Keys have been converted to PKCS#8 so PEM serialization is different
         String newPem = PEMUtils.jwkToPem(ecKey);
-        //assertEquals(pem, newPem);
+        JWK ecKey2 = PEMUtils.pemToECKey(newPem);
+
+        assertThat(ecKey2).isEqualTo(ecKey);
     }
 
     @ParameterizedTest

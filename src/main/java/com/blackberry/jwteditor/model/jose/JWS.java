@@ -28,6 +28,7 @@ import com.nimbusds.jose.util.Base64URL;
 import java.nio.charset.StandardCharsets;
 import java.security.Provider;
 import java.security.Security;
+import java.util.List;
 
 /**
  * Class representing a JWS
@@ -35,6 +36,7 @@ import java.security.Security;
 public class JWS extends JOSEObject {
     private final Base64URL payload;
     private final Base64URL signature;
+    private final List<TimeClaim> timeClaims;
 
     /**
      * Construct a JWS from encoded components
@@ -46,6 +48,7 @@ public class JWS extends JOSEObject {
         super(header);
         this.payload = payload;
         this.signature = signature;
+        this.timeClaims = TimeClaimFactory.fromPayloadJson(payload.decodeToString());
     }
 
     /**
@@ -78,6 +81,11 @@ public class JWS extends JOSEObject {
     @Override
     public String serialize() {
         return "%s.%s.%s".formatted(header.toString(), payload.toString(), signature.toString());
+    }
+
+    @Override
+    public List<TimeClaim> timeClaims() {
+        return timeClaims;
     }
 
     /**

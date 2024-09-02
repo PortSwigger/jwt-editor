@@ -24,6 +24,14 @@ public class StubLogging implements Logging {
     }
 
     @Override
+    public void logToError(String message, Throwable cause) {
+    }
+
+    @Override
+    public void logToError(Throwable cause) {
+    }
+
+    @Override
     public void raiseDebugEvent(String message) {
     }
 

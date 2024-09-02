@@ -1,7 +1,7 @@
 /*
 Author : Dolph Flynn
 
-Copyright 2023 Dolph Flynn
+Copyright 2024 Dolph Flynn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,20 +16,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.view.utils;
+package com.blackberry.jwteditor.utils;
 
-import burp.api.montoya.logging.Logging;
+public class StringUtils {
 
-import java.awt.event.ActionListener;
+    public static int countOccurrences(String data, char seek) {
+        if (data == null) {
+            return 0;
+        }
 
-public class ErrorLoggingActionListenerFactory {
-    private final Logging logging;
+        int count = 0;
 
-    public ErrorLoggingActionListenerFactory(Logging logging) {
-        this.logging = logging;
-    }
+        for (char c : data.toCharArray()) {
+            if (c == seek) {
+                count++;
+            }
+        }
 
-    public ActionListener from(ActionListener actionListener) {
-        return new ErrorLoggingActionListener(logging, actionListener);
+        return count;
     }
 }

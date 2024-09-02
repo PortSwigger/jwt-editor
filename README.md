@@ -17,6 +17,12 @@ Additionally it facilitates several well-known attacks against JWT implementatio
 
 ## Changelog
 
+**2.3 2024-08-05**
+- Add Information panel to JWS view showing decoded *iat*, *nbf* and *exp* values (Thanks to [@exploide](https://github.com/exploide) for collaborating on this).
+- Add support for WebSocket messages containing JWT's.
+- Preserve JWT order when message has multiple JWT's.
+- Remove use of commons-lang3.
+
 **2.2.2 2024-07-12**
 - Fix issue where JWT's highlighted in Proxy regardless of config setting (Thanks to [@serate-actual](https://github.com/serate-actual) for reporting this).
 
@@ -158,7 +164,7 @@ This option is automatically enabled if it is detected that the original JWT did
 *JWT Editor* can be built from source.
 * Ensure that Java JDK 17 or newer is installed
 * From root of project, run the command `./gradlew jar`
-* This should place the JAR file `jwt-editor-2.2.2.jar` within the `build/libs` directory
+* This should place the JAR file `jwt-editor-2.3.jar` within the `build/libs` directory
 * This can be loaded into Burp Suite by navigating to the `Extensions` tab, `Installed` sub-tab, clicking `Add` and loading the JAR file
 * This BApp is using the newer Montoya API so it's best to use the latest version of Burp Suite (try the earlier adopter channel if there are issues with the latest stable release)
 
