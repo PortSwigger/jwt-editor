@@ -3,7 +3,7 @@ ExtensionType: 1
 Name: JWT Editor
 RepoName: jwt-editor
 ScreenVersion: 2.3
-SerialVersion: 15
+SerialVersion: 16
 MinPlatformVersion: 8
 ProOnly: False
 Author: Fraser Winterborn and Dolph Flynn.
