@@ -28,12 +28,10 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Pair;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import utils.ArgumentUtils;
-import utils.BouncyCastleExtension;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -46,7 +44,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @SuppressWarnings("deprecation")
-@ExtendWith(BouncyCastleExtension.class)
 class RSAEncryptionTests {
     private static final String TEST_JWS = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUZXN0In0.WVLalefVZ5Rj991Cjgh0qBjKSIQaqC_CgN3b-30GKpQ";
     private static final List<JWEAlgorithm> ENCRYPTION_ALGORITHMS = List.of(

@@ -1,7 +1,7 @@
 /*
-Author : Fraser Winterborn
+Author : Dolph Flynn
 
-Copyright 2021 BlackBerry Limited
+Copyright 2024 Dolph Flynn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,27 +20,15 @@ package com.blackberry.jwteditor.model.jose;
 
 import com.nimbusds.jose.util.Base64URL;
 
-import java.util.List;
+public class Signature extends Base64Encoded {
+    private final Base64URL signature;
 
-/**
- * Abstract class representing common elements of JWE/JWT
- */
-public abstract class JOSEObject {
-    final Header header;
-
-    JOSEObject(Base64URL header) {
-        this.header = new Header(header);
+    Signature(Base64URL signature) {
+        super(signature);
+        this.signature = signature;
     }
 
-    public Header header() {
-        return header;
+    public byte[] data() {
+        return signature.decode();
     }
-
-    /**
-     * Serialize the JWT/JWE to a string in compact serialization form
-     * @return the compact serialized JWE/JWS
-     */
-    public abstract String serialize();
-
-    public abstract List<Information> information();
 }

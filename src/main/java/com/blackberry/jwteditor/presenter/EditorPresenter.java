@@ -19,12 +19,10 @@ limitations under the License.
 package com.blackberry.jwteditor.presenter;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
-import com.blackberry.jwteditor.model.jose.JOSEObject;
-import com.blackberry.jwteditor.model.jose.JWE;
-import com.blackberry.jwteditor.model.jose.JWS;
-import com.blackberry.jwteditor.model.jose.MutableJOSEObject;
+import com.blackberry.jwteditor.model.jose.*;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.model.keys.KeyRing;
+import com.blackberry.jwteditor.model.keys.KeysRepository;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.dialog.MessageDialogFactory;
 import com.blackberry.jwteditor.view.dialog.operations.*;
@@ -39,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.blackberry.jwteditor.model.jose.ClaimsType.JSON;
+import static com.blackberry.jwteditor.model.jose.ClaimsType.TEXT;
 import static com.blackberry.jwteditor.model.jose.JOSEObjectFinder.containsJOSEObjects;
 import static com.blackberry.jwteditor.model.jose.JWEFactory.jweFromParts;
 import static com.blackberry.jwteditor.model.jose.JWSFactory.jwsFromParts;
@@ -49,9 +49,9 @@ import static com.blackberry.jwteditor.utils.JSONUtils.prettyPrintJSON;
 /**
  * Presenter class for the Editor tab
  */
-public class EditorPresenter extends Presenter {
+public class EditorPresenter {
 
-    private final PresenterStore presenters;
+    private final KeysRepository keysRepository;
     private final EditorView view;
     private final CollaboratorPayloadGenerator collaboratorPayloadGenerator;
     private final ErrorLoggingActionListenerFactory actionListenerFactory;
@@ -64,15 +64,13 @@ public class EditorPresenter extends Presenter {
             EditorView view,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
             ErrorLoggingActionListenerFactory actionListenerFactory,
-            PresenterStore presenters) {
+            KeysRepository keysRepository) {
         this.view = view;
         this.collaboratorPayloadGenerator = collaboratorPayloadGenerator;
         this.actionListenerFactory = actionListenerFactory;
-        this.presenters = presenters;
+        this.keysRepository = keysRepository;
         this.model = new EditorModel();
         this.messageDialogFactory = new MessageDialogFactory(view.uiComponent());
-
-        presenters.register(this);
     }
 
     /**
@@ -104,21 +102,31 @@ public class EditorPresenter extends Presenter {
         // Check if the header and payload survives compaction without changes (i.e. it was compact when deserialized)
         // If contain whitespace, don't try to pretty print, as the re-compacted version won't match the original
 
-        String header = jws.getHeader();
-        boolean isHeaderJsonCompact = isJsonCompact(header);
-        String jwsHeader = isHeaderJsonCompact ? prettyPrintJSON(header) : header;
+        Header header = jws.header();
+        boolean isHeaderJsonCompact = header.isCompact();
+        String jwsHeader = isHeaderJsonCompact ? header.decodeAndPrettyPrint() : header.decoded();
 
         view.setJWSHeader(jwsHeader);
         view.setJWSHeaderCompact(isHeaderJsonCompact);
 
-        String payload = jws.getPayload();
-        boolean isPayloadJsonCompact = isJsonCompact(payload);
-        String jwsPayload = isPayloadJsonCompact ? prettyPrintJSON(payload) : payload;
+        JWSClaims claim = jws.claims();
 
-        view.setJWSPayloadCompact(isPayloadJsonCompact);
-        view.setPayload(jwsPayload);
+        switch (claim.type()) {
+            case JSON -> {
+                String payload = claim.decoded();
+                boolean isPayloadJsonCompact = isJsonCompact(payload);
+                String jwsPayload = isPayloadJsonCompact ? prettyPrintJSON(payload) : payload;
 
-        view.setSignature(jws.getSignature());
+                view.setJWSPayloadCompact(isPayloadJsonCompact);
+                view.setPayload(jwsPayload, JSON);
+            }
+
+            case TEXT -> view.setPayload(claim.decoded(), TEXT);
+
+            default -> throw new IllegalStateException("Unsupported claim type: " + claim.type());
+        }
+
+        view.setSignature(jws.signature().data());
     }
 
     /**
@@ -143,10 +151,10 @@ public class EditorPresenter extends Presenter {
      */
     private void setJWE(JWE jwe) {
         // Check if the header survives compaction without changes (i.e. it was compact when deserialized)
-        String header = jwe.getHeader();
+        Header header = jwe.header();
 
-        boolean isHeaderJsonCompact = isJsonCompact(header);
-        String jweHeader = isHeaderJsonCompact ? prettyPrintJSON(header) : header;
+        boolean isHeaderJsonCompact = header.isCompact();
+        String jweHeader = isHeaderJsonCompact ? header.decodeAndPrettyPrint() : header.decoded();
 
         view.setJWEHeader(jweHeader);
         view.setJWEHeaderCompact(isHeaderJsonCompact);
@@ -187,12 +195,10 @@ public class EditorPresenter extends Presenter {
      * Handle click events from the HMAC Key Confusion button
      */
     public void onAttackKeyConfusionClicked() {
-        KeysPresenter keysPresenter = (KeysPresenter) presenters.get(KeysPresenter.class);
-
         List<Key> attackKeys = new ArrayList<>();
 
         // Get a list of verification capable public keys
-        List<Key> verificationKeys = keysPresenter.getVerificationKeys();
+        List<Key> verificationKeys = keysRepository.getVerificationKeys();
         for (Key signingKey : verificationKeys) {
             if (signingKey.isPublic() && signingKey.hasPEM()) {
                 attackKeys.add(signingKey);
@@ -286,10 +292,8 @@ public class EditorPresenter extends Presenter {
      * @param mode mode of the signing dialog to display
      */
     private void signingDialog(SignDialog.Mode mode) {
-        KeysPresenter keysPresenter = (KeysPresenter) presenters.get(KeysPresenter.class);
-
         // Check there are signing keys in the keystore
-        if (keysPresenter.getSigningKeys().isEmpty()) {
+        if (keysRepository.getSigningKeys().isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_signing_keys", "error_no_signing_keys");
             return;
         }
@@ -297,7 +301,7 @@ public class EditorPresenter extends Presenter {
         SignDialog signDialog = new SignDialog(
                 view.window(),
                 actionListenerFactory,
-                keysPresenter.getSigningKeys(),
+                keysRepository.getSigningKeys(),
                 getJWS(),
                 mode
         );
@@ -314,7 +318,7 @@ public class EditorPresenter extends Presenter {
      * Handle click events from the Verify button
      */
     public void onVerifyClicked() {
-        List<Key> keys = ((KeysPresenter) presenters.get(KeysPresenter.class)).getVerificationKeys();
+        List<Key> keys = keysRepository.getVerificationKeys();
 
         // Check there are verification keys in the keystore
         if (keys.isEmpty()) {
@@ -332,10 +336,8 @@ public class EditorPresenter extends Presenter {
     }
 
     public void onEncryptClicked() {
-        KeysPresenter keysPresenter = (KeysPresenter) presenters.get(KeysPresenter.class);
-
         // Check there are encryption keys in the keystore
-        if (keysPresenter.getEncryptionKeys().isEmpty()) {
+        if (keysRepository.getEncryptionKeys().isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_encryption_keys", "error_no_encryption_keys");
             return;
         }
@@ -344,7 +346,7 @@ public class EditorPresenter extends Presenter {
                 view.window(),
                 actionListenerFactory,
                 getJWS(),
-                keysPresenter.getEncryptionKeys()
+                keysRepository.getEncryptionKeys()
         );
         encryptDialog.display();
 
@@ -361,17 +363,14 @@ public class EditorPresenter extends Presenter {
      * Handle click events from the Decrypt button
      */
     public void onDecryptClicked() {
-        KeysPresenter keysPresenter = (KeysPresenter) presenters.get(KeysPresenter.class);
-
-        // Check there are decryption keys in the keystore
-        if (keysPresenter.getDecryptionKeys().isEmpty()) {
+        if (keysRepository.getDecryptionKeys().isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_decryption_keys", "error_no_decryption_keys");
             return;
         }
 
         // Attempt to decrypt the contents of the editor with all available keys
         try {
-            List<Key> keys = keysPresenter.getDecryptionKeys();
+            List<Key> keys = keysRepository.getDecryptionKeys();
             Optional<JWS> jws = new KeyRing(keys).attemptDecryption(getJWE());
 
             // If decryption was successful, set the contents of the editor to the decrypted JWS and set the editor mode to JWS
@@ -449,11 +448,7 @@ public class EditorPresenter extends Presenter {
         //Highlight the serialized text as changed if it differs from the original, and the change wasn't triggered by onSelectionChanging
         view.setSerialized(joseObject.serialize(), mutableJoseObject.changed() && !selectionChanging);
 
-        List<Information> information = mutableJoseObject.timeClaims().stream()
-                .map(Information::from)
-                .toList();
-
-        view.setInformation(information);
+        view.setInformation(mutableJoseObject.information());
     }
 
     /**
@@ -483,7 +478,7 @@ public class EditorPresenter extends Presenter {
      */
     public void formatJWSPayload() {
         try {
-            view.setPayload(prettyPrintJSON(view.getPayload()));
+            view.setPayload(prettyPrintJSON(view.getPayload()), JSON);
         } catch (JSONException e) {
             messageDialogFactory.showErrorDialog("error_title_unable_to_format_json", "error_format_json");
         }

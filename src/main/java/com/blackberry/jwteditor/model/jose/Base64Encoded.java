@@ -1,7 +1,7 @@
 /*
-Author : Fraser Winterborn
+Author : Dolph Flynn
 
-Copyright 2021 BlackBerry Limited
+Copyright 2024 Dolph Flynn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,10 +16,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.presenter;
+package com.blackberry.jwteditor.model.jose;
 
-/**
- * Generic class for Presenters
- */
-public abstract class Presenter {
+import com.nimbusds.jose.util.Base64URL;
+
+public abstract class Base64Encoded {
+    private final Base64URL data;
+
+    Base64Encoded(Base64URL data) {
+        this.data = data;
+    }
+
+    public Base64URL encoded() {
+        return data;
+    }
+
+    public String decoded() {
+        return data.decodeToString();
+    }
+
+    @Override
+    public String toString() {
+        return data.toString();
+    }
 }

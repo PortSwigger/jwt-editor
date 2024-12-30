@@ -34,11 +34,9 @@ import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemWriter;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -257,5 +255,20 @@ public class PEMUtils {
         } catch (ClassCastException e){
             throw new PemException("Invalid ASN1");
         }
+    }
+
+    /**
+     * Convert a BouncyCastle PemObject to its String representation
+     * @param pemObject the PemObject
+     * @return a PEM string
+     * @throws IOException if conversion fails
+     */
+    public static String pemObjectToString(PemObject pemObject) throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        PemWriter pemWriter = new PemWriter(stringWriter);
+        pemWriter.writeObject(pemObject);
+        pemWriter.close();
+        stringWriter.close();
+        return stringWriter.toString();
     }
 }

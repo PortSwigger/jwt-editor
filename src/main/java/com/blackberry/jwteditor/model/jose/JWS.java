@@ -34,9 +34,8 @@ import java.util.List;
  * Class representing a JWS
  */
 public class JWS extends JOSEObject {
-    private final Base64URL payload;
-    private final Base64URL signature;
-    private final List<TimeClaim> timeClaims;
+    private final JWSClaims claims;
+    private final Signature signature;
 
     /**
      * Construct a JWS from encoded components
@@ -46,32 +45,18 @@ public class JWS extends JOSEObject {
      */
     JWS(Base64URL header, Base64URL payload, Base64URL signature) {
         super(header);
-        this.payload = payload;
-        this.signature = signature;
-        this.timeClaims = TimeClaimFactory.fromPayloadJson(payload.decodeToString());
+        this.claims = new JWSClaims(payload);
+        this.signature = new Signature(signature);
     }
 
-    /**
-     * Get the payload as a String
-     *
-     * @return the decoded payload
-     */
-    public String getPayload() {
-        return payload.decodeToString();
+    public JWSClaims claims() {
+        return claims;
     }
 
-    /**
-     * Get the encoded payload
-     *
-     * @return the base64 encoded payload
-     */
-    public Base64URL getEncodedPayload() { return payload; }
-
-    public byte[] getSignature() {
-        return signature.decode();
+    public Signature signature()
+    {
+        return signature;
     }
-
-    public Base64URL getEncodedSignature() { return signature; }
 
     /**
      * Serialize the JWS to compact form
@@ -80,12 +65,14 @@ public class JWS extends JOSEObject {
      */
     @Override
     public String serialize() {
-        return "%s.%s.%s".formatted(header.toString(), payload.toString(), signature.toString());
+        return "%s.%s.%s".formatted(header.toString(), claims.toString(), signature.toString());
     }
 
     @Override
-    public List<TimeClaim> timeClaims() {
-        return timeClaims;
+    public List<Information> information() {
+        return claims.timeClaims().stream()
+                .map(Information::from)
+                .toList();
     }
 
     /**
@@ -114,7 +101,7 @@ public class JWS extends JOSEObject {
         // Build the signing input
         // JWS signature input is the ASCII bytes of the base64 encoded header and payload concatenated with a '.'
         byte[] headerBytes = header.toString().getBytes(StandardCharsets.US_ASCII);
-        byte[] payloadBytes = payload.toString().getBytes(StandardCharsets.US_ASCII);
+        byte[] payloadBytes = claims.encoded().toString().getBytes(StandardCharsets.US_ASCII);
         byte[] signingInput = new byte[headerBytes.length + 1 + payloadBytes.length];
         System.arraycopy(headerBytes, 0, signingInput, 0, headerBytes.length);
         signingInput[headerBytes.length] = '.';
@@ -122,7 +109,7 @@ public class JWS extends JOSEObject {
 
         // Verify the payload with the key and the algorithm provided
         try {
-            return verifier.verify(verificationInfo, signingInput, signature);
+            return verifier.verify(verificationInfo, signingInput, signature.encoded());
         } catch (JOSEException e) {
             throw new VerificationException(e.getMessage());
         }

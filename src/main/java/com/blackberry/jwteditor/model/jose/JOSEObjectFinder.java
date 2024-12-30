@@ -33,7 +33,7 @@ import static com.nimbusds.jose.HeaderParameterNames.ALGORITHM;
 public class JOSEObjectFinder {
     public static final String BASE64_REGEX = "[A-Za-z0-9-_]";
 
-    private static final String JWS_REGEX = "e%s*\\.%s+\\.%s*".formatted(BASE64_REGEX, BASE64_REGEX, BASE64_REGEX);
+    private static final String JWS_REGEX = "e%s*\\.%s+\\.%s*[\\.^]?".formatted(BASE64_REGEX, BASE64_REGEX, BASE64_REGEX);
     private static final String JWE_REGEX = "e%s*\\.%s*\\.%s+\\.%s+\\.%s+".formatted(BASE64_REGEX, BASE64_REGEX, BASE64_REGEX, BASE64_REGEX, BASE64_REGEX);
     private static final Pattern JOSE_OBJECT_PATTERN = Pattern.compile("(%s)|(%s)".formatted(JWE_REGEX, JWS_REGEX));
 
@@ -126,11 +126,6 @@ public class JOSEObjectFinder {
             if (algValue == null || algValue.isBlank()) {
                 throw new ParseException("Missing \"alg\" in header JSON object", 0);
             }
-
-            // Payload must be Base64URL encoded UTF-8 encoded JSON object
-            Base64URL encodedPayload = parts[1];
-            String payload = encodedPayload.decodeToString();
-            JSONObjectUtils.parse(payload); // throws ParseException if not JSON object
 
             return Optional.of(JWSFactory.parse(candidate));
         } catch (ParseException e) {

@@ -25,31 +25,32 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 
-import static com.blackberry.jwteditor.utils.JSONUtils.compactJSON;
-import static com.blackberry.jwteditor.utils.JSONUtils.isJsonCompact;
+import static com.blackberry.jwteditor.utils.JSONUtils.*;
+import static com.blackberry.jwteditor.utils.JsonData.COMPACTED_JSON;
+import static com.blackberry.jwteditor.utils.JsonData.PRETTY_PRINTED_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class JSONUtilsTests {
 
     @ParameterizedTest
-    @ValueSource(strings = {JsonData.COMPACTED_JSON, JsonData.PRETTY_PRINTED_JSON})
+    @ValueSource(strings = {COMPACTED_JSON, PRETTY_PRINTED_JSON})
     void testCompactJSON(String json) {
         String compactedJSON = compactJSON(json);
-        assertThat(compactedJSON).isEqualTo(JsonData.COMPACTED_JSON);
+        assertThat(compactedJSON).isEqualTo(COMPACTED_JSON);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {JsonData.COMPACTED_JSON, JsonData.PRETTY_PRINTED_JSON})
+    @ValueSource(strings = {COMPACTED_JSON, PRETTY_PRINTED_JSON})
     void testPrettyPrintJSON(String json) {
         String prettyPrintedJSON = JSONUtils.prettyPrintJSON(json);
-        assertThat(prettyPrintedJSON).isEqualTo(JsonData.PRETTY_PRINTED_JSON);
+        assertThat(prettyPrintedJSON).isEqualTo(PRETTY_PRINTED_JSON);
     }
 
     private static Stream<Arguments>  isJsonCompactData() {
         return Stream.of(
-                arguments(JsonData.PRETTY_PRINTED_JSON, false),
-                arguments(JsonData.COMPACTED_JSON, true)
+                arguments(PRETTY_PRINTED_JSON, false),
+                arguments(COMPACTED_JSON, true)
         );
     }
 
@@ -57,5 +58,23 @@ class JSONUtilsTests {
     @ParameterizedTest
     void testIsJsonCompact(String json, boolean expectedIsJsonCompacted) {
         assertThat(isJsonCompact(json)).isEqualTo(expectedIsJsonCompacted);
+    }
+
+    private static Stream<Arguments>  isJsonObjectData() {
+        return Stream.of(
+                arguments(PRETTY_PRINTED_JSON, true),
+                arguments(COMPACTED_JSON, true),
+                arguments("", false),
+                arguments("[]", false),
+                arguments("null", false),
+                arguments("string", false),
+                arguments("448", false)
+        );
+    }
+
+    @MethodSource("isJsonObjectData")
+    @ParameterizedTest
+    void testIsJsonObject(String json, boolean expectedIsJsonCompacted) {
+        assertThat(isJsonObject(json)).isEqualTo(expectedIsJsonCompacted);
     }
 }

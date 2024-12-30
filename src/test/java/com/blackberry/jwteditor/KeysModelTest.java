@@ -174,4 +174,37 @@ class KeysModelTest {
 
         assertThat(deletedKey.get()).isSameAs(oldKey);
     }
+
+    @Test
+    void givenEmptyKeyModel_thenKeyExistsReturnsFalse() {
+        KeysModel model = new KeysModel();
+
+        boolean keyExists = model.keyExists("kid");
+
+        assertThat(keyExists).isFalse();
+    }
+
+    @Test
+    void givenKeyModelWithKey_thenKeyExistsQueriedWithCorrectKeyId_thenReturnsTrue() {
+        KeysModel model = keysModel()
+                .withECKey(PRIME256v1PrivateSEC1, "kid")
+                .withECKey(PRIME256v1Public)
+                .build();
+
+        boolean keyExists = model.keyExists("kid");
+
+        assertThat(keyExists).isTrue();
+    }
+
+    @Test
+    void givenKeyModelWithKey_thenKeyExistsQueriedWithIncorrectKeyId_thenReturnsFalse() {
+        KeysModel model = keysModel()
+                .withECKey(PRIME256v1PrivateSEC1, "kid")
+                .withECKey(PRIME256v1Public)
+                .build();
+
+        boolean keyExists = model.keyExists("phi");
+
+        assertThat(keyExists).isFalse();
+    }
 }

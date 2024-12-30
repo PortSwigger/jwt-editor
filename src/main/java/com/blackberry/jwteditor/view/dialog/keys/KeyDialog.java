@@ -19,8 +19,7 @@ limitations under the License.
 package com.blackberry.jwteditor.view.dialog.keys;
 
 import com.blackberry.jwteditor.model.keys.Key;
-import com.blackberry.jwteditor.presenter.KeysPresenter;
-import com.blackberry.jwteditor.presenter.PresenterStore;
+import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.utils.Utils;
 
 import javax.swing.*;
@@ -35,13 +34,13 @@ import static javax.swing.JOptionPane.*;
  */
 public abstract class KeyDialog extends JDialog {
     private final String originalId;
-    private final PresenterStore presenters;
+    private final KeysModel keysModel;
 
-    public KeyDialog(Window parent, String titleResourceId, String originalId, PresenterStore presenters) {
+    public KeyDialog(Window parent, String titleResourceId, String originalId, KeysModel keysModel) {
         super(parent);
 
         this.originalId = originalId;
-        this.presenters = presenters;
+        this.keysModel = keysModel;
 
         setModal(true);
         setTitle(Utils.getResourceString(titleResourceId));
@@ -74,13 +73,12 @@ public abstract class KeyDialog extends JDialog {
      * Handler for OK button click
      */
     void onOK() {
-        KeysPresenter keyPresenter = (KeysPresenter) presenters.get(KeysPresenter.class);
         Key newKey = getKey();
 
         boolean checkForKeyIdClash = originalId == null || !newKey.getID().equals(originalId);
 
         // Handle overwrites if a key already exists with the same kid
-        if (checkForKeyIdClash && keyPresenter.keyExists(newKey.getID())) {
+        if (checkForKeyIdClash && keysModel.keyExists(newKey.getID())) {
             if (showConfirmDialog(
                     this,
                     Utils.getResourceString("keys_confirm_overwrite"),

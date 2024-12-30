@@ -20,9 +20,10 @@ package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
 import burp.api.montoya.ui.Selection;
+import com.blackberry.jwteditor.model.jose.ClaimsType;
+import com.blackberry.jwteditor.model.jose.Information;
+import com.blackberry.jwteditor.model.keys.KeysRepository;
 import com.blackberry.jwteditor.presenter.EditorPresenter;
-import com.blackberry.jwteditor.presenter.Information;
-import com.blackberry.jwteditor.presenter.PresenterStore;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
@@ -42,6 +43,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.List;
 
+import static com.blackberry.jwteditor.model.jose.ClaimsType.JSON;
 import static java.awt.Color.RED;
 import static java.awt.EventQueue.invokeLater;
 import static org.exbin.deltahex.EditationAllowed.ALLOWED;
@@ -100,7 +102,7 @@ public abstract class EditorView {
     private CodeArea codeAreaTag;
 
     EditorView(
-            PresenterStore presenters,
+            KeysRepository keysRepository,
             RstaFactory rstaFactory,
             HexCodeAreaFactory hexAreaCodeFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
@@ -112,7 +114,7 @@ public abstract class EditorView {
         this.editable = editable;
         this.hexCodeAreaFactory = hexAreaCodeFactory;
         this.isProVersion = isProVersion;
-        this.presenter = new EditorPresenter(this, collaboratorPayloadGenerator, actionListenerFactory, presenters);
+        this.presenter = new EditorPresenter(this, collaboratorPayloadGenerator, actionListenerFactory, keysRepository);
         this.informationPanel = informationPanelFactory.build();
 
         informationScrollPane.setViewportView(informationPanel);
@@ -189,10 +191,6 @@ public abstract class EditorView {
         );
     }
 
-    /**
-     * Set the JWS header value in the UI
-     * @param header value string
-     */
     public void setJWSHeader(String header) {
         textAreaJWSHeader.setText(header);
     }
@@ -205,11 +203,12 @@ public abstract class EditorView {
         return textAreaJWSHeader.getText();
     }
 
-    /**
-     * Set the payload value in the UI
-     * @param payload value string
-     */
-    public void setPayload(String payload) {
+    public void setPayload(String payload, ClaimsType claimsType) {
+        boolean claimIsJson = claimsType == JSON;
+
+        buttonJWSPayloadFormatJSON.setEnabled(claimIsJson);
+        checkBoxJWSPayloadCompactJSON.setEnabled(claimIsJson);
+
         textAreaPayload.setText(payload);
     }
 

@@ -42,7 +42,16 @@ class JWSDetectionTests {
                 // JWS with empty payload
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyB9.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgfQ.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSH"
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgfQ.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSH",
+                // JWS with text claims
+                "eyJhbGciOiJSUzI1NiIsImtpZCI6InlmdTlwUzlTaXVDZzNiaXZvZXZuNkxmZEZ2NUlMZk9wT3RsNnRCYmRlemsifQ.dXNlcg.soNtldMC7sxtVPSxkgvd7L7wPZ2FTMRvP-xgOjM5fQ3N74GeZZEKDzjaKeJ10EBeE4OcQkJeyawk5zmra65Nosc3BWDFieA7qUokVvW6qmKKnk7AoeBexirwVurAz4iOsaH5TQ_5Vwou1A2yHZSbuPBdq-Ofat9KKH5mo86yvLrEy2M3ikvOOJ3PFU49jLH9o1uCUCBKo-9g6B22b-q8Xwpt3faPa5RX0P6ihYt0wtsa4VecagLZyjDxfG46xWs7-aWpEi7pymGJdyLcD3ioUE5X6AbIIo7b73xfxLj4yjBjm-WROfPd4n82mh276ZHmEkw2F8eKYcWUp2YdPvZRyA",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.K0FIc0FJZy1zdWIrQUNJOitBQ0ktVGVzdCtBQ0lBZlEt.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9._v8AewAiAHMAdQBiACIAOgAiAFQAZQBzAHQAIgB9.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
+                // Payload not JSON object
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.bnVsbA.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.NDQ4.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.InNhdW5hIg.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.W10.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSH"
         );
     }
 
@@ -64,8 +73,6 @@ class JWSDetectionTests {
                 // Invalid charset encoding
                 "K0FIc0FJZy10eXArQUNJOitBQ0ktSldUK0FDSSwrQUNJLWFsZytBQ0k6K0FDSS1IUzI1NitBQ0lBZlEt.eyJzdWIiOiJUZXN0In0.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
                 "_v8AewAiAHQAeQBwACIAOgAiAEoAVwBUACIALAAiAGEAbABnACIAOgAiAEgAUwAyADUANgAiAH0.eyJzdWIiOiJUZXN0In0.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.K0FIc0FJZy1zdWIrQUNJOitBQ0ktVGVzdCtBQ0lBZlEt.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9._v8AewAiAHMAdQBiACIAOgAiAFQAZQBzAHQAIgB9.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
                 // Missing or invalid 'alg'
                 "eyJ0eXAiOiJKV1QifQ.eyJzdWIiOiJUZXN0In0.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
                 "eyJ0eXAiOiJKV1QiLCJhbGciOiIifQ.eyJzdWIiOiJUZXN0In0.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
@@ -75,11 +82,9 @@ class JWSDetectionTests {
                 "eyJ0eXAiOiJKV1QiLCJhbGciOjQ0OH0.eyJzdWIiOiJUZXN0In0.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
                 "eyJ0eXAiOiJKV1QiLCJhbGciOltdfQ.eyJzdWIiOiJUZXN0In0.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
                 "eyJ0eXAiOiJKV1QiLCJhbGciOnt9fQ.eyJzdWIiOiJUZXN0In0.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
-                // Payload not JSON object
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.bnVsbA.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.NDQ4.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.InNhdW5hIg.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSHw",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.W10.17DlZn0zeYhz3uTQCRpSx9hYlUj1SJxDMeZLof8dSH"
+                // Partial JWE
+                "eyJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiQTEyOEtXIn0.H3X6mT5HLgcFfzLoe4ku6Knhh9Ofv1eL.qF5-N_7K8VQ4yMSz.",
+                "eyJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiQTEyOEtXIn0.H3X6mT5HLgcFfzLoe4ku6Knhh9Ofv1eL.qF5-N_7K8VQ4yMSz.WXUNY6eg5fR4tc8Hqf5XDRM9ALGwcQyYG4IYwwg8Ctkx1UuxoV7t6UnemjzCj2sOYUqi3KYpDzrKVJpzokz0vcIem4lFe5N_ds8FAMpW0GSF9ePA8qvV99WaP0N2ECVPmgihvL6qwNhdptlLKtxcOpE41U5LnU22voPK55VF4_1j0WmTgWgZ7DwLDysp6EIDjrrt-DY."
         );
     }
 

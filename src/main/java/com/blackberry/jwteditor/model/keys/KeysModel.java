@@ -34,7 +34,7 @@ import static java.util.Collections.unmodifiableCollection;
 /**
  * A container class for Key objects
  */
-public class KeysModel {
+public class KeysModel implements KeysRepository {
     private final Map<String, Key> keys;
     private final Object lock;
 
@@ -56,13 +56,6 @@ public class KeysModel {
         this.modelListeners.add(modelListener);
     }
 
-    /**
-     * Parse a JSON string to a KeysModel
-     *
-     * @param json JSON string containing encoded keys
-     * @return the KeysModel parsed from the JSON
-     * @throws ParseException if parsing fails
-     */
     public static KeysModel parse(String json) throws ParseException {
         KeysModel keysModel = new KeysModel();
 
@@ -95,35 +88,34 @@ public class KeysModel {
         return jsonArray.toString();
     }
 
+    @Override
     public List<Key> getSigningKeys() {
         synchronized (lock) {
             return keys.values().stream().filter(Key::canSign).toList();
         }
     }
 
+    @Override
     public List<Key> getVerificationKeys() {
         synchronized (lock) {
             return keys.values().stream().filter(Key::canVerify).toList();
         }
     }
 
+    @Override
     public List<Key> getEncryptionKeys() {
         synchronized (lock) {
             return keys.values().stream().filter(Key::canEncrypt).toList();
         }
     }
 
+    @Override
     public List<Key> getDecryptionKeys() {
         synchronized (lock) {
             return keys.values().stream().filter(Key::canDecrypt).toList();
         }
     }
 
-    /**
-     * Add a key to the model
-     *
-     * @param key key to add
-     */
     public void addKey(Key key) {
         Key oldKey;
 
@@ -154,11 +146,6 @@ public class KeysModel {
         return -1;
     }
 
-    /**
-     * Remove a key from the model by id
-     *
-     * @param keyId key id to remove
-     */
     public void deleteKey(String keyId) {
         int rowIndex;
 
@@ -174,11 +161,6 @@ public class KeysModel {
         }
     }
 
-    /**
-     * Remove a set of keys from the model by id
-     *
-     * @param indices indices of keys to remove
-     */
     public void deleteKeys(int[] indices) {
         synchronized (lock) {
             List<String> idsToDelete = IntStream.of(indices).mapToObj(this::getKey).map(Key::getID).toList();
@@ -189,12 +171,6 @@ public class KeysModel {
         }
     }
 
-    /**
-     * Get a key from the model by index
-     *
-     * @param index index of key to retrieve
-     * @return retrieved key
-     */
     public Key getKey(int index) {
         synchronized (lock) {
             String key = (String) keys.keySet().toArray()[index];
@@ -202,15 +178,16 @@ public class KeysModel {
         }
     }
 
-    /**
-     * Get a key from the model by index
-     *
-     * @param keyId ID of key to retrieve
-     * @return retrieved key
-     */
+    @Override
     public Key getKey(String keyId) {
         synchronized (lock) {
             return keys.get(keyId);
+        }
+    }
+
+    public boolean keyExists(String keyId) {
+        synchronized (lock) {
+            return keys.get(keyId) != null;
         }
     }
 }

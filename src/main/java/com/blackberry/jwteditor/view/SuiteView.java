@@ -22,7 +22,6 @@ import burp.api.montoya.ui.UserInterface;
 import burp.config.BurpConfig;
 import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.model.persistence.KeysModelPersistence;
-import com.blackberry.jwteditor.presenter.PresenterStore;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.config.ConfigView;
 import com.blackberry.jwteditor.view.keys.KeysView;
@@ -36,7 +35,6 @@ import java.awt.*;
  */
 public class SuiteView {
     private final Window parent;
-    private final PresenterStore presenters;
     private final KeysModelPersistence keysModelPersistence;
     private final KeysModel keysModel;
     private final RstaFactory rstaFactory;
@@ -50,7 +48,6 @@ public class SuiteView {
 
     public SuiteView(
             Window parent,
-            PresenterStore presenters,
             KeysModelPersistence keysModelPersistence,
             KeysModel keysModel,
             RstaFactory rstaFactory,
@@ -58,7 +55,6 @@ public class SuiteView {
             UserInterface userInterface,
             boolean isProVersion) {
         this.parent = parent;
-        this.presenters = presenters;
         this.keysModelPersistence = keysModelPersistence;
         this.keysModel = keysModel;
         this.rstaFactory = rstaFactory;
@@ -89,7 +85,6 @@ public class SuiteView {
     private void createUIComponents() {
         keysView = new KeysView(
                 parent,
-                presenters,
                 keysModelPersistence,
                 keysModel,
                 rstaFactory

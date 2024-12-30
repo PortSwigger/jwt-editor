@@ -18,7 +18,7 @@ limitations under the License.
 
 package com.blackberry.jwteditor.view.dialog.keys;
 
-import com.blackberry.jwteditor.presenter.PresenterStore;
+import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.OctetKeyPair;
@@ -30,12 +30,12 @@ import static com.blackberry.jwteditor.view.dialog.keys.AsymmetricKeyDialogMode.
 
 public class AsymmetricKeyDialogFactory {
     private final Window parent;
-    private final PresenterStore presenters;
+    private final KeysModel keysModel;
     private final RstaFactory rstaFactory;
 
-    public AsymmetricKeyDialogFactory(Window parent, PresenterStore presenters, RstaFactory rstaFactory) {
+    public AsymmetricKeyDialogFactory(Window parent, KeysModel keysModel, RstaFactory rstaFactory) {
         this.parent = parent;
-        this.presenters = presenters;
+        this.keysModel = keysModel;
         this.rstaFactory = rstaFactory;
     }
 
@@ -46,7 +46,7 @@ public class AsymmetricKeyDialogFactory {
     public AsymmetricKeyDialog rsaKeyDialog(RSAKey rsaKey) {
         return new AsymmetricKeyDialog(
                 parent,
-                presenters,
+                keysModel,
                 rstaFactory,
                 RSA,
                 rsaKey
@@ -60,7 +60,7 @@ public class AsymmetricKeyDialogFactory {
     public AsymmetricKeyDialog ecKeyDialog(ECKey ecKey) {
         return new AsymmetricKeyDialog(
                 parent,
-                presenters,
+                keysModel,
                 rstaFactory,
                 EC,
                 ecKey
@@ -74,7 +74,7 @@ public class AsymmetricKeyDialogFactory {
     public AsymmetricKeyDialog okpDialog(OctetKeyPair octetKeyPair) {
         return new AsymmetricKeyDialog(
                 parent,
-                presenters,
+                keysModel,
                 rstaFactory,
                 OKP,
                 octetKeyPair

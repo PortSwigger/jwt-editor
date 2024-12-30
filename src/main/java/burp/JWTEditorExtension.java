@@ -17,13 +17,15 @@ import burp.scanner.JWSHeaderInsertionPointProvider;
 import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.model.persistence.BurpKeysModelPersistence;
 import com.blackberry.jwteditor.model.persistence.KeysModelPersistence;
-import com.blackberry.jwteditor.presenter.PresenterStore;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.SuiteView;
 import com.blackberry.jwteditor.view.editor.HttpRequestEditorView;
 import com.blackberry.jwteditor.view.editor.HttpResponseEditorView;
+import com.blackberry.jwteditor.view.editor.InformationPanelFactory;
 import com.blackberry.jwteditor.view.editor.WebSocketEditorView;
+import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
+import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 
 import java.awt.*;
 
@@ -51,13 +53,11 @@ public class JWTEditorExtension implements BurpExtension {
         Window suiteWindow = userInterface.swingUtils().suiteFrame();
 
         RstaFactory rstaFactory = new RstaFactory(userInterface, api.logging());
-        PresenterStore presenters = new PresenterStore();
 
         boolean isProVersion = api.burpSuite().version().edition() == PROFESSIONAL;
 
         SuiteView suiteView = new SuiteView(
                 suiteWindow,
-                presenters,
                 keysModelPersistence,
                 keysModel,
                 rstaFactory,
@@ -68,13 +68,18 @@ public class JWTEditorExtension implements BurpExtension {
 
         userInterface.registerSuiteTab(suiteView.getTabCaption(), suiteView.getUiComponent());
 
+        HexCodeAreaFactory hexAreaCodeFactory = new HexCodeAreaFactory(api.logging(), api.userInterface());
+        ErrorLoggingActionListenerFactory actionListenerFactory = new ErrorLoggingActionListenerFactory(api.logging());
+        InformationPanelFactory informationPanelFactory = new InformationPanelFactory(api.userInterface(), api.logging());
+
         userInterface.registerHttpRequestEditorProvider(editorCreationContext ->
                 new HttpRequestEditorView(
-                        presenters,
+                        keysModel,
                         rstaFactory,
-                        api.logging(),
-                        api.userInterface(),
                         api.collaborator().defaultPayloadGenerator(),
+                        hexAreaCodeFactory,
+                        actionListenerFactory,
+                        informationPanelFactory,
                         editorCreationContext.editorMode() != READ_ONLY,
                         isProVersion
                 )
@@ -82,11 +87,12 @@ public class JWTEditorExtension implements BurpExtension {
 
         userInterface.registerHttpResponseEditorProvider(editorCreationContext ->
                 new HttpResponseEditorView(
-                        presenters,
+                        keysModel,
                         rstaFactory,
-                        api.logging(),
-                        api.userInterface(),
                         api.collaborator().defaultPayloadGenerator(),
+                        hexAreaCodeFactory,
+                        actionListenerFactory,
+                        informationPanelFactory,
                         editorCreationContext.editorMode() != READ_ONLY,
                         isProVersion
                 )
@@ -94,11 +100,12 @@ public class JWTEditorExtension implements BurpExtension {
 
         userInterface.registerWebSocketMessageEditorProvider(editorCreationContext ->
                 new WebSocketEditorView(
-                        presenters,
+                        keysModel,
                         rstaFactory,
-                        api.logging(),
-                        api.userInterface(),
                         api.collaborator().defaultPayloadGenerator(),
+                        hexAreaCodeFactory,
+                        actionListenerFactory,
+                        informationPanelFactory,
                         editorCreationContext.editorMode() != READ_ONLY,
                         isProVersion
                 )

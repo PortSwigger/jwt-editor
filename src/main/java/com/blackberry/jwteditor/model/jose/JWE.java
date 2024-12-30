@@ -68,7 +68,7 @@ public class JWE extends JOSEObject {
     }
 
     @Override
-    public List<TimeClaim> timeClaims() {
+    public List<Information> information() {
         return emptyList();
     }
 
@@ -117,7 +117,7 @@ public class JWE extends JOSEObject {
      */
     public JWS decrypt(Key key) throws DecryptionException, ParseException {
         // Parse the JWE header to get the decryption algorithms
-        JWEHeader header = JWEHeader.parse(this.header.decodeToString());
+        JWEHeader header = JWEHeader.parse(this.header.decoded());
 
         try {
             // Create a new decrypter with the header algs

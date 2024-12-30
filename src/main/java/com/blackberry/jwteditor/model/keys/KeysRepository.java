@@ -16,21 +16,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.presenter;
+package com.blackberry.jwteditor.model.keys;
 
-import com.blackberry.jwteditor.model.jose.TimeClaim;
+import java.util.List;
 
-public record Information(String text, boolean isWarning) {
+public interface KeysRepository {
+    List<Key> getVerificationKeys();
 
-    static Information from(TimeClaim timeClaim) {
-        StringBuilder sb = new StringBuilder(timeClaim.type().toString()).append(" - ");
+    List<Key> getSigningKeys();
 
-        if (timeClaim.hasDate()) {
-            sb.append(timeClaim.date());
-        } else {
-            sb.append("invalid value: ").append(timeClaim.value());
-        }
+    List<Key> getEncryptionKeys();
 
-        return new Information(sb.toString(), !timeClaim.isValid());
-    }
+    List<Key> getDecryptionKeys();
+
+    Key getKey(String keyId);
 }

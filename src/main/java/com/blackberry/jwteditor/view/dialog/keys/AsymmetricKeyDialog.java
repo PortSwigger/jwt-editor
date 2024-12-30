@@ -22,7 +22,7 @@ import com.blackberry.jwteditor.exceptions.PemException;
 import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
 import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.blackberry.jwteditor.model.keys.Key;
-import com.blackberry.jwteditor.presenter.PresenterStore;
+import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.utils.JSONUtils;
 import com.blackberry.jwteditor.utils.PEMUtils;
 import com.blackberry.jwteditor.utils.Utils;
@@ -68,11 +68,11 @@ public class AsymmetricKeyDialog extends KeyDialog {
 
     AsymmetricKeyDialog(
             Window parent,
-            PresenterStore presenters,
+            KeysModel keysModel,
             RstaFactory rstaFactory,
             AsymmetricKeyDialogMode mode,
             JWK jwk) {
-        super(parent, mode.resourceTitleId(), jwk == null ? null : jwk.getKeyID(), presenters);
+        super(parent, mode.resourceTitleId(), jwk == null ? null : jwk.getKeyID(), keysModel);
 
         this.mode = mode;
         this.rstaFactory = rstaFactory;

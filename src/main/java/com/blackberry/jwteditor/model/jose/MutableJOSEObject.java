@@ -74,7 +74,7 @@ public class MutableJOSEObject {
         return original;
     }
 
-    public List<TimeClaim> timeClaims() {
-        return modified.timeClaims();
+    public List<Information> information() {
+        return modified.information();
     }
 }

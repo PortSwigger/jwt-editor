@@ -25,11 +25,9 @@ import com.blackberry.jwteditor.model.keys.JWKKey;
 import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Base64URL;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import utils.BouncyCastleExtension;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -43,7 +41,6 @@ import static data.PemData.RSA512Private;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@ExtendWith(BouncyCastleExtension.class)
 class SigningTests {
     private static final String UPDATED_KID = "1ba163b6-2f3b-432f-9f4f-97365be3ead5";
     private static final JWS TEST_JWS = jwsFromParts(

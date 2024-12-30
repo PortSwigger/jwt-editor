@@ -20,31 +20,30 @@ package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.logging.Logging;
-import burp.api.montoya.ui.UserInterface;
 import burp.api.montoya.ui.contextmenu.WebSocketMessage;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedWebSocketMessageEditor;
-import com.blackberry.jwteditor.presenter.PresenterStore;
+import com.blackberry.jwteditor.model.keys.KeysRepository;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 
 public class WebSocketEditorView extends EditorView implements ExtensionProvidedWebSocketMessageEditor {
 
-    public WebSocketEditorView(PresenterStore presenters,
+    public WebSocketEditorView(KeysRepository keysRepository,
                                RstaFactory rstaFactory,
-                               Logging logging,
-                               UserInterface userInterface,
                                CollaboratorPayloadGenerator collaboratorPayloadGenerator,
+                               HexCodeAreaFactory hexAreaCodeFactory,
+                               ErrorLoggingActionListenerFactory actionListenerFactory,
+                               InformationPanelFactory informationPanelFactory,
                                boolean editable,
                                boolean isProVersion) {
         super(
-                presenters,
+                keysRepository,
                 rstaFactory,
-                new HexCodeAreaFactory(logging, userInterface),
+                hexAreaCodeFactory,
                 collaboratorPayloadGenerator,
-                new ErrorLoggingActionListenerFactory(logging),
-                new InformationPanelFactory(userInterface, logging),
+                actionListenerFactory,
+                informationPanelFactory,
                 editable,
                 isProVersion
         );

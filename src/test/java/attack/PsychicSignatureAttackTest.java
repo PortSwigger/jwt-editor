@@ -23,11 +23,9 @@ import com.blackberry.jwteditor.model.jose.JWSFactory;
 import com.blackberry.jwteditor.operations.Attacks;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import utils.BouncyCastleExtension;
 
 import java.util.stream.Stream;
 
@@ -36,7 +34,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@ExtendWith(BouncyCastleExtension.class)
 class PsychicSignatureAttackTest {
     private static final String TEST_JWS = "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.tyh-VfuzIxCyGYDlkBA7DfyjrqmSHu6pQ2hoZuFqUSLPNY2N0mpHb3nk5K17HWP_3cYHBw7AhHale5wky6-sVA";
 
@@ -64,7 +61,7 @@ class PsychicSignatureAttackTest {
 
         JWS attackJws = Attacks.signWithPsychicSignature(jws, ES256);
 
-        assertThat(attackJws.getHeader()).isEqualTo(jws.getHeader());
+        assertThat(attackJws.header().decoded()).isEqualTo(jws.header().decoded());
     }
 
     private static Stream<JWSAlgorithm> unsupportedAlgorithms() {

@@ -18,9 +18,12 @@ limitations under the License.
 
 package com.blackberry.jwteditor.utils;
 
+import com.nimbusds.jose.util.JSONObjectUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
 
 public class JSONUtils {
     private static final int JSON_INDENTATION = 4;
@@ -121,6 +124,15 @@ public class JSONUtils {
         }
 
         return stringBuilder.toString();
+    }
+
+    public static boolean isJsonObject(String payload) {
+        try {
+            JSONObjectUtils.parse(payload); // throws ParseException if not JSON object
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 
     public static boolean isJsonCompact(String json) {

@@ -24,13 +24,10 @@ import com.blackberry.jwteditor.model.keys.*;
 import com.blackberry.jwteditor.model.persistence.KeysModelPersistence;
 import com.blackberry.jwteditor.utils.PEMUtils;
 import com.blackberry.jwteditor.utils.Utils;
-import com.blackberry.jwteditor.view.dialog.keys.AsymmetricKeyDialogFactory;
 import com.blackberry.jwteditor.view.dialog.keys.KeyDialog;
-import com.blackberry.jwteditor.view.dialog.keys.PasswordDialog;
-import com.blackberry.jwteditor.view.dialog.keys.SymmetricKeyDialog;
+import com.blackberry.jwteditor.view.dialog.keys.KeysDialogFactory;
 import com.blackberry.jwteditor.view.keys.KeysView;
-import com.blackberry.jwteditor.view.rsta.RstaFactory;
-import com.nimbusds.jose.jwk.*;
+import com.nimbusds.jose.jwk.JWK;
 
 import javax.swing.*;
 import java.util.List;
@@ -42,33 +39,19 @@ import static com.blackberry.jwteditor.utils.JSONUtils.prettyPrintJSON;
 /**
  * Presenter for the Keys tab
  */
-public class KeysPresenter extends Presenter {
+public class KeysPresenter {
 
     private final KeysModel model;
     private final KeysView view;
-    private final RstaFactory rstaFactory;
-    private final PresenterStore presenters;
-    private final AsymmetricKeyDialogFactory asymmetricKeyDialogFactory;
+    private final KeysDialogFactory keysDialogFactory;
 
-    /**
-     * Create a new KeysPresenter
-     *
-     * @param view                 the KeysView to associate with the presenter
-     * @param presenters           the shared list of all presenters
-     * @param keysModelPersistence class used to persist keys model
-     * @param keysModel            KeysModel to use (or null to create a new one)
-     * @param rstaFactory          Factory to create RSyntaxTextArea
-     */
     public KeysPresenter(KeysView view,
-                         PresenterStore presenters,
                          KeysModelPersistence keysModelPersistence,
                          KeysModel keysModel,
-                         RstaFactory rstaFactory) {
+                         KeysDialogFactory keysDialogFactory) {
         this.view = view;
-        this.rstaFactory = rstaFactory;
-        this.presenters = presenters;
         this.model = keysModel;
-        this.asymmetricKeyDialogFactory = new AsymmetricKeyDialogFactory(view.getParent(), presenters, rstaFactory);
+        this.keysDialogFactory = keysDialogFactory;
 
         model.addKeyModelListener(new KeysModelListener() {
             @Override
@@ -91,8 +74,6 @@ public class KeysPresenter extends Presenter {
                 keysModelPersistence.save(keysModel);
             }
         });
-
-        presenters.register(this);
     }
 
     /**
@@ -100,47 +81,21 @@ public class KeysPresenter extends Presenter {
      */
     public void onTableKeysDoubleClick() {
         Key key = model.getKey(view.getSelectedRow());
+        KeyDialog dialog = keysDialogFactory.dialogFor(key);
 
-        KeyDialog d;
-
-        // Get the dialog type based on the key type
-        if (key instanceof JWKKey) {
-            JWK jwk = ((JWKKey) key).getJWK();
-            if (jwk instanceof RSAKey rsaKey) {
-                d = asymmetricKeyDialogFactory.rsaKeyDialog(rsaKey);
-            } else if (jwk instanceof ECKey ecKey) {
-                d = asymmetricKeyDialogFactory.ecKeyDialog(ecKey);
-            } else if (jwk instanceof OctetKeyPair octetKeyPair) {
-                d = asymmetricKeyDialogFactory.okpDialog(octetKeyPair);
-            } else if (jwk instanceof OctetSequenceKey octetSequenceKey) {
-                d = new SymmetricKeyDialog(view.getParent(), presenters, rstaFactory, octetSequenceKey);
-            } else {
-                return;
-            }
-        } else if (key instanceof PasswordKey) {
-            d = new PasswordDialog(view.getParent(), presenters, (PasswordKey) key);
-        } else {
+        if (dialog == null) {
             return;
         }
 
-        d.display();
+        dialog.display();
 
         // If dialog returned a key, replace the key in the store with the new key
-        Key newKey = d.getKey();
+        Key newKey = dialog.getKey();
+
         if (newKey != null) {
             model.deleteKey(key.getID());
-            model.addKey(d.getKey());
+            model.addKey(dialog.getKey());
         }
-    }
-
-    /**
-     * Check if a key exists in the key model
-     *
-     * @param keyId id of key to check
-     * @return true if the key exists in the model
-     */
-    public boolean keyExists(String keyId) {
-        return model.getKey(keyId) != null;
     }
 
     private void onButtonNewClicked(KeyDialog d) {
@@ -156,35 +111,35 @@ public class KeysPresenter extends Presenter {
      * Handler for button clicks for new symmetric keys
      */
     public void onButtonNewSymmetricClick() {
-        onButtonNewClicked(new SymmetricKeyDialog(view.getParent(), presenters, rstaFactory, null));
+        onButtonNewClicked(keysDialogFactory.symmetricKeyDialog());
     }
 
     /**
      * Handler for button clicks for new RSA keys
      */
     public void onButtonNewRSAClick() {
-        onButtonNewClicked(asymmetricKeyDialogFactory.rsaKeyDialog());
+        onButtonNewClicked(keysDialogFactory.rsaKeyDialog());
     }
 
     /**
      * Handler for button clicks for new EC keys
      */
     public void onButtonNewECClick() {
-        onButtonNewClicked(asymmetricKeyDialogFactory.ecKeyDialog());
+        onButtonNewClicked(keysDialogFactory.ecKeyDialog());
     }
 
     /**
      * Handler for button clicks for new OKPs
      */
     public void onButtonNewOKPClick() {
-        onButtonNewClicked(asymmetricKeyDialogFactory.okpDialog());
+        onButtonNewClicked(keysDialogFactory.okpDialog());
     }
 
     /**
      * Handler for button clicks for new passwords
      */
     public void onButtonNewPasswordClick() {
-        onButtonNewClicked(new PasswordDialog(view.getParent(), presenters));
+        onButtonNewClicked(keysDialogFactory.passwordDialog());
     }
 
     /**
@@ -343,41 +298,5 @@ public class KeysPresenter extends Presenter {
         String jwkSetJson = jwkSet.serialize();
 
         Utils.copyToClipboard(jwkSetJson);
-    }
-
-    /**
-     * Get a list of signing keys from the model
-     *
-     * @return list of keys that can be used for signing
-     */
-    public List<Key> getSigningKeys() {
-        return model.getSigningKeys();
-    }
-
-    /**
-     * Get a list of encryption keys from the model
-     *
-     * @return list of keys that can be used for encryption
-     */
-    public List<Key> getEncryptionKeys() {
-        return model.getEncryptionKeys();
-    }
-
-    /**
-     * Get a list of decryption keys from the model
-     *
-     * @return list of keys that can be used for decryption
-     */
-    public List<Key> getDecryptionKeys() {
-        return model.getDecryptionKeys();
-    }
-
-    /**
-     * Get a list of verification keys from the model
-     *
-     * @return list of keys that can be used for verification
-     */
-    public List<Key> getVerificationKeys() {
-        return model.getVerificationKeys();
     }
 }

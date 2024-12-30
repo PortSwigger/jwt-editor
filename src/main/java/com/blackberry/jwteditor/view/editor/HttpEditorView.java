@@ -20,7 +20,7 @@ package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedEditor;
-import com.blackberry.jwteditor.presenter.PresenterStore;
+import com.blackberry.jwteditor.model.keys.KeysRepository;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
@@ -28,7 +28,7 @@ import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 abstract class HttpEditorView extends EditorView implements ExtensionProvidedEditor {
 
     HttpEditorView(
-            PresenterStore presenters,
+            KeysRepository keysRepository,
             RstaFactory rstaFactory,
             HexCodeAreaFactory hexAreaCodeFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
@@ -37,7 +37,7 @@ abstract class HttpEditorView extends EditorView implements ExtensionProvidedEdi
             boolean editable,
             boolean isProVersion) {
         super(
-                presenters,
+                keysRepository,
                 rstaFactory,
                 hexAreaCodeFactory,
                 collaboratorPayloadGenerator,

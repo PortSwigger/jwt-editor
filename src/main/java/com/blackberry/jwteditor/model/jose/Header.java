@@ -1,7 +1,7 @@
 /*
-Author : Fraser Winterborn
+Author : Dolph Flynn
 
-Copyright 2021 BlackBerry Limited
+Copyright 2024 Dolph Flynn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,28 +19,29 @@ limitations under the License.
 package com.blackberry.jwteditor.model.jose;
 
 import com.nimbusds.jose.util.Base64URL;
+import org.json.JSONObject;
 
-import java.util.List;
+import static com.blackberry.jwteditor.utils.JSONUtils.isJsonCompact;
+import static com.blackberry.jwteditor.utils.JSONUtils.prettyPrintJSON;
 
-/**
- * Abstract class representing common elements of JWE/JWT
- */
-public abstract class JOSEObject {
-    final Header header;
+public class Header extends Base64Encoded {
 
-    JOSEObject(Base64URL header) {
-        this.header = new Header(header);
+    public Header(Base64URL header) {
+        super(header);
     }
 
-    public Header header() {
-        return header;
+    public boolean isCompact()
+    {
+        return isJsonCompact(decoded());
     }
 
-    /**
-     * Serialize the JWT/JWE to a string in compact serialization form
-     * @return the compact serialized JWE/JWS
-     */
-    public abstract String serialize();
+    public String decodeAndPrettyPrint()
+    {
+        return prettyPrintJSON(decoded());
+    }
 
-    public abstract List<Information> information();
+    public JSONObject json()
+    {
+        return new JSONObject(decoded());
+    }
 }

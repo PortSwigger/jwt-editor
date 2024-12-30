@@ -91,7 +91,7 @@ class JWSHeaderInsertionPointTest {
         ByteArray attackRequest = httpRequest.toByteArray();
 
         JWS attackJws = JWSFactory.parse(attackRequest.toString());
-        assertThat(attackJws.getHeader()).isEqualTo("{\"kid\":\"../etc/passwd\",\"typ\":\"JWT\",\"alg\":\"ES256\"}");
+        assertThat(attackJws.header().decoded()).isEqualTo("{\"kid\":\"../etc/passwd\",\"typ\":\"JWT\",\"alg\":\"ES256\"}");
     }
 
     @Test
@@ -140,6 +140,6 @@ class JWSHeaderInsertionPointTest {
         List<AuditInsertionPoint> insertionPoints = insertionPointProvider.provideInsertionPoints(requestResponse);
         assertThat(insertionPoints).hasSize(1);
 
-        return insertionPoints.get(0);
+        return insertionPoints.getFirst();
     }
 }

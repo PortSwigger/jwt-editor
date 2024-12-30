@@ -290,6 +290,16 @@ public class FakeHttpRequest implements HttpRequest {
     }
 
     @Override
+    public HttpRequest withAddedHeaders(List<? extends HttpHeader> list) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public HttpRequest withAddedHeaders(HttpHeader... httpHeaders) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public HttpRequest withUpdatedHeader(String name, String value) {
         throw new UnsupportedOperationException();
     }
@@ -300,12 +310,32 @@ public class FakeHttpRequest implements HttpRequest {
     }
 
     @Override
+    public HttpRequest withUpdatedHeaders(List<? extends HttpHeader> list) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public HttpRequest withUpdatedHeaders(HttpHeader... httpHeaders) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public HttpRequest withRemovedHeader(String name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public HttpRequest withRemovedHeader(HttpHeader header) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public HttpRequest withRemovedHeaders(List<? extends HttpHeader> list) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public HttpRequest withRemovedHeaders(HttpHeader... httpHeaders) {
         throw new UnsupportedOperationException();
     }
 

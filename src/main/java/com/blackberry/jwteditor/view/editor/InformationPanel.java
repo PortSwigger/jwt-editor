@@ -19,7 +19,7 @@ limitations under the License.
 package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.logging.Logging;
-import com.blackberry.jwteditor.presenter.Information;
+import com.blackberry.jwteditor.model.jose.Information;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;

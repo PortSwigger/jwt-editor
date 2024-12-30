@@ -18,6 +18,7 @@ limitations under the License.
 
 package com.blackberry.jwteditor.presenter;
 
+import com.blackberry.jwteditor.model.jose.Information;
 import com.blackberry.jwteditor.model.jose.TimeClaim;
 import com.blackberry.jwteditor.model.jose.TimeClaimFactory;
 import org.junit.jupiter.params.ParameterizedTest;

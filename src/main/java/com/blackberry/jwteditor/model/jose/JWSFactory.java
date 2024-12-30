@@ -40,7 +40,7 @@ public class JWSFactory {
 
         Base64URL buildUpdatedHeader(JWS jws, Key key, JWSAlgorithm algorithm) {
             return switch (this) {
-                case DO_NOT_MODIFY_HEADER -> jws.getEncodedHeader();
+                case DO_NOT_MODIFY_HEADER -> jws.header().encoded();
 
                 case UPDATE_ALGORITHM_ONLY -> {
                     JSONObject jsonHeader = parseHeader(jws);
@@ -62,7 +62,7 @@ public class JWSFactory {
 
         private static JSONObject parseHeader(JWS jws) {
             try {
-                return new JSONObject(jws.getHeader());
+                return jws.header().json();
             } catch (JSONException e) {
                 return new JSONObject();
             }
@@ -78,7 +78,7 @@ public class JWSFactory {
                 key,
                 algorithm,
                 updateMode.buildUpdatedHeader(jws, key, algorithm),
-                jws.getEncodedPayload()
+                jws.claims().encoded()
         );
     }
 

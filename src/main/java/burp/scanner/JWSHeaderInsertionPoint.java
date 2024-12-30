@@ -1,3 +1,21 @@
+/*
+Author : Dolph Flynn
+
+Copyright 2024 Dolph Flynn
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package burp.scanner;
 
 import burp.api.montoya.core.ByteArray;
@@ -40,7 +58,7 @@ class JWSHeaderInsertionPoint implements AuditInsertionPoint {
         baseRequestPostfix = endOffset == baseRequestBytes.length() ? new byte[0] : baseRequestBytes.subArray(endOffset, baseRequestBytes.length()).getBytes();
 
         try {
-            headerJsonObject = new JSONObject(jws.getHeader());
+            headerJsonObject = jws.header().json();
         } catch (JSONException e) {
             throw new IllegalStateException("Could not parse JWS header!", e);
         }
@@ -78,6 +96,6 @@ class JWSHeaderInsertionPoint implements AuditInsertionPoint {
         headerJsonObject.put(headerParameterName, payload.toString());
         Base64URL headerBase64 = Base64URL.encode(headerJsonObject.toString());
 
-        return "%s.%s.%s".formatted(headerBase64, jws.getEncodedPayload(), jws.getEncodedSignature()).getBytes(UTF_8);
+        return "%s.%s.%s".formatted(headerBase64, jws.claims().encoded(), jws.signature().encoded()).getBytes(UTF_8);
     }
 }

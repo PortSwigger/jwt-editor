@@ -35,7 +35,7 @@ class JWSTimeClaimTest {
     void givenJWSWithNoTimeClaims_thenTimeClaimsIsEmpty() throws ParseException {
         JWS jws = JWSFactory.parse("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUZXN0In0.WVLalefVZ5Rj991Cjgh0qBjKSIQaqC_CgN3b-30GKpQ");
 
-        assertThat(jws.timeClaims()).isEmpty();
+        assertThat(jws.claims().timeClaims()).isEmpty();
     }
 
     @ParameterizedTest
@@ -46,7 +46,7 @@ class JWSTimeClaimTest {
     void givenJWSWithExpTimeClaims_thenTimeClaimsCorrect(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        assertThat(jws.timeClaims()).containsExactly(TimeClaimFactory.fromEpochSeconds(EXPIRATION_TIME, "1716239022", 1716239022L));
+        assertThat(jws.claims().timeClaims()).containsExactly(TimeClaimFactory.fromEpochSeconds(EXPIRATION_TIME, "1716239022", 1716239022L));
     }
 
     private static Stream<String> jwsWithValidExpValues() {
@@ -62,7 +62,7 @@ class JWSTimeClaimTest {
     void givenJWSWithExpTimeClaims_whenExpiryDateInTheFuture_thenTimeClaimValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(EXPIRATION_TIME);
         assertThat(timeClaim.isValid()).isTrue();
@@ -81,7 +81,7 @@ class JWSTimeClaimTest {
     void givenJWSWithExpTimeClaims_whenExpiryDateInvalid_thenTimeClaimNotValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(EXPIRATION_TIME);
         assertThat(timeClaim.isValid()).isFalse();
@@ -99,7 +99,7 @@ class JWSTimeClaimTest {
     void givenJWSWithExpTimeClaims_whenExpiryDateIsInThePast_thenTimeClaimNotValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(EXPIRATION_TIME);
         assertThat(timeClaim.isValid()).isFalse();
@@ -113,7 +113,7 @@ class JWSTimeClaimTest {
     void givenJWSWithNbfTimeClaims_thenTimeClaimsCorrect(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        assertThat(jws.timeClaims()).containsExactly(TimeClaimFactory.fromEpochSeconds(NOT_BEFORE_TIME, "1716239022", 1716239022L));
+        assertThat(jws.claims().timeClaims()).containsExactly(TimeClaimFactory.fromEpochSeconds(NOT_BEFORE_TIME, "1716239022", 1716239022L));
     }
 
     private static Stream<String> jwsWithValidNbfValues() {
@@ -132,7 +132,7 @@ class JWSTimeClaimTest {
     void givenJWSWithNbfTimeClaims_whenNotBeforeDateInThePast_thenTimeClaimValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(NOT_BEFORE_TIME);
         assertThat(timeClaim.isValid()).isTrue();
@@ -151,7 +151,7 @@ class JWSTimeClaimTest {
     void givenJWSWithNbfTimeClaims_whenNotBeforeDateInvalid_thenTimeClaimNotValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(NOT_BEFORE_TIME);
         assertThat(timeClaim.isValid()).isFalse();
@@ -168,7 +168,7 @@ class JWSTimeClaimTest {
     void givenJWSWithNbfTimeClaims_whenNotBeforeDateIsInTheFuture_thenTimeClaimNotValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(NOT_BEFORE_TIME);
         assertThat(timeClaim.isValid()).isFalse();
@@ -186,7 +186,7 @@ class JWSTimeClaimTest {
     void givenJWSWithIatTimeClaims_thenTimeClaimsCorrect(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        assertThat(jws.timeClaims()).containsExactly(TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, "1716239022", 1716239022L));
+        assertThat(jws.claims().timeClaims()).containsExactly(TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, "1716239022", 1716239022L));
     }
 
     private static Stream<String> jwsWithValidIatDatesInThePast() {
@@ -205,7 +205,7 @@ class JWSTimeClaimTest {
     void givenJWSWithIatTimeClaims_whenIssuedAtDateInThePast_thenTimeClaimValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(ISSUED_AT_TIME);
         assertThat(timeClaim.isValid()).isTrue();
@@ -223,7 +223,7 @@ class JWSTimeClaimTest {
     void givenJWSWithIatTimeClaims_whenIssuedAtDateInvalid_thenTimeClaimNotValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(ISSUED_AT_TIME);
         assertThat(timeClaim.isValid()).isFalse();
@@ -240,16 +240,9 @@ class JWSTimeClaimTest {
     void givenJWSWithIatTimeClaims_whenIssuedAtDateIsInTheFuture_thenTimeClaimNotValid(String data) throws ParseException {
         JWS jws = JWSFactory.parse(data);
 
-        TimeClaim timeClaim = jws.timeClaims().getFirst();
+        TimeClaim timeClaim = jws.claims().timeClaims().getFirst();
 
         assertThat(timeClaim.type()).isEqualTo(ISSUED_AT_TIME);
         assertThat(timeClaim.isValid()).isFalse();
-    }
-
-    @Test
-    void givenJWE_thenTimeClaimsIsEmpty() throws ParseException {
-        JWE jwe = JWEFactory.parse("eyJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiQTEyOEtXIn0.H3X6mT5HLgcFfzLoe4ku6Knhh9Ofv1eL.qF5-N_7K8VQ4yMSz.WXUNY6eg5fR4tc8Hqf5XDRM9ALGwcQyYG4IYwwg8Ctkx1UuxoV7t6UnemjzCj2sOYUqi3KYpDzrKVJpzokz0vcIem4lFe5N_ds8FAMpW0GSF9ePA8qvV99WaP0N2ECVPmgihvL6qwNhdptlLKtxcOpE41U5LnU22voPK55VF4_1j0WmTgWgZ7DwLDysp6EIDjrrt-DY.febBmP71KADmKRVfeSnv_g");
-
-        assertThat(jwe.timeClaims()).isEmpty();
     }
 }

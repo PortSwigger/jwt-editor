@@ -107,7 +107,7 @@ class KeySigningTests {
         JWSHeader signingInfo = new JWSHeader.Builder(algorithm).build();
 
         Base64URL header = signingInfo.toBase64URL();
-        Base64URL payload = TEST_JWS.getEncodedPayload();
+        Base64URL payload = TEST_JWS.claims().encoded();
 
         JWS jws = JWSFactory.sign(key, header, payload, signingInfo);
 
@@ -121,7 +121,7 @@ class KeySigningTests {
         JWSHeader signingInfo = new JWSHeader.Builder(HS256).build();
 
         Base64URL header = signingInfo.toBase64URL();
-        Base64URL payload = TEST_JWS.getEncodedPayload();
+        Base64URL payload = TEST_JWS.claims().encoded();
 
         JWS jws = JWSFactory.sign(key, header, payload, signingInfo);
 
@@ -137,7 +137,7 @@ class KeySigningTests {
 
         JWSHeader signingInfo = new JWSHeader.Builder(EdDSA).build();
         Base64URL header = signingInfo.toBase64URL();
-        Base64URL payload = TEST_JWS.getEncodedPayload();
+        Base64URL payload = TEST_JWS.claims().encoded();
 
         JWS jws = JWSFactory.sign(privateKey, header, payload, signingInfo);
 

@@ -21,7 +21,7 @@ package com.blackberry.jwteditor.view.dialog.keys;
 import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
 import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.blackberry.jwteditor.model.keys.Key;
-import com.blackberry.jwteditor.presenter.PresenterStore;
+import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.utils.JSONUtils;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
@@ -63,8 +63,8 @@ public class SymmetricKeyDialog extends KeyDialog {
 
     private OctetSequenceKey jwk;
 
-    public SymmetricKeyDialog(Window parent, PresenterStore presenters, RstaFactory rstaFactory, OctetSequenceKey jwk) {
-        super(parent, TITLE_RESOURCE_ID, jwk == null ? null : jwk.getKeyID(), presenters);
+    public SymmetricKeyDialog(Window parent, KeysModel keysModel, RstaFactory rstaFactory, OctetSequenceKey jwk) {
+        super(parent, TITLE_RESOURCE_ID, jwk == null ? null : jwk.getKeyID(), keysModel);
 
         this.rstaFactory = rstaFactory;
         this.rng = new SecureRandom();
