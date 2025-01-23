@@ -54,6 +54,7 @@ public class KeysView {
     private JPanel panel;
     private JButton buttonNewOKP;
     private JTable tableKeys;
+    private JButton buttonImportJWK;
 
     private JMenuItem menuItemDelete;
     private JMenuItem menuItemCopyJWK;
@@ -81,7 +82,8 @@ public class KeysView {
                         keysModel,
                         rstaFactory,
                         parent
-                )
+                ),
+                rstaFactory
         );
 
         // Attach event handlers for button clicks
@@ -90,6 +92,7 @@ public class KeysView {
         buttonNewOKP.addActionListener(e -> presenter.onButtonNewOKPClick());
         buttonNewRSA.addActionListener(e -> presenter.onButtonNewRSAClick());
         buttonNewPassword.addActionListener(e -> presenter.onButtonNewPasswordClick());
+        buttonImportJWK.addActionListener(e -> presenter.onButtonImportJWKSet());
     }
 
     /**

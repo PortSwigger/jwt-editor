@@ -54,11 +54,6 @@ class OctetSequenceKeyJWKKey extends AbstractJWKKey {
     }
 
     @Override
-    public boolean hasPEM() {
-        return false;
-    }
-
-    @Override
     public boolean canConvertToPem() {
         return false;
     }

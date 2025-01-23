@@ -25,7 +25,6 @@ import com.blackberry.jwteditor.view.editor.InformationPanelFactory;
 import com.blackberry.jwteditor.view.editor.WebSocketEditorView;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
-import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 
 import java.awt.*;
 
@@ -69,7 +68,6 @@ public class JWTEditorExtension implements BurpExtension {
         userInterface.registerSuiteTab(suiteView.getTabCaption(), suiteView.getUiComponent());
 
         HexCodeAreaFactory hexAreaCodeFactory = new HexCodeAreaFactory(api.logging(), api.userInterface());
-        ErrorLoggingActionListenerFactory actionListenerFactory = new ErrorLoggingActionListenerFactory(api.logging());
         InformationPanelFactory informationPanelFactory = new InformationPanelFactory(api.userInterface(), api.logging());
 
         userInterface.registerHttpRequestEditorProvider(editorCreationContext ->
@@ -78,7 +76,7 @@ public class JWTEditorExtension implements BurpExtension {
                         rstaFactory,
                         api.collaborator().defaultPayloadGenerator(),
                         hexAreaCodeFactory,
-                        actionListenerFactory,
+                        api.logging(),
                         informationPanelFactory,
                         editorCreationContext.editorMode() != READ_ONLY,
                         isProVersion
@@ -91,7 +89,7 @@ public class JWTEditorExtension implements BurpExtension {
                         rstaFactory,
                         api.collaborator().defaultPayloadGenerator(),
                         hexAreaCodeFactory,
-                        actionListenerFactory,
+                        api.logging(),
                         informationPanelFactory,
                         editorCreationContext.editorMode() != READ_ONLY,
                         isProVersion
@@ -104,7 +102,7 @@ public class JWTEditorExtension implements BurpExtension {
                         rstaFactory,
                         api.collaborator().defaultPayloadGenerator(),
                         hexAreaCodeFactory,
-                        actionListenerFactory,
+                        api.logging(),
                         informationPanelFactory,
                         editorCreationContext.editorMode() != READ_ONLY,
                         isProVersion

@@ -43,8 +43,6 @@ public class PasswordDialog extends KeyDialog {
     private JSpinner spinnerIterations;
     private JTextField textFieldKeyId;
 
-    private PasswordKey key;
-
     public PasswordDialog(Window parent, KeysModel keysModel) {
         this(parent, keysModel, null, "", 8, 1000);
     }
@@ -101,30 +99,12 @@ public class PasswordDialog extends KeyDialog {
         buttonOK.setEnabled(!textFieldKeyId.getText().isEmpty() && !textFieldPassword.getText().isEmpty());
     }
 
-    /**
-     * OK clicked, build a PasswordKey from the form values
-     */
     @Override
-    void onOK() {
-        key = new PasswordKey(textFieldKeyId.getText(), textFieldPassword.getText(), (Integer) spinnerSaltLength.getValue(), (Integer) spinnerIterations.getValue());
-        super.onOK();
-    }
-
-    /**
-     * Called when the Cancel or X button is pressed. Set the changed key to null and destroy the window
-     */
-    @Override
-    void onCancel() {
-        key = null;
-        dispose();
-    }
-
-    /**
-     * Get the new/modified key resulting from the operations of this dialog
-     * @return the new/modified JWK
-     */
-    @Override
-    public Key getKey() {
-        return key;
+    Key constructKey() {
+        return new PasswordKey(textFieldKeyId.getText(),
+                textFieldPassword.getText(),
+                (Integer) spinnerSaltLength.getValue(),
+                (Integer) spinnerIterations.getValue()
+        );
     }
 }

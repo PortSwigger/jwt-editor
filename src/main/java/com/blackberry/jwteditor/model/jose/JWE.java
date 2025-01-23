@@ -23,6 +23,7 @@ import com.blackberry.jwteditor.model.keys.Key;
 import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Provider;
 import java.security.Security;
@@ -124,7 +125,7 @@ public class JWE extends JOSEObject {
             JWEDecrypter decrypter = key.getDecrypter(header.getAlgorithm());
 
             // Try to use the BouncyCastle provider, but fall-back to default if this fails
-            Provider provider = Security.getProvider("BC");
+            Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
             if (provider != null) {
                 decrypter.getJCAContext().setProvider(provider);
             }

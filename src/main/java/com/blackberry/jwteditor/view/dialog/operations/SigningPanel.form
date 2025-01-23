@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.blackberry.jwteditor.view.dialog.operations.SigningPanel">
+  <grid id="cbd77" binding="panel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="10" left="10" bottom="10" right="10"/>
+    <constraints>
+      <xy x="48" y="54" width="470" height="313"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="55a21" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="line" title-resource-bundle="strings" title-key="signing_label_signing_key">
+          <color color="-4473925"/>
+        </border>
+        <children>
+          <component id="f7fed" class="javax.swing.JComboBox" binding="comboBoxSigningKey">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+      <grid id="f5d21" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="line" title-resource-bundle="strings" title-key="signing_label_signing_algorithm">
+          <color color="-4473925"/>
+        </border>
+        <children>
+          <component id="a29ae" class="javax.swing.JComboBox" binding="comboBoxSigningAlgorithm">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+      <grid id="d5b7f" binding="panelOptions" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="line" title-resource-bundle="strings" title-key="signing_label_header_options">
+          <color color="-4473925"/>
+        </border>
+        <children>
+          <component id="6a255" class="javax.swing.JRadioButton" binding="radioButtonUpdateGenerateJWT">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="strings" key="signing_radio_generate_valid_jwt"/>
+            </properties>
+          </component>
+          <component id="cb07" class="javax.swing.JRadioButton" binding="radioButtonUpdateGenerateAlg">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <selected value="false"/>
+              <text resource-bundle="strings" key="signing_radio_generate_valid_alg"/>
+            </properties>
+          </component>
+          <component id="5c131" class="javax.swing.JRadioButton" binding="radioButtonUpdateGenerateNone">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <selected value="true"/>
+              <text resource-bundle="strings" key="signing_radio_generate_valid_none"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="buttonGroupUpdateGenerate">
+      <member id="cb07"/>
+      <member id="6a255"/>
+      <member id="5c131"/>
+    </group>
+  </buttonGroups>
+</form>

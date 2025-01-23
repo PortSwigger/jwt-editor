@@ -26,9 +26,9 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.util.Base64URL;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Provider;
-import java.security.Security;
 import java.util.List;
+
+import static com.blackberry.jwteditor.model.jose.JWSVerifierFactory.verifierFor;
 
 /**
  * Class representing a JWS
@@ -53,8 +53,7 @@ public class JWS extends JOSEObject {
         return claims;
     }
 
-    public Signature signature()
-    {
+    public Signature signature() {
         return signature;
     }
 
@@ -84,19 +83,7 @@ public class JWS extends JOSEObject {
      * @throws VerificationException if verification process fails
      */
     public boolean verify(Key key, JWSHeader verificationInfo) throws VerificationException {
-        // Get the verifier based on the key type
-        JWSVerifier verifier;
-        try {
-            verifier = key.getVerifier();
-        } catch (JOSEException e) {
-            throw new VerificationException(e.getMessage());
-        }
-
-        // Try to use the BouncyCastle provider, but fall-back to default if this fails
-        Provider provider = Security.getProvider("BC");
-        if (provider != null) {
-            verifier.getJCAContext().setProvider(provider);
-        }
+        JWSVerifier verifier = verifierFor(key, verificationInfo.getAlgorithm());
 
         // Build the signing input
         // JWS signature input is the ASCII bytes of the base64 encoded header and payload concatenated with a '.'

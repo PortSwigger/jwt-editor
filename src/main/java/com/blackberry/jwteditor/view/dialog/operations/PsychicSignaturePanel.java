@@ -19,52 +19,31 @@ package com.blackberry.jwteditor.view.dialog.operations;
 
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.operations.Attacks;
-import com.blackberry.jwteditor.view.dialog.AbstractDialog;
 import com.nimbusds.jose.JWSAlgorithm;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
 
 import static com.nimbusds.jose.JWSAlgorithm.*;
+import static java.awt.BorderLayout.CENTER;
 
-public class PsychicSignatureDialog extends AbstractDialog {
+public class PsychicSignaturePanel extends OperationPanel<JWS, JWS> {
     private static final JWSAlgorithm[] ALGORITHMS = {ES256, ES384, ES512};
 
-    private JPanel contentPane;
-    private JButton buttonOK;
-    private JButton buttonCancel;
+    private JPanel panel;
     private JComboBox<JWSAlgorithm> comboBoxAlgorithm;
-    private JWS jws;
 
-    public PsychicSignatureDialog(Window parent, JWS jws) {
-        super(parent, "psychic_signature_signing_dialog_title");
-        this.jws = jws;
-
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        buttonOK.addActionListener(e -> onOK());
-        buttonCancel.addActionListener(e -> onCancel());
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(
-                e -> onCancel(),
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
-        );
+    public PsychicSignaturePanel() {
+        super("psychic_signature_signing_dialog_title");
 
         comboBoxAlgorithm.setModel(new DefaultComboBoxModel<>(ALGORITHMS));
         comboBoxAlgorithm.setSelectedIndex(0);
+
+        add(panel, CENTER);
     }
 
-    public JWS getJWS() {
-        return jws;
-    }
-
-    private void onOK() {
+    @Override
+    public JWS performOperation(JWS originalJwt) throws Exception {
         JWSAlgorithm selectedAlgorithm = (JWSAlgorithm) comboBoxAlgorithm.getSelectedItem();
-        jws = Attacks.signWithPsychicSignature(jws, selectedAlgorithm);
-        dispose();
+        return Attacks.signWithPsychicSignature(originalJwt, selectedAlgorithm);
     }
 }

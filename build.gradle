@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.blackberry'
-version = '2.4'
+version = '2.5'
 description = 'jwt-editor'
 
 repositories {
@@ -35,15 +35,15 @@ dependencies {
             'com.nimbusds:nimbus-jose-jwt:9.21',
             'org.exbin.deltahex:deltahex-swing:0.1.2',
             'com.fifesoft:rsyntaxtextarea:3.5.3',
-            'org.json:json:20240303'
+            'org.json:json:20250107'
     )
     testImplementation(
             "org.bouncycastle:bcprov-jdk18on:${bouncycastle_version}",
             "org.bouncycastle:bcpkix-jdk18on:${bouncycastle_version}",
             "net.portswigger.burp.extensions:montoya-api:${extender_version}",
-            'org.junit.jupiter:junit-jupiter:5.11.2',
-            'org.assertj:assertj-core:3.26.3',
-            'org.mockito:mockito-core:5.14.1'
+            'org.junit.jupiter:junit-jupiter:5.11.4',
+            'org.assertj:assertj-core:3.27.3',
+            'org.mockito:mockito-core:5.15.2'
     )
 }
 

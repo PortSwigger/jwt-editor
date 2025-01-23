@@ -25,38 +25,40 @@ import com.blackberry.jwteditor.model.jose.JWSFactory.SigningUpdateMode;
 import com.blackberry.jwteditor.model.keys.JWKKey;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.operations.Attacks;
-import com.blackberry.jwteditor.utils.Utils;
-import com.blackberry.jwteditor.view.dialog.AbstractDialog;
-import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
+import com.blackberry.jwteditor.view.dialog.operations.LastSigningKeys.Signer;
 import com.nimbusds.jose.JWSAlgorithm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.List;
 
 import static com.blackberry.jwteditor.model.jose.JWSFactory.SigningUpdateMode.*;
-import static javax.swing.JOptionPane.WARNING_MESSAGE;
+import static java.awt.BorderLayout.CENTER;
 
-/**
- * Sign and Attack > Embedded JWK dialog from the Editor tab
- */
-public class SignDialog extends AbstractDialog {
+public class SigningPanel extends OperationPanel<JWS, JWS> {
 
     public enum Mode {
-        NORMAL("sign_dialog_title"),
-        EMBED_JWK("embed_jwk_attack_dialog_title");
+        NORMAL("sign_dialog_title", Signer.NORMAL),
+        EMBED_JWK("embed_jwk_attack_dialog_title", Signer.EMBED_JWK);
+
+        final Signer signer;
 
         private final String titleResourceId;
 
-        Mode(String titleResourceId) {
+        Mode(String titleResourceId, Signer embedJwk) {
             this.titleResourceId = titleResourceId;
+            this.signer = embedJwk;
+        }
+
+        Dimension dimension() {
+            return switch (this) {
+                case NORMAL -> new Dimension(500, 375);
+                case EMBED_JWK -> new Dimension(500, 250);
+            };
         }
     }
 
-    private JPanel contentPane;
-    private JButton buttonOK;
-    private JButton buttonCancel;
+    private JPanel panel;
     private JComboBox<Key> comboBoxSigningKey;
     private JComboBox<JWSAlgorithm> comboBoxSigningAlgorithm;
     private JPanel panelOptions;
@@ -65,30 +67,12 @@ public class SignDialog extends AbstractDialog {
     private JRadioButton radioButtonUpdateGenerateNone;
 
     private final Mode mode;
-    private JWS jws;
+    private final LastSigningKeys lastSigningKeys;
 
-    public SignDialog(
-            Window parent,
-            ErrorLoggingActionListenerFactory actionListenerFactory,
-            List<Key> signingKeys,
-            JWS jws,
-            Mode mode) {
-        super(parent, mode.titleResourceId);
-        this.jws = jws;
+    public SigningPanel(List<Key> signingKeys, Mode mode, LastSigningKeys lastSigningKeys) {
+        super(mode.titleResourceId, mode.dimension());
         this.mode = mode;
-
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        buttonOK.addActionListener(actionListenerFactory.from(e -> onOK()));
-        buttonCancel.addActionListener(e -> onCancel());
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(
-                e -> onCancel(),
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
-        );
+        this.lastSigningKeys = lastSigningKeys;
 
         // Convert the signingKeys from a List to an Array
         Key[] signingKeysArray = new Key[signingKeys.size()];
@@ -102,32 +86,27 @@ public class SignDialog extends AbstractDialog {
             Key selectedKey = (Key) comboBoxSigningKey.getSelectedItem();
             //noinspection ConstantConditions
             comboBoxSigningAlgorithm.setModel(new DefaultComboBoxModel<>(selectedKey.getSigningAlgorithms()));
-            buttonOK.setEnabled(true);
         });
 
-        // Set the signing key to the first entry, also triggering the event handler
-        comboBoxSigningKey.setSelectedIndex(0);
+        int lastUsedKeyIndex = lastSigningKeys.lastKeyFor(mode.signer).map(signingKeys::indexOf).orElse(-1);
+        lastUsedKeyIndex = lastUsedKeyIndex == -1 ? 0 : lastUsedKeyIndex;
+        comboBoxSigningKey.setSelectedIndex(lastUsedKeyIndex);
 
         // If the dialog is being used for the embedded JWK attack, hide the Header Options
         if (mode != Mode.NORMAL) {
             panelOptions.setVisible(false);
         }
+
+        add(panel, CENTER);
     }
 
-    /**
-     * Get the result of the dialog
-     *
-     * @return the header/payload as a signed JWS
-     */
-    public JWS getJWS() {
-        return jws;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void onOK() {
+    @Override
+    public JWS performOperation(JWS originalJwt) throws SigningException, NoSuchFieldException, IllegalAccessException {
         // Get the selected signing key and algorithm
         JWKKey selectedKey = (JWKKey) comboBoxSigningKey.getSelectedItem();
         JWSAlgorithm selectedAlgorithm = (JWSAlgorithm) comboBoxSigningAlgorithm.getSelectedItem();
+
+        lastSigningKeys.recordKeyUse(mode.signer, selectedKey);
 
         // Get the header update mode based on the selected radio button, convert to the associated enum value
         SigningUpdateMode signingUpdateMode;
@@ -140,23 +119,14 @@ public class SignDialog extends AbstractDialog {
             signingUpdateMode = DO_NOT_MODIFY_HEADER;
         }
 
-        // Perform a signing operation or the embedded JWK attack based on the dialog mode
-        try {
-            if (mode == Mode.NORMAL) {
-                jws = JWSFactory.sign(selectedKey, selectedAlgorithm, signingUpdateMode, jws);
-            } else if (mode == Mode.EMBED_JWK) {
-                jws = Attacks.embeddedJWK(jws, selectedKey, selectedAlgorithm);
-            }
-        } catch (SigningException | NoSuchFieldException | IllegalAccessException e) {
-            jws = null;
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    Utils.getResourceString("error_title_unable_to_sign"),
-                    WARNING_MESSAGE
-            );
-        } finally {
-            dispose();
-        }
+        return switch (mode) {
+            case NORMAL -> JWSFactory.sign(selectedKey, selectedAlgorithm, signingUpdateMode, originalJwt);
+            case EMBED_JWK -> Attacks.embeddedJWK(originalJwt, selectedKey, selectedAlgorithm);
+        };
+    }
+
+    @Override
+    public String operationFailedResourceId() {
+        return "error_title_unable_to_sign";
     }
 }

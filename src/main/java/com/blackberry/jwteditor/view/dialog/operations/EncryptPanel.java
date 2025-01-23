@@ -23,47 +23,23 @@ import com.blackberry.jwteditor.model.jose.JWE;
 import com.blackberry.jwteditor.model.jose.JWEFactory;
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.model.keys.Key;
-import com.blackberry.jwteditor.utils.Utils;
-import com.blackberry.jwteditor.view.dialog.AbstractDialog;
-import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.List;
 
-/**
- * Encrypt dialog from the Editor tab
- */
-public class EncryptDialog extends AbstractDialog {
-    private JPanel contentPane;
-    private JButton buttonOK;
-    private JButton buttonCancel;
+import static java.awt.BorderLayout.CENTER;
+
+public class EncryptPanel extends OperationPanel<JWE, JWS> {
+    private JPanel panel;
     private JComboBox<EncryptionMethod> comboBoxCEK;
     private JComboBox<JWEAlgorithm> comboBoxKEK;
     private JComboBox<Key> comboBoxEncryptionKey;
 
-    private final JWS jws;
-    private JWE jwe;
-
-    public EncryptDialog(
-            Window parent,
-            ErrorLoggingActionListenerFactory actionListenerFactory,
-            JWS jws,
-            List<Key> encryptionKeys) {
-        super(parent, "encrypt_dialog_title");
-        this.jws = jws;
-
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        buttonOK.addActionListener(actionListenerFactory.from(e -> onOK()));
-        buttonCancel.addActionListener(e -> onCancel());
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    public EncryptPanel(List<Key> encryptionKeys) {
+        super("encrypt_dialog_title", new Dimension(600, 325));
 
         // Convert encryptionKeys List to Array
         Key[] encryptionKeysArray = new Key[encryptionKeys.size()];
@@ -78,6 +54,8 @@ public class EncryptDialog extends AbstractDialog {
 
         // Set the encryption key to be the first value. This will trigger the event handlers setting the other two dropdowns
         comboBoxEncryptionKey.setSelectedIndex(0);
+
+        add(panel, CENTER);
     }
 
     /**
@@ -129,7 +107,7 @@ public class EncryptDialog extends AbstractDialog {
                 if (cekAlgorithms.length > 0) {
                     comboBoxCEK.setSelectedIndex(0);
                     comboBoxCEK.setEnabled(true);
-                    buttonOK.setEnabled(true);
+                    fireValidityEvent(true);
                 } else {
                     comboBoxCEK.setEnabled(false);
                 }
@@ -137,40 +115,31 @@ public class EncryptDialog extends AbstractDialog {
                 // Disable the form and the Content Encryption Algorithm dropdown if there is no Key Encryption Algorithm selected
                 comboBoxCEK.setModel(new DefaultComboBoxModel<>());
                 comboBoxCEK.setEnabled(false);
-                buttonOK.setEnabled(false);
+                fireValidityEvent(false);
             }
         } else {
             // Disable the form and the Content Encryption Algorithm dropdown if there is no Encryption Key selected
             comboBoxCEK.setModel(new DefaultComboBoxModel<>());
             comboBoxCEK.setEnabled(false);
-            buttonOK.setEnabled(false);
+            fireValidityEvent(false);
         }
     }
 
-    /**
-     * Handler for OK button pressed. Encrypt the editor content with the selected parameters
-     */
-    private void onOK() {
+    private void fireValidityEvent(boolean isValid) {
+        firePropertyChange(VALIDITY_EVENT, !isValid, isValid);
+    }
+
+    @Override
+    public JWE performOperation(JWS originalJwt) throws EncryptionException {
         Key selectedKey = (Key) comboBoxEncryptionKey.getSelectedItem();
         JWEAlgorithm selectedKek = (JWEAlgorithm) comboBoxKEK.getSelectedItem();
         EncryptionMethod selectedCek = (EncryptionMethod) comboBoxCEK.getSelectedItem();
 
-        // Try to encrypt, show a dialog if this fails
-        try {
-            jwe = JWEFactory.encrypt(jws, selectedKey, selectedKek, selectedCek);
-        } catch (EncryptionException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), Utils.getResourceString("error_title_unable_to_encrypt"), JOptionPane.WARNING_MESSAGE);
-        } finally {
-            dispose();
-        }
+        return JWEFactory.encrypt(originalJwt, selectedKey, selectedKek, selectedCek);
     }
 
-    /**
-     * Get the result of the dialog
-     *
-     * @return the encrypted JWS as a JWE
-     */
-    public JWE getJWE() {
-        return jwe;
+    @Override
+    public String operationFailedResourceId() {
+        return "error_title_unable_to_encrypt";
     }
 }

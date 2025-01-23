@@ -28,6 +28,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.math.ec.ECPoint;
@@ -151,7 +152,7 @@ public class PEMUtils {
                 // The PKCS8 PEM object is a PrivateKeyInfo
                 if (pemObject instanceof PrivateKeyInfo) {
                     // Get the private key
-                    JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC"); //NON-NLS
+                    JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME);
                     PrivateKey privateKey = converter.getPrivateKey((PrivateKeyInfo) pemObject);
 
                     if (privateKey instanceof BCECPrivateKey ecPrivateKey) {
@@ -159,8 +160,8 @@ public class PEMUtils {
                         BigInteger d = ecPrivateKey.getD();
                         ECParameterSpec ecParameterSpec = ecPrivateKey.getParameters();
                         ECPoint Q = ecPrivateKey.getParameters().getG().multiply(d);
-                        ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(Q, ecParameterSpec); //NON-NLS //NON-NLS
-                        KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC"); //NON-NLS //NON-NLS
+                        ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(Q, ecParameterSpec);
+                        KeyFactory keyFactory = KeyFactory.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
                         ECPublicKey publicKey = (ECPublicKey) keyFactory.generatePublic(ecPublicKeySpec);
 
                         // Use public and private key to construct a JWK object

@@ -26,9 +26,7 @@ import com.blackberry.jwteditor.model.jose.JWSFactory;
 import com.blackberry.jwteditor.model.keys.JWKKey;
 import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.blackberry.jwteditor.model.keys.Key;
-import com.blackberry.jwteditor.utils.ByteArrayUtils;
 import com.blackberry.jwteditor.utils.PEMUtils;
-import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.jwk.JWK;
@@ -40,7 +38,9 @@ import java.lang.reflect.Field;
 import java.util.Set;
 
 import static com.blackberry.jwteditor.model.jose.JWSFactory.jwsFromParts;
+import static com.blackberry.jwteditor.utils.ByteArrayUtils.trimTrailingBytes;
 import static com.nimbusds.jose.HeaderParameterNames.*;
+import static com.nimbusds.jose.JOSEObjectType.JWT;
 import static com.nimbusds.jose.JWSAlgorithm.*;
 
 /**
@@ -74,12 +74,12 @@ public class Attacks {
         byte[] pemBytes = PEMUtils.jwkToPem(key.getJWK().toPublicJWK()).getBytes();
 
         // Remove any trailing /n (0xOA) characters from the PEM
-        if(stripTrailingNewlines){
-            pemBytes = ByteArrayUtils.trimTrailingBytes(pemBytes, (byte) 0x0A);
+        if (stripTrailingNewlines) {
+            pemBytes = trimTrailingBytes(pemBytes, (byte) 0x0A);
         }
 
         // Build a new header for the chosen HMAC algorithm
-        JWSHeader signingInfo = new JWSHeader.Builder(algorithm).type(JOSEObjectType.JWT).build();
+        JWSHeader signingInfo = new JWSHeader.Builder(algorithm).type(JWT).build();
 
         // Construct a HMAC signing key from the PEM bytes
         JWKKey signingKey = JWKKeyFactory.from(new OctetSequenceKey.Builder((pemBytes)).build());
@@ -157,7 +157,7 @@ public class Attacks {
     public static JWS embeddedJWK(JWS jws, JWKKey key, JWSAlgorithm algorithm) throws SigningException, NoSuchFieldException, IllegalAccessException {
         JWK embeddedKey = key.isPublic() ? key.getJWK().toPublicJWK() : key.getJWK();
         JWSHeader.Builder jwsHeaderBuilder = new JWSHeader.Builder(algorithm)
-                .type(JOSEObjectType.JWT)
+                .type(JWT)
                 .keyID(key.getID());
 
         // nimbus-jose-jwt adds a check to jwk() to prevent embedding private keys in 9.21

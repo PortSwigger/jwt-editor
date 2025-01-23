@@ -36,6 +36,8 @@ public abstract class KeyDialog extends JDialog {
     private final String originalId;
     private final KeysModel keysModel;
 
+    private Key key;
+
     public KeyDialog(Window parent, String titleResourceId, String originalId, KeysModel keysModel) {
         super(parent);
 
@@ -48,20 +50,18 @@ public abstract class KeyDialog extends JDialog {
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 onCancel();
             }
         });
     }
 
-    /**
-     * Get the key generated/edited by the dialog
-     *
-     * @return the new/modified key
-     */
-    public abstract Key getKey();
+    abstract Key constructKey();
 
-    abstract void onCancel();
+    public Key getKey() {
+        return key;
+    }
 
     public void display() {
         pack();
@@ -69,13 +69,10 @@ public abstract class KeyDialog extends JDialog {
         setVisible(true);
     }
 
-    /**
-     * Handler for OK button click
-     */
     void onOK() {
-        Key newKey = getKey();
+        Key newKey = constructKey();
 
-        boolean checkForKeyIdClash = originalId == null || !newKey.getID().equals(originalId);
+        boolean checkForKeyIdClash = newKey != null && (originalId == null || !newKey.getID().equals(originalId));
 
         // Handle overwrites if a key already exists with the same kid
         if (checkForKeyIdClash && keysModel.keyExists(newKey.getID())) {
@@ -84,10 +81,16 @@ public abstract class KeyDialog extends JDialog {
                     Utils.getResourceString("keys_confirm_overwrite"),
                     Utils.getResourceString("keys_confirm_overwrite_title"),
                     OK_CANCEL_OPTION) != OK_OPTION) {
-                return;
+                newKey = null;
             }
         }
 
+        key = newKey;
+        dispose();
+    }
+
+    void onCancel() {
+        key = null;
         dispose();
     }
 }

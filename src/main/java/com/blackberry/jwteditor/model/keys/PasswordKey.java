@@ -138,16 +138,6 @@ public class PasswordKey implements Key {
         return false;
     }
 
-    /**
-     * Does the key have a PEM representation
-     *
-     * @return always false for passwords
-     */
-    @Override
-    public boolean hasPEM() {
-        return false;
-    }
-
     @Override
     public boolean canConvertToPem() {
         return false;
@@ -156,7 +146,7 @@ public class PasswordKey implements Key {
     /**
      * Get the signing algorithms that can be used with this key
      *
-     * @return list of allowed signing algorithms
+     * @return array of allowed signing algorithms
      */
     @Override
     public JWSAlgorithm[] getSigningAlgorithms() {
@@ -166,7 +156,7 @@ public class PasswordKey implements Key {
     /**
      * Get the key encryption algorithms that can be used with this key
      *
-     * @return list of allowed key encryption algorithms
+     * @return array of allowed key encryption algorithms
      */
     @Override
     public JWEAlgorithm[] getKeyEncryptionKeyAlgorithms() {
@@ -180,7 +170,7 @@ public class PasswordKey implements Key {
     /**
      * Get the content encryption algorithms that can be used with this key
      *
-     * @return list of allowed key encryption algorithms
+     * @return array of allowed key encryption algorithms
      */
     @Override
     public EncryptionMethod[] getContentEncryptionKeyAlgorithms(JWEAlgorithm keyEncryptionKeyAlgorithm) {

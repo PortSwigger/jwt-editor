@@ -54,11 +54,6 @@ class RSAJWKKey extends AbstractJWKKey {
     }
 
     @Override
-    public boolean hasPEM() {
-        return true;
-    }
-
-    @Override
     public boolean canConvertToPem() {
         return true;
     }

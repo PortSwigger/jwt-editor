@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import static com.blackberry.jwteditor.utils.JSONUtils.isJsonCompact;
 import static com.blackberry.jwteditor.utils.JSONUtils.prettyPrintJSON;
+import static com.nimbusds.jose.HeaderParameterNames.ALGORITHM;
 
 public class Header extends Base64Encoded {
 
@@ -43,5 +44,10 @@ public class Header extends Base64Encoded {
     public JSONObject json()
     {
         return new JSONObject(decoded());
+    }
+
+    public String algorithm() {
+        JSONObject json = json();
+        return json.has(ALGORITHM) ? json.getString(ALGORITHM) : "";
     }
 }

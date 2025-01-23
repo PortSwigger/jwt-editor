@@ -36,7 +36,7 @@ class TimeClaimTest {
     @EnumSource(TimeClaimType.class)
     @ParameterizedTest
     void invalidEpochTime(TimeClaimType type) {
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(type, "-1", -1L);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(type, "-1");
 
         assertThat(timeClaim.type()).isEqualTo(type);
         assertThat(timeClaim.value()).isEqualTo("-1");
@@ -92,7 +92,7 @@ class TimeClaimTest {
     void testIssuedAtTimeClaimsForEpochTimes(long epochDateTime, String expectedDateTimeString) {
         String epochDateTimeValue = Long.toString(epochDateTime);
 
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, epochDateTimeValue, epochDateTime);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, epochDateTimeValue);
 
         assertThat(timeClaim.type()).isEqualTo(ISSUED_AT_TIME);
         assertThat(timeClaim.value()).isEqualTo(epochDateTimeValue);
@@ -107,7 +107,7 @@ class TimeClaimTest {
         long epochSeconds = Instant.now().getEpochSecond() - 1;
         String epochSecondsValue = Long.toString(epochSeconds);
 
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(EXPIRATION_TIME, epochSecondsValue, epochSeconds);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(EXPIRATION_TIME, epochSecondsValue);
 
         assertThat(timeClaim.type()).isEqualTo(EXPIRATION_TIME);
         assertThat(timeClaim.value()).isEqualTo(epochSecondsValue);
@@ -122,7 +122,7 @@ class TimeClaimTest {
         long epochSeconds = Instant.now().getEpochSecond() + 5;
         String epochSecondsValue = Long.toString(epochSeconds);
 
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(EXPIRATION_TIME, epochSecondsValue, epochSeconds);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(EXPIRATION_TIME, epochSecondsValue);
 
         assertThat(timeClaim.type()).isEqualTo(EXPIRATION_TIME);
         assertThat(timeClaim.value()).isEqualTo(epochSecondsValue);
@@ -137,7 +137,7 @@ class TimeClaimTest {
         long epochSeconds = Instant.now().getEpochSecond() - 1;
         String epochSecondsValue = Long.toString(epochSeconds);
 
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, epochSecondsValue, epochSeconds);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, epochSecondsValue);
 
         assertThat(timeClaim.type()).isEqualTo(ISSUED_AT_TIME);
         assertThat(timeClaim.value()).isEqualTo(epochSecondsValue);
@@ -152,7 +152,7 @@ class TimeClaimTest {
         long epochSeconds = Instant.now().getEpochSecond() + 5;
         String epochSecondsValue = Long.toString(epochSeconds);
 
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, epochSecondsValue, epochSeconds);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(ISSUED_AT_TIME, epochSecondsValue);
 
         assertThat(timeClaim.type()).isEqualTo(ISSUED_AT_TIME);
         assertThat(timeClaim.value()).isEqualTo(epochSecondsValue);
@@ -166,7 +166,7 @@ class TimeClaimTest {
         long epochSeconds = Instant.now().getEpochSecond() - 1;
         String epochSecondsValue = Long.toString(epochSeconds);
 
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(NOT_BEFORE_TIME, epochSecondsValue, epochSeconds);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(NOT_BEFORE_TIME, epochSecondsValue);
 
         assertThat(timeClaim.type()).isEqualTo(NOT_BEFORE_TIME);
         assertThat(timeClaim.value()).isEqualTo(epochSecondsValue);
@@ -181,7 +181,7 @@ class TimeClaimTest {
         long epochSeconds = Instant.now().getEpochSecond() + 5;
         String epochSecondsValue = Long.toString(epochSeconds);
 
-        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(NOT_BEFORE_TIME, epochSecondsValue, epochSeconds);
+        TimeClaim timeClaim = TimeClaimFactory.fromEpochSeconds(NOT_BEFORE_TIME, epochSecondsValue);
 
         assertThat(timeClaim.type()).isEqualTo(NOT_BEFORE_TIME);
         assertThat(timeClaim.value()).isEqualTo(epochSecondsValue);

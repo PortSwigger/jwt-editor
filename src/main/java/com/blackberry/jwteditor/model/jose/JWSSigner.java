@@ -19,32 +19,17 @@ limitations under the License.
 package com.blackberry.jwteditor.model.jose;
 
 import com.blackberry.jwteditor.exceptions.SigningException;
-import com.blackberry.jwteditor.model.keys.Key;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Provider;
-import java.security.Security;
 
 class JWSSigner {
     private final com.nimbusds.jose.JWSSigner signer;
 
-    JWSSigner(Key key) throws SigningException {
-        // Get the signer based on the key type
-        try {
-            signer = key.getSigner();
-        } catch (JOSEException e) {
-            throw new SigningException(e.getMessage());
-        }
-
-        // Try to use the BouncyCastle provider, but fall-back to default if this fails
-        Provider provider = Security.getProvider("BC");
-
-        if (provider != null) {
-            signer.getJCAContext().setProvider(provider);
-        }
+    JWSSigner(com.nimbusds.jose.JWSSigner signer) {
+        this.signer = signer;
     }
 
     public JWS sign(Base64URL header, Base64URL payload, JWSHeader signingInfo) throws SigningException {

@@ -181,26 +181,13 @@ public class SymmetricKeyDialog extends KeyDialog {
         textFieldKeyId.setText(keyId);
     }
 
-    /**
-     * Get the new/modified key resulting from the operations of this dialog
-     *
-     * @return the new/modified JWK
-     */
-    public Key getKey() {
+    @Override
+    Key constructKey() {
         try {
             return jwk == null ? null : JWKKeyFactory.from(jwk);
         } catch (UnsupportedKeyException ignored) {
             return null;
         }
-    }
-
-    /**
-     * Called when the Cancel or X button is pressed. Set the changed key to null and destroy the window
-     */
-    @Override
-    void onCancel() {
-        jwk = null;
-        dispose();
     }
 
     private void createUIComponents() {

@@ -1,0 +1,8 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "com.nimbusds:nimbus-jose-jwt"

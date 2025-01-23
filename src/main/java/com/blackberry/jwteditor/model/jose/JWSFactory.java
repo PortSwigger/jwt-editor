@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 
+import static com.blackberry.jwteditor.model.jose.JWSSignerFactory.signerFor;
 import static com.blackberry.jwteditor.utils.StringUtils.countOccurrences;
 import static com.nimbusds.jose.HeaderParameterNames.*;
 import static java.util.Arrays.stream;
@@ -83,7 +84,7 @@ public class JWSFactory {
     }
 
     public static JWS sign(Key key, JWSAlgorithm algorithm, Base64URL header, Base64URL payload) throws SigningException {
-        return new JWSSigner(key).sign(header, payload, new JWSHeader.Builder(algorithm).build());
+        return signerFor(key, algorithm).sign(header, payload, new JWSHeader.Builder(algorithm).build());
     }
 
     /**

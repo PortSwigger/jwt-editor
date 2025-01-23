@@ -188,7 +188,6 @@ public class AsymmetricKeyDialog extends KeyDialog {
                 }
                 labelError.setText(Utils.getResourceString("error_invalid_key"));
             }
-
         }
 
         // If the key ID is invalid, disable OK and highlight the key id text entry
@@ -301,26 +300,13 @@ public class AsymmetricKeyDialog extends KeyDialog {
         radioButtonPEM.setEnabled(enabled);
     }
 
-    /**
-     * Get the new/modified key resulting from the operations of this dialog
-     *
-     * @return the new/modified JWK
-     */
-    public Key getKey() {
+     @Override
+     Key constructKey() {
         try {
             return jwk == null ? null : JWKKeyFactory.from(jwk);
         } catch (UnsupportedKeyException e) {
             return null;
         }
-    }
-
-    /**
-     * Called when the Cancel or X button is pressed. Set the changed key to null and destroy the window
-     */
-    @Override
-    void onCancel() {
-        jwk = null;
-        dispose();
     }
 
     private void createUIComponents() {

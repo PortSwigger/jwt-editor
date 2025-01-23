@@ -22,6 +22,7 @@ import com.blackberry.jwteditor.exceptions.EncryptionException;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Provider;
@@ -44,7 +45,7 @@ public class JWEFactory {
         }
 
         // Try to use the BouncyCastle provider, but fall-back to default if this fails
-        Provider provider = Security.getProvider("BC");
+        Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
         if (provider != null) {
             encrypter.getJCAContext().setProvider(provider);
         }

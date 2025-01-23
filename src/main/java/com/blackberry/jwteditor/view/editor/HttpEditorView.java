@@ -19,11 +19,11 @@ limitations under the License.
 package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
+import burp.api.montoya.logging.Logging;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedEditor;
 import com.blackberry.jwteditor.model.keys.KeysRepository;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
-import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
 
 abstract class HttpEditorView extends EditorView implements ExtensionProvidedEditor {
 
@@ -32,7 +32,7 @@ abstract class HttpEditorView extends EditorView implements ExtensionProvidedEdi
             RstaFactory rstaFactory,
             HexCodeAreaFactory hexAreaCodeFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
-            ErrorLoggingActionListenerFactory actionListenerFactory,
+            Logging logging,
             InformationPanelFactory informationPanelFactory,
             boolean editable,
             boolean isProVersion) {
@@ -41,7 +41,7 @@ abstract class HttpEditorView extends EditorView implements ExtensionProvidedEdi
                 rstaFactory,
                 hexAreaCodeFactory,
                 collaboratorPayloadGenerator,
-                actionListenerFactory,
+                logging,
                 informationPanelFactory,
                 editable,
                 isProVersion

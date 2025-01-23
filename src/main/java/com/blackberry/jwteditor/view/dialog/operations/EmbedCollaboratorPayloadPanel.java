@@ -21,61 +21,39 @@ package com.blackberry.jwteditor.view.dialog.operations;
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.operations.Attacks;
-import com.blackberry.jwteditor.view.dialog.AbstractDialog;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
 
 import static com.nimbusds.jose.HeaderParameterNames.JWK_SET_URL;
 import static com.nimbusds.jose.HeaderParameterNames.X_509_CERT_URL;
+import static java.awt.BorderLayout.CENTER;
 
-public class EmbedCollaboratorPayloadDialog extends AbstractDialog {
+public class EmbedCollaboratorPayloadPanel extends OperationPanel<JWS, JWS> {
     private static final String[] HEADER_LOCATION_VALUES = {JWK_SET_URL, X_509_CERT_URL};
 
     private final CollaboratorPayloadGenerator collaboratorPayloadGenerator;
 
-    private JPanel contentPane;
-    private JButton buttonOK;
-    private JButton buttonCancel;
+    private JPanel panel;
     private JComboBox<String> comboBoxAlgorithm;
-    private JWS jws;
 
-    public EmbedCollaboratorPayloadDialog(Window parent, JWS jws, CollaboratorPayloadGenerator collaboratorPayloadGenerator) {
-        super(parent, "embed_collaborator_payload_attack_dialog_title");
-        this.jws = jws;
+    public EmbedCollaboratorPayloadPanel(CollaboratorPayloadGenerator collaboratorPayloadGenerator) {
+        super("embed_collaborator_payload_attack_dialog_title");
         this.collaboratorPayloadGenerator = collaboratorPayloadGenerator;
-
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        buttonOK.addActionListener(e -> onOK());
-        buttonCancel.addActionListener(e -> onCancel());
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(
-                e -> onCancel(),
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
-        );
 
         comboBoxAlgorithm.setModel(new DefaultComboBoxModel<>(HEADER_LOCATION_VALUES));
         comboBoxAlgorithm.setSelectedIndex(0);
+
+        add(panel, CENTER);
     }
 
-    public JWS getJWS() {
-        return jws;
-    }
-
-    private void onOK() {
+    @Override
+    public JWS performOperation(JWS originalJwt) {
         String selectedLocation = (String) comboBoxAlgorithm.getSelectedItem();
 
-        jws = Attacks.embedCollaboratorPayload(
-                jws,
+        return Attacks.embedCollaboratorPayload(
+                originalJwt,
                 selectedLocation,
                 collaboratorPayloadGenerator.generatePayload().toString()
         );
-
-        dispose();
     }
 }

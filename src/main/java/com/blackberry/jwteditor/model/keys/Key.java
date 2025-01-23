@@ -42,7 +42,6 @@ public interface Key {
     boolean canDecrypt();
 
     boolean hasJWK();
-    boolean hasPEM();
 
     boolean canConvertToPem();
 

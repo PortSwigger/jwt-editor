@@ -489,7 +489,7 @@
                   <text resource-bundle="strings" key="encrypt"/>
                 </properties>
               </component>
-              <component id="6588e" class="javax.swing.JButton" binding="buttonAttack" custom-create="true">
+              <component id="6588e" class="javax.swing.JButton" binding="buttonAttack">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>

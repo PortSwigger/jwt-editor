@@ -19,6 +19,7 @@ limitations under the License.
 package com.blackberry.jwteditor.presenter;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
+import burp.api.montoya.logging.Logging;
 import com.blackberry.jwteditor.model.jose.*;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.model.keys.KeyRing;
@@ -28,12 +29,11 @@ import com.blackberry.jwteditor.view.dialog.MessageDialogFactory;
 import com.blackberry.jwteditor.view.dialog.operations.*;
 import com.blackberry.jwteditor.view.editor.EditorMode;
 import com.blackberry.jwteditor.view.editor.EditorView;
-import com.blackberry.jwteditor.view.utils.ErrorLoggingActionListenerFactory;
+import com.blackberry.jwteditor.view.weak.WeakKeyAttackDialog;
 import com.nimbusds.jose.util.Base64URL;
 import org.json.JSONException;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +45,7 @@ import static com.blackberry.jwteditor.model.jose.JWSFactory.jwsFromParts;
 import static com.blackberry.jwteditor.utils.Base64URLUtils.base64UrlEncodeJson;
 import static com.blackberry.jwteditor.utils.JSONUtils.isJsonCompact;
 import static com.blackberry.jwteditor.utils.JSONUtils.prettyPrintJSON;
+import static com.blackberry.jwteditor.view.dialog.operations.SigningPanel.Mode.EMBED_JWK;
 
 /**
  * Presenter class for the Editor tab
@@ -54,23 +55,25 @@ public class EditorPresenter {
     private final KeysRepository keysRepository;
     private final EditorView view;
     private final CollaboratorPayloadGenerator collaboratorPayloadGenerator;
-    private final ErrorLoggingActionListenerFactory actionListenerFactory;
+    private final Logging logging;
     private final MessageDialogFactory messageDialogFactory;
     private final EditorModel model;
+    private final LastSigningKeys lastSigningKeys;
 
     private boolean selectionChanging;
 
     public EditorPresenter(
             EditorView view,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
-            ErrorLoggingActionListenerFactory actionListenerFactory,
+            Logging logging,
             KeysRepository keysRepository) {
         this.view = view;
         this.collaboratorPayloadGenerator = collaboratorPayloadGenerator;
-        this.actionListenerFactory = actionListenerFactory;
+        this.logging = logging;
         this.keysRepository = keysRepository;
         this.model = new EditorModel();
         this.messageDialogFactory = new MessageDialogFactory(view.uiComponent());
+        this.lastSigningKeys = new LastSigningKeys();
     }
 
     /**
@@ -118,15 +121,15 @@ public class EditorPresenter {
                 String jwsPayload = isPayloadJsonCompact ? prettyPrintJSON(payload) : payload;
 
                 view.setJWSPayloadCompact(isPayloadJsonCompact);
-                view.setPayload(jwsPayload, JSON);
+                view.setJWSPayload(jwsPayload, JSON);
             }
 
-            case TEXT -> view.setPayload(claim.decoded(), TEXT);
+            case TEXT -> view.setJWSPayload(claim.decoded(), TEXT);
 
             default -> throw new IllegalStateException("Unsupported claim type: " + claim.type());
         }
 
-        view.setSignature(jws.signature().data());
+        view.setJWSSignature(jws.signature().data());
     }
 
     /**
@@ -139,9 +142,9 @@ public class EditorPresenter {
         // Return the entry encoded as-is if this fails, or the corresponding compact checkbox is unticked
 
         Base64URL header = base64UrlEncodeJson(view.getJWSHeader(), view.getJWSHeaderCompact());
-        Base64URL payload = base64UrlEncodeJson(view.getPayload(), view.getJWSPayloadCompact());
+        Base64URL payload = base64UrlEncodeJson(view.getJWSPayload(), view.getJWSPayloadCompact());
 
-        return jwsFromParts(header, payload, Base64URL.encode(view.getSignature()));
+        return jwsFromParts(header, payload, Base64URL.encode(view.getJWSSignature()));
     }
 
     /**
@@ -160,10 +163,10 @@ public class EditorPresenter {
         view.setJWEHeaderCompact(isHeaderJsonCompact);
 
         // Set the other JWE fields - these are all byte arrays
-        view.setEncryptedKey(jwe.getEncryptedKey());
-        view.setCiphertext(jwe.getCiphertext());
-        view.setIV(jwe.getIV());
-        view.setTag(jwe.getTag());
+        view.setJWEEncryptedKey(jwe.getEncryptedKey());
+        view.setJWECiphertext(jwe.getCiphertext());
+        view.setJWEIV(jwe.getIV());
+        view.setJWETag(jwe.getTag());
     }
 
     /**
@@ -176,10 +179,10 @@ public class EditorPresenter {
         // Return the entry encoded as-is if this fails, or the compact checkbox is unticked
         Base64URL header = base64UrlEncodeJson(view.getJWEHeader(), view.getJWEHeaderCompact());
 
-        Base64URL encryptedKey = Base64URL.encode(view.getEncryptedKey());
-        Base64URL iv = Base64URL.encode(view.getIV());
-        Base64URL ciphertext = Base64URL.encode(view.getCiphertext());
-        Base64URL tag = Base64URL.encode(view.getTag());
+        Base64URL encryptedKey = Base64URL.encode(view.getJWEEncryptedKey());
+        Base64URL iv = Base64URL.encode(view.getJWEIV());
+        Base64URL ciphertext = Base64URL.encode(view.getJWECiphertext());
+        Base64URL tag = Base64URL.encode(view.getJWETag());
 
         return jweFromParts(header, encryptedKey, iv, ciphertext, tag);
     }
@@ -188,102 +191,56 @@ public class EditorPresenter {
      * Handle clicks events from the Embedded JWK Attack button
      */
     public void onAttackEmbedJWKClicked() {
-        signingDialog(SignDialog.Mode.EMBED_JWK);
+        signingDialog(EMBED_JWK);
     }
 
     /**
      * Handle click events from the HMAC Key Confusion button
      */
     public void onAttackKeyConfusionClicked() {
-        List<Key> attackKeys = new ArrayList<>();
-
         // Get a list of verification capable public keys
-        List<Key> verificationKeys = keysRepository.getVerificationKeys();
-        for (Key signingKey : verificationKeys) {
-            if (signingKey.isPublic() && signingKey.hasPEM()) {
-                attackKeys.add(signingKey);
-            }
-        }
+        List<Key> attackKeys = keysRepository.getVerificationKeys().stream()
+                .filter(key -> key.isPublic() && key.canConvertToPem())
+                .toList();
 
         if (attackKeys.isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_signing_keys", "error_no_signing_keys");
             return;
         }
 
-        // Create the key confusion attack dialog with the JWS currently in the editor fields
-        KeyConfusionAttackDialog keyConfusionAttackDialog = new KeyConfusionAttackDialog(
-                view.window(),
-                actionListenerFactory,
-                verificationKeys,
-                getJWS()
-        );
-        keyConfusionAttackDialog.display();
-
-        // Set the result as the JWS in the editor if the attack succeeds
-        JWS signedJWS = keyConfusionAttackDialog.getJWS();
-        if (signedJWS != null) {
-            setJWS(signedJWS);
-        }
+        showDialogAndUpdateJWS(new KeyConfusionAttackPanel(attackKeys, lastSigningKeys));
     }
 
-    /**
-     * Handle clicks events from the none Signing algorithm button
-     */
     public void onAttackSignNoneClicked() {
-        // Get the JWS from the editor, strip the signature and set the editor to the new JWS
-        NoneDialog noneDialog = new NoneDialog(view.window(), getJWS());
-        noneDialog.display();
-
-        JWS unsignedJWS = noneDialog.getJWS();
-
-        if (unsignedJWS != null) {
-            setJWS(unsignedJWS);
-        }
+        showDialogAndUpdateJWS(new NoneOperation());
     }
 
     public void onAttackSignEmptyKeyClicked() {
-        EmptyKeySigningDialog signingDialog = new EmptyKeySigningDialog(view.window(), actionListenerFactory, getJWS());
-        signingDialog.display();
-
-        JWS signedJWS = signingDialog.getJWS();
-
-        if (signedJWS != null) {
-            setJWS(signedJWS);
-        }
+        showDialogAndUpdateJWS(new EmptyKeySigningPanel());
     }
 
     public void onAttackPsychicSignatureClicked() {
-        PsychicSignatureDialog signingDialog = new PsychicSignatureDialog(view.window(), getJWS());
-        signingDialog.display();
-
-        JWS signedJWS = signingDialog.getJWS();
-
-        if (signedJWS != null) {
-            setJWS(signedJWS);
-        }
+        showDialogAndUpdateJWS(new PsychicSignaturePanel());
     }
 
     public void onAttackEmbedCollaboratorPayloadClicked() {
-        EmbedCollaboratorPayloadDialog collaboratorPayloadDialog = new EmbedCollaboratorPayloadDialog(
-                view.window(),
-                getJWS(),
-                collaboratorPayloadGenerator
-        );
-
-        collaboratorPayloadDialog.display();
-
-        JWS updatedJWS = collaboratorPayloadDialog.getJWS();
-
-        if (updatedJWS != null) {
-            setJWS(updatedJWS);
-        }
+        showDialogAndUpdateJWS(new EmbedCollaboratorPayloadPanel(collaboratorPayloadGenerator));
     }
 
-    /**
-     * Handle click events from the Sign button
-     */
+    public void onAttackWeakHMACSecret() {
+        JWS jws = getJWS();
+
+        if (!jws.header().algorithm().startsWith("HS")) {
+            messageDialogFactory.showWarningDialog("error_title_unable_to_attack_weak_symmetric", "error_unable_to_attack_weak_symmetric");
+            return;
+        }
+
+        WeakKeyAttackDialog dialog = new WeakKeyAttackDialog(view.window(), logging, getJWS());
+        dialog.display();
+    }
+
     public void onSignClicked() {
-        signingDialog(SignDialog.Mode.NORMAL);
+        signingDialog(SigningPanel.Mode.NORMAL);
     }
 
     /**
@@ -291,32 +248,33 @@ public class EditorPresenter {
      *
      * @param mode mode of the signing dialog to display
      */
-    private void signingDialog(SignDialog.Mode mode) {
+    private void signingDialog(SigningPanel.Mode mode) {
         // Check there are signing keys in the keystore
         if (keysRepository.getSigningKeys().isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_signing_keys", "error_no_signing_keys");
             return;
         }
 
-        SignDialog signDialog = new SignDialog(
-                view.window(),
-                actionListenerFactory,
-                keysRepository.getSigningKeys(),
-                getJWS(),
-                mode
-        );
-        signDialog.display();
+        showDialogAndUpdateJWS(new SigningPanel(keysRepository.getSigningKeys(), mode, lastSigningKeys));
+    }
 
-        // If a JWS was created by the dialog, replace the contents of the editor
-        JWS signedJWS = signDialog.getJWS();
-        if (signedJWS != null) {
-            setJWS(signedJWS);
+    private void showDialogAndUpdateJWS(Operation<JWS, JWS> operation) {
+        OperationDialog<JWS, JWS> dialog = new OperationDialog<>(
+                view.window(),
+                logging,
+                operation,
+                getJWS()
+        );
+
+        dialog.display();
+
+        JWS updatedJWS = dialog.getJWT();
+
+        if (updatedJWS != null) {
+            setJWS(updatedJWS);
         }
     }
 
-    /**
-     * Handle click events from the Verify button
-     */
     public void onVerifyClicked() {
         List<Key> keys = keysRepository.getVerificationKeys();
 
@@ -342,19 +300,18 @@ public class EditorPresenter {
             return;
         }
 
-        EncryptDialog encryptDialog = new EncryptDialog(
+        OperationDialog<JWE, JWS> encryptDialog = new OperationDialog<>(
                 view.window(),
-                actionListenerFactory,
-                getJWS(),
-                keysRepository.getEncryptionKeys()
+                logging,
+                new EncryptPanel(keysRepository.getEncryptionKeys()),
+                getJWS()
         );
         encryptDialog.display();
 
         // If a JWE was created by the dialog, replace the contents of the editor and change to JWE mode
-        JWE jwe = encryptDialog.getJWE();
+        JWE jwe = encryptDialog.getJWT();
 
         if (jwe != null) {
-            view.setMode(EditorMode.JWE);
             setJWE(jwe);
         }
     }
@@ -375,7 +332,6 @@ public class EditorPresenter {
 
             // If decryption was successful, set the contents of the editor to the decrypted JWS and set the editor mode to JWS
             if (jws.isPresent()) {
-                view.setMode(EditorMode.JWS);
                 setJWS(jws.get());
             } else {
                 messageDialogFactory.showWarningDialog("error_title_unable_to_decrypt", "error_decryption_all_keys_failed");
@@ -423,10 +379,8 @@ public class EditorPresenter {
 
         // Change to JWE/JWS mode based on the newly selected JOSEObject
         if (joseObject instanceof JWS) {
-            view.setMode(EditorMode.JWS);
             setJWS((JWS) joseObject);
         } else {
-            view.setMode(EditorMode.JWE);
             setJWE((JWE) joseObject);
         }
 
@@ -478,7 +432,7 @@ public class EditorPresenter {
      */
     public void formatJWSPayload() {
         try {
-            view.setPayload(prettyPrintJSON(view.getPayload()), JSON);
+            view.setJWSPayload(prettyPrintJSON(view.getJWSPayload()), JSON);
         } catch (JSONException e) {
             messageDialogFactory.showErrorDialog("error_title_unable_to_format_json", "error_format_json");
         }
