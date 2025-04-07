@@ -18,6 +18,7 @@ limitations under the License.
 
 package com.blackberry.jwteditor.model.jose;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,6 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class JWSInformationTest {
+
+    @BeforeAll
+    static void setTimeZone() {
+        System.setProperty("user.timezone", "UTC");
+    }
 
     @Test
     void givenJWSWithNoTimeClaims_thenInformationIsEmpty() throws ParseException {
@@ -49,15 +55,15 @@ class JWSInformationTest {
 
         Information information = jws.information().getFirst();
 
-        assertThat(information.text()).isEqualTo("Expiration Time - Mon May 20 2024 21:03:42");
+        assertThat(information.text()).isEqualTo("Expiration Time - Mon May 20 2024 21:03:42 GMT");
         assertThat(information.isWarning()).isTrue();
     }
 
     private static Stream<Arguments> jwsWithValidExpValues() {
         return Stream.of(
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoyMzE2MjM5MDIyfQ.nmCDcUHT-yLgrRG1LKMH9E2FQs2xWcB8CncxoqKdQEQ", "Expiration Time - Tue May 26 2043 07:43:42"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoiMjMxNjIzOTAyMiJ9.kDOLZJTcFVwrSVSDeFK31EIx7Q4e4Ya33iNCk4QZ10c", "Expiration Time - Tue May 26 2043 07:43:42"),
-                arguments("eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoiMjAzNi0xMi0xOVQxNjozOTo1Ny0wODowMCJ9.", "Expiration Time - Fri Dec 19 2036 16:39:57")
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoyMzE2MjM5MDIyfQ.nmCDcUHT-yLgrRG1LKMH9E2FQs2xWcB8CncxoqKdQEQ", "Expiration Time - Tue May 26 2043 07:43:42 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoiMjMxNjIzOTAyMiJ9.kDOLZJTcFVwrSVSDeFK31EIx7Q4e4Ya33iNCk4QZ10c", "Expiration Time - Tue May 26 2043 07:43:42 GMT"),
+                arguments("eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoiMjAzNi0xMi0xOVQxNjozOTo1Ny0wODowMCJ9.", "Expiration Time - Sat Dec 20 2036 00:39:57 GMT")
         );
     }
 
@@ -93,8 +99,8 @@ class JWSInformationTest {
 
     private static Stream<Arguments> jwsWithExpValuesInThePast() {
         return Stream.of(
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJleHAiOjE1MTYyMzkwMjJ9.mVGXFv3OuwtuZPsdaf_oGUYm2uOH-T-JRTDQE1c10q0", "Expiration Time - Thu Jan 18 2018 01:30:22"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJleHAiOjB9.eVVhRMapPD77WuMWIHKBqYw0cjJHC49On-mHEuonYjk", "Expiration Time - Thu Jan 01 1970 00:00:00")
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJleHAiOjE1MTYyMzkwMjJ9.mVGXFv3OuwtuZPsdaf_oGUYm2uOH-T-JRTDQE1c10q0", "Expiration Time - Thu Jan 18 2018 01:30:22 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJleHAiOjB9.eVVhRMapPD77WuMWIHKBqYw0cjJHC49On-mHEuonYjk", "Expiration Time - Thu Jan 01 1970 00:00:00 GMT")
         );
     }
 
@@ -120,18 +126,18 @@ class JWSInformationTest {
 
         Information information = jws.information().getFirst();
 
-        assertThat(information.text()).isEqualTo("Not Before - Mon May 20 2024 21:03:42");
+        assertThat(information.text()).isEqualTo("Not Before - Mon May 20 2024 21:03:42 GMT");
         assertThat(information.isWarning()).isFalse();
     }
 
     private static Stream<Arguments> jwsWithValidNbfValues() {
         return Stream.of(
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwibmJmIjoxNzE2MjM5MDIyfQ.mZ_wGwRA0BBp_m6LJOPOBfwMosKrhTf9DbnKZYTzBzg", "Not Before - Mon May 20 2024 21:03:42"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwibmJmIjoiMTcxNjIzOTAyMiJ9.JD7t6jE6sOzuaFi5Lj5e3RhnoRDDWW9QHv_U3bFgEKM", "Not Before - Mon May 20 2024 21:03:42"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjE1MTYyMzkwMjJ9.1OhNEYnVM64dytXGZ1kj_Z3fV73xGFxWyba52S5r7wc", "Not Before - Thu Jan 18 2018 01:30:22"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjB9.AqIAHlKSdpcDp7mD6sWsfKCQxI2hyJYsI7Y4Dh6N6pI", "Not Before - Thu Jan 01 1970 00:00:00"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjE3MjIxNjc0Nzd9.2almhOGrigs8lXH9DLKBkkUCS6r5j7zpJXYsXJN39d4", "Not Before - Sun Jul 28 2024 11:51:17"),
-                arguments("eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwibmJmIjoiMjAyNC0wNS0yMFQyMjowMzo0MiswMTowMCJ9.", "Not Before - Mon May 20 2024 22:03:42")
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwibmJmIjoxNzE2MjM5MDIyfQ.mZ_wGwRA0BBp_m6LJOPOBfwMosKrhTf9DbnKZYTzBzg", "Not Before - Mon May 20 2024 21:03:42 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwibmJmIjoiMTcxNjIzOTAyMiJ9.JD7t6jE6sOzuaFi5Lj5e3RhnoRDDWW9QHv_U3bFgEKM", "Not Before - Mon May 20 2024 21:03:42 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjE1MTYyMzkwMjJ9.1OhNEYnVM64dytXGZ1kj_Z3fV73xGFxWyba52S5r7wc", "Not Before - Thu Jan 18 2018 01:30:22 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjB9.AqIAHlKSdpcDp7mD6sWsfKCQxI2hyJYsI7Y4Dh6N6pI", "Not Before - Thu Jan 01 1970 00:00:00 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjE3MjIxNjc0Nzd9.2almhOGrigs8lXH9DLKBkkUCS6r5j7zpJXYsXJN39d4", "Not Before - Sun Jul 28 2024 11:51:17 GMT"),
+                arguments("eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwibmJmIjoiMjAyNC0wNS0yMFQyMjowMzo0MiswMTowMCJ9.", "Not Before - Mon May 20 2024 21:03:42 GMT")
         );
     }
 
@@ -167,8 +173,8 @@ class JWSInformationTest {
 
     private static Stream<Arguments> jwsWithFutureNbfValues() {
         return Stream.of(
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjIzMjIxNjc0Nzd9.cMocfo6ghvuYBqDwZ9GBdfbCnMLsUcZe2GZRuaah0-c", "Not Before - Sun Aug 02 2043 22:31:17"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjE4MjIxNjc0Nzd9._m-Rhio9DLcVRfWo7S-KIvlTk29QuDgal-tqreN4y4E", "Not Before - Tue Sep 28 2027 21:37:57")
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjIzMjIxNjc0Nzd9.cMocfo6ghvuYBqDwZ9GBdfbCnMLsUcZe2GZRuaah0-c", "Not Before - Sun Aug 02 2043 22:31:17 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJuYmYiOjE4MjIxNjc0Nzd9._m-Rhio9DLcVRfWo7S-KIvlTk29QuDgal-tqreN4y4E", "Not Before - Tue Sep 28 2027 21:37:57 GMT")
         );
     }
 
@@ -186,8 +192,8 @@ class JWSInformationTest {
 
     private static Stream<Arguments> jwsWithValidIatValues() {
         return Stream.of(
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE3MTYyMzkwMjJ9.y06rqsXv0DMutukwDaUJU0Sf-Ye3qrDkyFpOaj1J08A", "Issued At - Mon May 20 2024 21:03:42"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOiIxNzE2MjM5MDIyIn0.c2Ogr8QeTwopupVPqI56VaovZXE3svug2BI-Trft2EA", "Issued At - Mon May 20 2024 21:03:42")
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE3MTYyMzkwMjJ9.y06rqsXv0DMutukwDaUJU0Sf-Ye3qrDkyFpOaj1J08A", "Issued At - Mon May 20 2024 21:03:42 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOiIxNzE2MjM5MDIyIn0.c2Ogr8QeTwopupVPqI56VaovZXE3svug2BI-Trft2EA", "Issued At - Mon May 20 2024 21:03:42 GMT")
         );
     }
 
@@ -205,12 +211,12 @@ class JWSInformationTest {
 
     private static Stream<Arguments> jwsWithValidIatDatesInThePast() {
         return Stream.of(
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE3MTYyMzkwMjJ9.y06rqsXv0DMutukwDaUJU0Sf-Ye3qrDkyFpOaj1J08A", "Issued At - Mon May 20 2024 21:03:42"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOiIxNzE2MjM5MDIyIn0.c2Ogr8QeTwopupVPqI56VaovZXE3svug2BI-Trft2EA", "Issued At - Mon May 20 2024 21:03:42"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.hqWGSaFpvbrXkOWc6lrnffhNWR19W_S1YKFBx2arWBk", "Issued At - Thu Jan 18 2018 01:30:22"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjB9.9TaucSjKgR3_gXUlzTGperv3PK9IAXO0ZVbgP9Wx4IY", "Issued At - Thu Jan 01 1970 00:00:00"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE3MjIxNjc0Nzd9.SWmvLUBWE5ddBWvSEWnrHM8W3rfzyYmEQVk6-ywFFgQ", "Issued At - Sun Jul 28 2024 11:51:17"),
-                arguments("eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoiMjAyNC0wNS0yMFQyMjowMzo0MiswMTowMCJ9.", "Issued At - Mon May 20 2024 22:03:42")
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE3MTYyMzkwMjJ9.y06rqsXv0DMutukwDaUJU0Sf-Ye3qrDkyFpOaj1J08A", "Issued At - Mon May 20 2024 21:03:42 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOiIxNzE2MjM5MDIyIn0.c2Ogr8QeTwopupVPqI56VaovZXE3svug2BI-Trft2EA", "Issued At - Mon May 20 2024 21:03:42 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.hqWGSaFpvbrXkOWc6lrnffhNWR19W_S1YKFBx2arWBk", "Issued At - Thu Jan 18 2018 01:30:22 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjB9.9TaucSjKgR3_gXUlzTGperv3PK9IAXO0ZVbgP9Wx4IY", "Issued At - Thu Jan 01 1970 00:00:00 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE3MjIxNjc0Nzd9.SWmvLUBWE5ddBWvSEWnrHM8W3rfzyYmEQVk6-ywFFgQ", "Issued At - Sun Jul 28 2024 11:51:17 GMT"),
+                arguments("eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoiMjAyNC0wNS0yMFQyMjowMzo0MiswMTowMCJ9.", "Issued At - Mon May 20 2024 21:03:42 GMT")
         );
     }
 
@@ -247,8 +253,8 @@ class JWSInformationTest {
 
     private static Stream<Arguments> jwsWithFutureIatDates() {
         return Stream.of(
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjIzMjIxNjc0Nzd9.3UYGoLpdXRhnlai81VFV_iWmW90xnCimcYverY1-Zk4", "Issued At - Sun Aug 02 2043 22:31:17"),
-                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE4MjIxNjc0Nzd9._H-G7WjMbg8IVADVbz1Lsd7I_bGQZBYKPf8S2Q9vxf4", "Issued At - Tue Sep 28 2027 21:37:57")
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjIzMjIxNjc0Nzd9.3UYGoLpdXRhnlai81VFV_iWmW90xnCimcYverY1-Zk4", "Issued At - Sun Aug 02 2043 22:31:17 GMT"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE4MjIxNjc0Nzd9._H-G7WjMbg8IVADVbz1Lsd7I_bGQZBYKPf8S2Q9vxf4", "Issued At - Tue Sep 28 2027 21:37:57 GMT")
         );
     }
 

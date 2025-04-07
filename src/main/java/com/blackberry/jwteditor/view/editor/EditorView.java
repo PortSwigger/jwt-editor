@@ -24,6 +24,8 @@ import burp.api.montoya.ui.Selection;
 import com.blackberry.jwteditor.model.jose.ClaimsType;
 import com.blackberry.jwteditor.model.jose.Information;
 import com.blackberry.jwteditor.model.keys.KeysRepository;
+import com.blackberry.jwteditor.model.tokens.TokenIdGenerator;
+import com.blackberry.jwteditor.model.tokens.TokenRepository;
 import com.blackberry.jwteditor.presenter.EditorPresenter;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
@@ -64,6 +66,7 @@ public abstract class EditorView {
     private final boolean editable;
     private final HexCodeAreaFactory hexCodeAreaFactory;
     private final InformationPanel informationPanel;
+    private final EditorViewAttackMenuFactory attackMenuFactory;
 
     private EditorMode mode;
     private JTabbedPane tabbedPane;
@@ -94,6 +97,7 @@ public abstract class EditorView {
     private JSplitPane midSplitPane;
     private JSplitPane lowerSplitPane;
     private JScrollPane informationScrollPane;
+    private JButton buttonTokens;
 
     private CodeArea codeAreaSignature;
     private CodeArea codeAreaEncryptedKey;
@@ -103,6 +107,8 @@ public abstract class EditorView {
 
     EditorView(
             KeysRepository keysRepository,
+            TokenRepository tokenRepository,
+            TokenIdGenerator tokenIdGenerator,
             RstaFactory rstaFactory,
             HexCodeAreaFactory hexAreaCodeFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
@@ -116,13 +122,18 @@ public abstract class EditorView {
 
         // IntelliJ generated code inserted here
 
-        this.presenter = new EditorPresenter(this, collaboratorPayloadGenerator, logging, keysRepository);
+        this.presenter = new EditorPresenter(this,
+                collaboratorPayloadGenerator,
+                logging,
+                keysRepository,
+                tokenRepository,
+                tokenIdGenerator
+        );
         this.informationPanel = informationPanelFactory.build();
-
-        EditorViewAttackMenuFactory attackMenuFactory = new EditorViewAttackMenuFactory(presenter, isProVersion);
-        buttonAttack.setComponentPopupMenu(attackMenuFactory.buildAttackPopupMenu());
+        this.attackMenuFactory = new EditorViewAttackMenuFactory(presenter, isProVersion);
 
         informationScrollPane.setViewportView(informationPanel);
+        informationScrollPane.setBorder(null);
 
         panel.addHierarchyListener(new RunEDTActionOnFirstRenderHierarchyListener(
                 panel,
@@ -164,21 +175,21 @@ public abstract class EditorView {
         buttonDecrypt.addActionListener(e -> presenter.onDecryptClicked());
         buttonCopy.addActionListener(e -> presenter.onCopyClicked());
         buttonAttack.addActionListener(e -> onAttackClicked());
+        buttonTokens.addActionListener(e -> presenter.onSendToTokensClicked());
     }
 
-    /**
-     * Handler for Attack button
-     */
+    public abstract String getHost();
+
+    public abstract String getPath();
+
     private void onAttackClicked() {
-        // Display the attack popup menu
-        JPopupMenu popupMenu = buttonAttack.getComponentPopupMenu();
-        popupMenu.setVisible(false);
-        // Position to above attack button
-        buttonAttack.getComponentPopupMenu().show(buttonAttack, buttonAttack.getX(), buttonAttack.getY());
-        buttonAttack.getComponentPopupMenu().show(
+        JPopupMenu popupMenu = attackMenuFactory.buildAttackPopupMenu();
+        Dimension popupMenuSize = popupMenu.getPreferredSize();
+
+        popupMenu.show(
                 buttonAttack,
                 buttonAttack.getX(),
-                buttonAttack.getY() - buttonAttack.getComponentPopupMenu().getHeight()
+                buttonAttack.getY() - popupMenuSize.height
         );
     }
 
@@ -352,8 +363,7 @@ public abstract class EditorView {
         return mode;
     }
 
-    private void setMode(EditorMode mode)
-    {
+    private void setMode(EditorMode mode) {
         if (mode == this.mode) {
             return;
         }
@@ -378,6 +388,7 @@ public abstract class EditorView {
         buttonJWEHeaderFormatJSON.setEnabled(false);
         buttonJWSHeaderFormatJSON.setEnabled(editable);
         buttonJWSPayloadFormatJSON.setEnabled(editable);
+        buttonTokens.setEnabled(true);
         checkBoxJWEHeaderCompactJSON.setEnabled(false);
         checkBoxJWSHeaderCompactJSON.setEnabled(editable);
         checkBoxJWSPayloadCompactJSON.setEnabled(editable);
@@ -398,6 +409,7 @@ public abstract class EditorView {
         buttonJWEHeaderFormatJSON.setEnabled(editable);
         buttonJWSHeaderFormatJSON.setEnabled(false);
         buttonJWSPayloadFormatJSON.setEnabled(false);
+        buttonTokens.setEnabled(false);
         checkBoxJWEHeaderCompactJSON.setEnabled(editable);
         checkBoxJWSHeaderCompactJSON.setEnabled(false);
         checkBoxJWSPayloadCompactJSON.setEnabled(false);
@@ -492,9 +504,6 @@ public abstract class EditorView {
         return SwingUtilities.getWindowAncestor(panel);
     }
 
-    /**
-     * Custom view initialisation
-     */
     private void createUIComponents() {
         panelSignature = new JPanel(new BorderLayout());
         codeAreaSignature = hexCodeAreaFactory.build();

@@ -99,4 +99,13 @@ class JWEHeadersTest {
 
         assertThat(algorithm).isEqualTo("dir");
     }
+
+    @Test
+    void givenJWE_thenKeyIdCorrect() throws ParseException {
+        JWE jwe = JWEFactory.parse("eyJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiUlNBMV81Iiwia2lkIjoidGVzdCJ9.tgnoI6TehvT1_0xRqtIQAnQ2fKFzH0C2E22uL53WkILw1DeppA23yCHwIyH0ZgiUtrKBfRyYkZiZ-1RSvZuk-_19hJGaDqygEzVHqaF7scJI1luNu7Ne7wI6WCeLk_Izlv_C8ymK9iV6xpNG9XYjK7rCgB2t31LBqHwtDQ2Ri1_wOVEm4xfNwrhR5ahaXENS4QUk-tGzxjj2Q3PNq6rOr3fHMq6YWShKKBzGienwwF7hnGXgL6cai_Qq2R7bB4fHpoSlzhR9dilgrvrtGSjsfaXB_vsckFZPg5xi1625LijqjB6uCzTDjNZQXgWI5pOwY4zg2afPdspIcEG0ILxtRA.m0dAYlhboIHQVObA.a6SEvaZxpPjm9_y0CySOHB3YL6j9GMMWFY_I2PdX0hNqBw9sT_d-wUGNgqwgD9ILamCnCgdQfbfGiU-pxE0uDTq9cM4ak4YZEIOvmkM4VTncZNBcbrFiXcmxc4vYcd70s48KQFvUhSbhK8c662b_4XThiojhN3n2cPrYx7dxcR7EuYmjwfOVXfyl7ZwLf3y_g_rwjzj7ujRQchUWkCsAOABURvmTOhiCwXxDtG0qE0zFJlsnbbFRbbaySMGtOT7VyLQcHg.tzH2t8SCnt75dwp2LcBHuA");
+
+        String algorithm = jwe.header().keyId();
+
+        assertThat(algorithm).isEqualTo("test");
+    }
 }

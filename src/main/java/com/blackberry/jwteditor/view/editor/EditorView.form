@@ -458,14 +458,14 @@
               </tabbedpane>
             </children>
           </splitpane>
-          <grid id="b3ff" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="b3ff" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="empty">
-              <size top="0" left="0" bottom="0" right="5"/>
+              <size top="0" left="0" bottom="0" right="2"/>
             </border>
             <children>
               <hspacer id="15da0">
@@ -495,6 +495,14 @@
                 </constraints>
                 <properties>
                   <text resource-bundle="strings" key="attack"/>
+                </properties>
+              </component>
+              <component id="714fc" class="javax.swing.JButton" binding="buttonTokens">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text resource-bundle="strings" key="editor_view_button_tokens"/>
                 </properties>
               </component>
             </children>

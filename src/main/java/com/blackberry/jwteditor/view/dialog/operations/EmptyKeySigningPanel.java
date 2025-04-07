@@ -23,31 +23,18 @@ import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.operations.Attacks;
 import com.nimbusds.jose.JWSAlgorithm;
 
-import javax.swing.*;
-
 import static com.nimbusds.jose.JWSAlgorithm.*;
-import static java.awt.BorderLayout.CENTER;
 
-public class EmptyKeySigningPanel extends OperationPanel<JWS, JWS> {
+public class EmptyKeySigningPanel extends SingleFixedInputJWSOperation<JWSAlgorithm> {
     private static final JWSAlgorithm[] ALGORITHMS = {HS256, HS384, HS512};
 
-    private JPanel panel;
-    private JComboBox<JWSAlgorithm> comboBoxAlgorithm;
-
     public EmptyKeySigningPanel() {
-        super("empty_key_signing_dialog_title");
-
-        comboBoxAlgorithm.setModel(new DefaultComboBoxModel<>(ALGORITHMS));
-        comboBoxAlgorithm.setSelectedIndex(0);
-
-        add(panel, CENTER);
+        super("empty_key_signing_dialog_title", "empty_key_signing_algorithm", ALGORITHMS);
     }
 
     @Override
     public JWS performOperation(JWS originalJwt) throws SigningException, UnsupportedKeyException {
-        JWSAlgorithm selectedAlgorithm = (JWSAlgorithm) comboBoxAlgorithm.getSelectedItem();
-
-        return Attacks.signWithEmptyKey(originalJwt, selectedAlgorithm);
+        return Attacks.signWithEmptyKey(originalJwt, selectedInputValue());
     }
 
     @Override

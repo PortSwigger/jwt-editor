@@ -24,9 +24,14 @@ import com.blackberry.jwteditor.model.jose.*;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.model.keys.KeyRing;
 import com.blackberry.jwteditor.model.keys.KeysRepository;
+import com.blackberry.jwteditor.model.tokens.Token;
+import com.blackberry.jwteditor.model.tokens.TokenIdGenerator;
+import com.blackberry.jwteditor.model.tokens.TokenRepository;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.dialog.MessageDialogFactory;
 import com.blackberry.jwteditor.view.dialog.operations.*;
+import com.blackberry.jwteditor.view.dialog.operations.SigningPanel.Mode;
+import com.blackberry.jwteditor.view.editor.Attack;
 import com.blackberry.jwteditor.view.editor.EditorMode;
 import com.blackberry.jwteditor.view.editor.EditorView;
 import com.blackberry.jwteditor.view.weak.WeakKeyAttackDialog;
@@ -39,20 +44,19 @@ import java.util.Optional;
 
 import static com.blackberry.jwteditor.model.jose.ClaimsType.JSON;
 import static com.blackberry.jwteditor.model.jose.ClaimsType.TEXT;
-import static com.blackberry.jwteditor.model.jose.JOSEObjectFinder.containsJOSEObjects;
 import static com.blackberry.jwteditor.model.jose.JWEFactory.jweFromParts;
 import static com.blackberry.jwteditor.model.jose.JWSFactory.jwsFromParts;
 import static com.blackberry.jwteditor.utils.Base64URLUtils.base64UrlEncodeJson;
 import static com.blackberry.jwteditor.utils.JSONUtils.isJsonCompact;
 import static com.blackberry.jwteditor.utils.JSONUtils.prettyPrintJSON;
 import static com.blackberry.jwteditor.view.dialog.operations.SigningPanel.Mode.EMBED_JWK;
+import static com.blackberry.jwteditor.view.dialog.operations.SigningPanel.Mode.NORMAL;
 
-/**
- * Presenter class for the Editor tab
- */
 public class EditorPresenter {
 
     private final KeysRepository keysRepository;
+    private final TokenRepository tokenRepository;
+    private final TokenIdGenerator tokenIdGenerator;
     private final EditorView view;
     private final CollaboratorPayloadGenerator collaboratorPayloadGenerator;
     private final Logging logging;
@@ -66,24 +70,18 @@ public class EditorPresenter {
             EditorView view,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
             Logging logging,
-            KeysRepository keysRepository) {
+            KeysRepository keysRepository,
+            TokenRepository tokenRepository,
+            TokenIdGenerator tokenIdGenerator) {
         this.view = view;
         this.collaboratorPayloadGenerator = collaboratorPayloadGenerator;
         this.logging = logging;
         this.keysRepository = keysRepository;
+        this.tokenRepository = tokenRepository;
+        this.tokenIdGenerator = tokenIdGenerator;
         this.model = new EditorModel();
         this.messageDialogFactory = new MessageDialogFactory(view.uiComponent());
         this.lastSigningKeys = new LastSigningKeys();
-    }
-
-    /**
-     * Determine if the tab should be enabled based on whether a block of text contains JWE/JWSs
-     *
-     * @param content text that may contain a serialized JWE/JWS
-     * @return true if the content contains a JWE/JWS that can be edited
-     */
-    public boolean isEnabled(String content) {
-        return containsJOSEObjects(content);
     }
 
     /**
@@ -187,17 +185,19 @@ public class EditorPresenter {
         return jweFromParts(header, encryptedKey, iv, ciphertext, tag);
     }
 
-    /**
-     * Handle clicks events from the Embedded JWK Attack button
-     */
-    public void onAttackEmbedJWKClicked() {
-        signingDialog(EMBED_JWK);
+    public void perform(Attack attack) {
+        switch (attack) {
+            case EmbedJWK -> signingDialog(EMBED_JWK);
+            case SignNone -> showDialogAndUpdateJWS(new NoneOperation());
+            case KeyConfusion -> onAttackKeyConfusionClicked();
+            case SignEmptyKey -> showDialogAndUpdateJWS(new EmptyKeySigningPanel());
+            case SignPsychicSignature -> showDialogAndUpdateJWS(new PsychicSignaturePanel());
+            case EmbedCollaboratorPayload -> showDialogAndUpdateJWS(new EmbedCollaboratorPayloadPanel(collaboratorPayloadGenerator));
+            case WeakSymmetricKey -> onAttackWeakHMACSecret();
+        }
     }
 
-    /**
-     * Handle click events from the HMAC Key Confusion button
-     */
-    public void onAttackKeyConfusionClicked() {
+    private void onAttackKeyConfusionClicked() {
         // Get a list of verification capable public keys
         List<Key> attackKeys = keysRepository.getVerificationKeys().stream()
                 .filter(key -> key.isPublic() && key.canConvertToPem())
@@ -211,23 +211,7 @@ public class EditorPresenter {
         showDialogAndUpdateJWS(new KeyConfusionAttackPanel(attackKeys, lastSigningKeys));
     }
 
-    public void onAttackSignNoneClicked() {
-        showDialogAndUpdateJWS(new NoneOperation());
-    }
-
-    public void onAttackSignEmptyKeyClicked() {
-        showDialogAndUpdateJWS(new EmptyKeySigningPanel());
-    }
-
-    public void onAttackPsychicSignatureClicked() {
-        showDialogAndUpdateJWS(new PsychicSignaturePanel());
-    }
-
-    public void onAttackEmbedCollaboratorPayloadClicked() {
-        showDialogAndUpdateJWS(new EmbedCollaboratorPayloadPanel(collaboratorPayloadGenerator));
-    }
-
-    public void onAttackWeakHMACSecret() {
+    private void onAttackWeakHMACSecret() {
         JWS jws = getJWS();
 
         if (!jws.header().algorithm().startsWith("HS")) {
@@ -240,15 +224,10 @@ public class EditorPresenter {
     }
 
     public void onSignClicked() {
-        signingDialog(SigningPanel.Mode.NORMAL);
+        signingDialog(NORMAL);
     }
 
-    /**
-     * Create a signing dialog based on the provided mode
-     *
-     * @param mode mode of the signing dialog to display
-     */
-    private void signingDialog(SigningPanel.Mode mode) {
+    private void signingDialog(Mode mode) {
         // Check there are signing keys in the keystore
         if (keysRepository.getSigningKeys().isEmpty()) {
             messageDialogFactory.showWarningDialog("error_title_no_signing_keys", "error_no_signing_keys");
@@ -346,6 +325,12 @@ public class EditorPresenter {
      */
     public void onCopyClicked() {
         Utils.copyToClipboard(view.getSerialized());
+    }
+
+    public void onSendToTokensClicked() {
+        Token token = new Token(tokenIdGenerator.next(), view.getHost(), view.getPath(), getJWS());
+
+        tokenRepository.add(token);
     }
 
     /**

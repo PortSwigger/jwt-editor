@@ -36,7 +36,7 @@ class EditorViewAttackMenuFactory {
 
         for (Attack attack : Attack.values()) {
             JMenuItem item = new JMenuItem(attack.label(), attack.mnemonic());
-            item.addActionListener(e -> attack.performOperation(presenter));
+            item.addActionListener(e -> presenter.perform(attack));
 
             if (attack.isProOnly()) {
                 item.setEnabled(isProVersion);

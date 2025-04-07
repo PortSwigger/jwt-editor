@@ -20,27 +20,15 @@ package com.blackberry.jwteditor.view.dialog.operations;
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.operations.Attacks;
 
-import javax.swing.*;
-import java.awt.*;
-
-public class NoneOperation extends OperationPanel<JWS, JWS> {
+public class NoneOperation extends SingleFixedInputJWSOperation<String> {
     private static final String[] NONE_ALGORITHM_VALUES = {"none", "None", "NONE", "nOnE"};
 
-    private JPanel panel;
-    private JComboBox<String> comboBoxAlgorithm;
-
     public NoneOperation() {
-        super("none_attack_dialog_title");
-
-        comboBoxAlgorithm.setModel(new DefaultComboBoxModel<>(NONE_ALGORITHM_VALUES));
-        comboBoxAlgorithm.setSelectedIndex(0);
-
-        add(panel, BorderLayout.CENTER);
+        super("none_attack_dialog_title", "none_label_algorithm", NONE_ALGORITHM_VALUES);
     }
 
     @Override
     public JWS performOperation(JWS originalJwt) {
-        String selectedAlgorithm = (String) comboBoxAlgorithm.getSelectedItem();
-        return Attacks.noneSigning(originalJwt, selectedAlgorithm);
+        return Attacks.noneSigning(originalJwt, selectedInputValue());
     }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.blackberry.jwteditor.view.tokens.TokensView">
+  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="5" left="5" bottom="5" right="5"/>
+    <constraints>
+      <xy x="20" y="20" width="721" height="693"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <splitpane id="5c1e6" binding="splitPane">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="200" height="200"/>
+          </grid>
+        </constraints>
+        <properties>
+          <dividerLocation value="433"/>
+          <orientation value="0"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <scrollpane id="22717">
+            <constraints>
+              <splitpane position="left"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="216a" class="javax.swing.JTable" binding="tokenTable" custom-create="true">
+                <constraints/>
+                <properties>
+                  <fillsViewportHeight value="true"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+          <scrollpane id="47f38">
+            <constraints>
+              <splitpane position="right"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="3f735" class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" binding="textAreaPayload" custom-create="true">
+                <constraints/>
+                <properties>
+                  <currentLineHighlightColor color="-1"/>
+                  <margin top="10" left="10" bottom="10" right="10"/>
+                  <syntaxEditingStyle value="text/json"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </splitpane>
+    </children>
+  </grid>
+</form>

@@ -21,29 +21,17 @@ import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.operations.Attacks;
 import com.nimbusds.jose.JWSAlgorithm;
 
-import javax.swing.*;
-
 import static com.nimbusds.jose.JWSAlgorithm.*;
-import static java.awt.BorderLayout.CENTER;
 
-public class PsychicSignaturePanel extends OperationPanel<JWS, JWS> {
+public class PsychicSignaturePanel extends SingleFixedInputJWSOperation<JWSAlgorithm> {
     private static final JWSAlgorithm[] ALGORITHMS = {ES256, ES384, ES512};
 
-    private JPanel panel;
-    private JComboBox<JWSAlgorithm> comboBoxAlgorithm;
-
     public PsychicSignaturePanel() {
-        super("psychic_signature_signing_dialog_title");
-
-        comboBoxAlgorithm.setModel(new DefaultComboBoxModel<>(ALGORITHMS));
-        comboBoxAlgorithm.setSelectedIndex(0);
-
-        add(panel, CENTER);
+        super("psychic_signature_signing_dialog_title", "psychic_signature_signing_algorithm", ALGORITHMS);
     }
 
     @Override
     public JWS performOperation(JWS originalJwt) throws Exception {
-        JWSAlgorithm selectedAlgorithm = (JWSAlgorithm) comboBoxAlgorithm.getSelectedItem();
-        return Attacks.signWithPsychicSignature(originalJwt, selectedAlgorithm);
+        return Attacks.signWithPsychicSignature(originalJwt, selectedInputValue());
     }
 }

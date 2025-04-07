@@ -19,18 +19,18 @@ limitations under the License.
 package com.blackberry.jwteditor.view.keys;
 
 import com.blackberry.jwteditor.model.keys.Key;
+import com.blackberry.jwteditor.view.keys.KeysTableColumnConfiguration.KeysTableColumns;
+import com.blackberry.jwteditor.view.utils.table.GenericTableModel;
 
-import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Model for the keys table
- */
-class KeysTableModel extends AbstractTableModel {
+class KeysTableModel extends GenericTableModel {
     private final List<Key> data;
 
     KeysTableModel(Iterable<Key> keys) {
+        super(new KeysTableColumnConfiguration());
+
         this.data = new ArrayList<>();
         keys.forEach(data::add);
     }
@@ -57,11 +57,6 @@ class KeysTableModel extends AbstractTableModel {
     }
 
     @Override
-    public int getColumnCount() {
-        return KeysTableColumns.values().length;
-    }
-
-    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (rowIndex < 0 || rowIndex >= data.size()) {
             return null;
@@ -80,15 +75,5 @@ class KeysTableModel extends AbstractTableModel {
             case ENCRYPTION -> key.canEncrypt();
             case DECRYPTION -> key.canDecrypt();
         };
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return KeysTableColumns.labelWithIndex(column);
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return KeysTableColumns.typeForIndex(columnIndex);
     }
 }

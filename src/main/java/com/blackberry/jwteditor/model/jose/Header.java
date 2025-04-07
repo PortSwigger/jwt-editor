@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import static com.blackberry.jwteditor.utils.JSONUtils.isJsonCompact;
 import static com.blackberry.jwteditor.utils.JSONUtils.prettyPrintJSON;
 import static com.nimbusds.jose.HeaderParameterNames.ALGORITHM;
+import static com.nimbusds.jose.HeaderParameterNames.KEY_ID;
 
 public class Header extends Base64Encoded {
 
@@ -31,23 +32,28 @@ public class Header extends Base64Encoded {
         super(header);
     }
 
-    public boolean isCompact()
-    {
+    public boolean isCompact() {
         return isJsonCompact(decoded());
     }
 
-    public String decodeAndPrettyPrint()
-    {
+    public String decodeAndPrettyPrint() {
         return prettyPrintJSON(decoded());
     }
 
-    public JSONObject json()
-    {
+    public JSONObject json() {
         return new JSONObject(decoded());
     }
 
     public String algorithm() {
+        return headerValue(ALGORITHM);
+    }
+
+    public String keyId() {
+        return headerValue(KEY_ID);
+    }
+
+    private String headerValue(String key) {
         JSONObject json = json();
-        return json.has(ALGORITHM) ? json.getString(ALGORITHM) : "";
+        return json.has(key) ? json.getString(key) : "";
     }
 }

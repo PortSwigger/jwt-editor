@@ -25,9 +25,9 @@ import com.blackberry.jwteditor.presenter.KeysPresenter;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.dialog.keys.KeysDialogFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
-import com.blackberry.jwteditor.view.utils.AlternateRowBackgroundDecoratingTableCellRenderer;
-import com.blackberry.jwteditor.view.utils.PercentageBasedColumnWidthTable;
-import com.blackberry.jwteditor.view.utils.RowHeightDecoratingTableCellRenderer;
+import com.blackberry.jwteditor.view.utils.table.AlternateRowBackgroundDecoratingTableCellRenderer;
+import com.blackberry.jwteditor.view.utils.table.PercentageBasedColumnWidthTable;
+import com.blackberry.jwteditor.view.utils.table.RowHeightDecoratingTableCellRenderer;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -36,7 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static com.blackberry.jwteditor.view.keys.KeysTableColumns.columnWidthPercentages;
+import static com.blackberry.jwteditor.view.keys.KeysTableColumnConfiguration.KeysTableColumns.columnWidthPercentages;
 
 /**
  * View class for the Keys tab

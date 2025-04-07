@@ -3,6 +3,7 @@ package burp;
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.intruder.Intruder;
+import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.persistence.Preferences;
 import burp.api.montoya.proxy.Proxy;
 import burp.api.montoya.ui.UserInterface;
@@ -10,6 +11,8 @@ import burp.api.montoya.utilities.ByteUtils;
 import burp.config.BurpConfig;
 import burp.config.BurpConfigPersistence;
 import burp.intruder.JWSPayloadProcessor;
+import burp.persistence.TokensIdGeneratorPersistence;
+import burp.persistence.TokensModelPersistence;
 import burp.proxy.ProxyConfig;
 import burp.proxy.ProxyHttpMessageHandler;
 import burp.proxy.ProxyWsMessageHandler;
@@ -17,6 +20,8 @@ import burp.scanner.JWSHeaderInsertionPointProvider;
 import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.model.persistence.BurpKeysModelPersistence;
 import com.blackberry.jwteditor.model.persistence.KeysModelPersistence;
+import com.blackberry.jwteditor.model.tokens.TokenIdGenerator;
+import com.blackberry.jwteditor.model.tokens.TokensModel;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.SuiteView;
 import com.blackberry.jwteditor.view.editor.HttpRequestEditorView;
@@ -46,8 +51,6 @@ public class JWTEditorExtension implements BurpExtension {
         BurpConfigPersistence burpConfigPersistence = new BurpConfigPersistence(preferences);
         BurpConfig burpConfig = burpConfigPersistence.loadOrCreateNew();
 
-        api.extension().registerUnloadingHandler(() -> burpConfigPersistence.save(burpConfig));
-
         UserInterface userInterface = api.userInterface();
         Window suiteWindow = userInterface.swingUtils().suiteFrame();
 
@@ -55,10 +58,19 @@ public class JWTEditorExtension implements BurpExtension {
 
         boolean isProVersion = api.burpSuite().version().edition() == PROFESSIONAL;
 
+        PersistedObject extensionData = isProVersion ? api.persistence().extensionData() : null;
+
+        TokensModelPersistence tokensModelPersistence = new TokensModelPersistence(isProVersion, extensionData);
+        TokensModel tokensModel = tokensModelPersistence.loadOrCreateNew();
+
+        TokensIdGeneratorPersistence tokensIdGeneratorPersistence = new TokensIdGeneratorPersistence(isProVersion, extensionData);
+        TokenIdGenerator tokenIdGenerator = tokensIdGeneratorPersistence.loadOrCreateNew();
+
         SuiteView suiteView = new SuiteView(
                 suiteWindow,
                 keysModelPersistence,
                 keysModel,
+                tokensModel,
                 rstaFactory,
                 burpConfig,
                 userInterface,
@@ -73,6 +85,8 @@ public class JWTEditorExtension implements BurpExtension {
         userInterface.registerHttpRequestEditorProvider(editorCreationContext ->
                 new HttpRequestEditorView(
                         keysModel,
+                        tokensModel,
+                        tokenIdGenerator,
                         rstaFactory,
                         api.collaborator().defaultPayloadGenerator(),
                         hexAreaCodeFactory,
@@ -86,6 +100,8 @@ public class JWTEditorExtension implements BurpExtension {
         userInterface.registerHttpResponseEditorProvider(editorCreationContext ->
                 new HttpResponseEditorView(
                         keysModel,
+                        tokensModel,
+                        tokenIdGenerator,
                         rstaFactory,
                         api.collaborator().defaultPayloadGenerator(),
                         hexAreaCodeFactory,
@@ -99,6 +115,8 @@ public class JWTEditorExtension implements BurpExtension {
         userInterface.registerWebSocketMessageEditorProvider(editorCreationContext ->
                 new WebSocketEditorView(
                         keysModel,
+                        tokensModel,
+                        tokenIdGenerator,
                         rstaFactory,
                         api.collaborator().defaultPayloadGenerator(),
                         hexAreaCodeFactory,
@@ -128,5 +146,11 @@ public class JWTEditorExtension implements BurpExtension {
         if (api.burpSuite().version().edition() != COMMUNITY_EDITION) {
             api.scanner().registerInsertionPointProvider(new JWSHeaderInsertionPointProvider(burpConfig.scannerConfig()));
         }
+
+        api.extension().registerUnloadingHandler(() -> {
+            burpConfigPersistence.save(burpConfig);
+            tokensModelPersistence.save(tokensModel);
+            tokensIdGeneratorPersistence.save(tokenIdGenerator);
+        });
     }
 }

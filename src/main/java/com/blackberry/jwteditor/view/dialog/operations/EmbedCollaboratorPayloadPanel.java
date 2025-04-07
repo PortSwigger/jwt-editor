@@ -22,37 +22,25 @@ import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.operations.Attacks;
 
-import javax.swing.*;
-
 import static com.nimbusds.jose.HeaderParameterNames.JWK_SET_URL;
 import static com.nimbusds.jose.HeaderParameterNames.X_509_CERT_URL;
-import static java.awt.BorderLayout.CENTER;
 
-public class EmbedCollaboratorPayloadPanel extends OperationPanel<JWS, JWS> {
+public class EmbedCollaboratorPayloadPanel extends SingleFixedInputJWSOperation<String> {
     private static final String[] HEADER_LOCATION_VALUES = {JWK_SET_URL, X_509_CERT_URL};
 
     private final CollaboratorPayloadGenerator collaboratorPayloadGenerator;
 
-    private JPanel panel;
-    private JComboBox<String> comboBoxAlgorithm;
-
     public EmbedCollaboratorPayloadPanel(CollaboratorPayloadGenerator collaboratorPayloadGenerator) {
-        super("embed_collaborator_payload_attack_dialog_title");
+        super("embed_collaborator_payload_attack_dialog_title", "embed_collaborator_payload_location", HEADER_LOCATION_VALUES);
+
         this.collaboratorPayloadGenerator = collaboratorPayloadGenerator;
-
-        comboBoxAlgorithm.setModel(new DefaultComboBoxModel<>(HEADER_LOCATION_VALUES));
-        comboBoxAlgorithm.setSelectedIndex(0);
-
-        add(panel, CENTER);
     }
 
     @Override
     public JWS performOperation(JWS originalJwt) {
-        String selectedLocation = (String) comboBoxAlgorithm.getSelectedItem();
-
         return Attacks.embedCollaboratorPayload(
                 originalJwt,
-                selectedLocation,
+                selectedInputValue(),
                 collaboratorPayloadGenerator.generatePayload().toString()
         );
     }

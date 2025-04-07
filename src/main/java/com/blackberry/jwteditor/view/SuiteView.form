@@ -22,6 +22,11 @@
               <tabbedpane title-resource-bundle="strings" title-key="keys"/>
             </constraints>
           </nested-form>
+          <nested-form id="c3e9f" form-file="com/blackberry/jwteditor/view/tokens/TokensView.form" binding="tokensView" custom-create="true">
+            <constraints>
+              <tabbedpane title="Tokens"/>
+            </constraints>
+          </nested-form>
           <nested-form id="50b89" form-file="com/blackberry/jwteditor/view/config/ConfigView.form" binding="configView" custom-create="true">
             <constraints>
               <tabbedpane title="Config"/>

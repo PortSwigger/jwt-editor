@@ -22,21 +22,21 @@ import burp.api.montoya.ui.UserInterface;
 import burp.config.BurpConfig;
 import com.blackberry.jwteditor.model.keys.KeysModel;
 import com.blackberry.jwteditor.model.persistence.KeysModelPersistence;
+import com.blackberry.jwteditor.model.tokens.TokensModel;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.config.ConfigView;
 import com.blackberry.jwteditor.view.keys.KeysView;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
+import com.blackberry.jwteditor.view.tokens.TokensView;
 
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * View class for the Burp extender ITab
- */
 public class SuiteView {
     private final Window parent;
     private final KeysModelPersistence keysModelPersistence;
     private final KeysModel keysModel;
+    private final TokensModel tokensModel;
     private final RstaFactory rstaFactory;
     private final BurpConfig burpConfig;
     private final UserInterface userInterface;
@@ -45,11 +45,13 @@ public class SuiteView {
     private JPanel panel;
     private KeysView keysView;
     private ConfigView configView;
+    private TokensView tokensView;
 
     public SuiteView(
             Window parent,
             KeysModelPersistence keysModelPersistence,
             KeysModel keysModel,
+            TokensModel tokensModel,
             RstaFactory rstaFactory,
             BurpConfig burpConfig,
             UserInterface userInterface,
@@ -57,6 +59,7 @@ public class SuiteView {
         this.parent = parent;
         this.keysModelPersistence = keysModelPersistence;
         this.keysModel = keysModel;
+        this.tokensModel = tokensModel;
         this.rstaFactory = rstaFactory;
         this.burpConfig = burpConfig;
         this.userInterface = userInterface;
@@ -79,9 +82,6 @@ public class SuiteView {
         return panel;
     }
 
-    /**
-     * Custom form initialisation
-     */
     private void createUIComponents() {
         keysView = new KeysView(
                 parent,
@@ -90,5 +90,6 @@ public class SuiteView {
                 rstaFactory
         );
         configView = new ConfigView(burpConfig, userInterface, isProVersion, keysModel);
+        tokensView = new TokensView(tokensModel, rstaFactory);
     }
 }

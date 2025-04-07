@@ -18,6 +18,7 @@ limitations under the License.
 
 package com.blackberry.jwteditor.model.jose;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,6 +31,11 @@ import static com.blackberry.jwteditor.model.jose.TimeClaimType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class JWSTimeClaimTest {
+
+    @BeforeAll
+    static void setTimeZone() {
+        System.setProperty("user.timezone", "UTC");
+    }
 
     @Test
     void givenJWSWithNoTimeClaims_thenTimeClaimsIsEmpty() throws ParseException {

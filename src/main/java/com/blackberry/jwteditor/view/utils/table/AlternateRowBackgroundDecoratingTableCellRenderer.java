@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.view.utils;
+package com.blackberry.jwteditor.view.utils.table;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

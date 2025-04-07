@@ -123,4 +123,20 @@ class JWSHeadersTest {
 
         assertThat(algorithm).isEqualTo(expectedAlgorithm);
     }
+
+    private static Stream<Arguments> keyIdData() {
+        return Stream.of(
+                arguments("eyJraWQiOiI4NTVmNmJlZi1jNWUwLTRjYWYtODU2OS03NjhmN2U5OTI1YzEifQ.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTczNTY0OTU1OCwic3ViIjoid2llbmVyIn0.qxz-0rVrVft-LIQO-QKgKL6tC1OdhHO7s8-SupOdp1XIP1T1yBE-G6G34e5h1fi10uY1u2W_yHLfmWVwhaPLe6ckPTiq5wivlUqhbVocSo6vKb6vFOeb3Q3fP6bI_gBDvhDYDwszfrMm69lwNBYYn2cAXlnm-YaJ-XHt-M_99loSxQFo-I3OWclzChuOoCPkEXQSbZ5CWuNmLYi37T7JEj5f8YHWI92rQOo0_Gby2KITToOHSs1WowXZy5UIM0ByNGNzC9w6MhdLD5GdAk2Mdt8dyryH9rg_RPAV6eJHhxkxiR8wRui7VbDEIx5GISubRzqgLqAuMJ1zvJ8PnH1qNQ", "855f6bef-c5e0-4caf-8569-768f7e9925c1"),
+                arguments("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", "")
+        );
+    }
+    @ParameterizedTest
+    @MethodSource("keyIdData")
+    void givenJWS_thenKeyIdCorrect(String data, String expectedKeyId) throws ParseException {
+        JWS jws = JWSFactory.parse(data);
+
+        String keyId = jws.header().keyId();
+
+        assertThat(keyId).isEqualTo(expectedKeyId);
+    }
 }

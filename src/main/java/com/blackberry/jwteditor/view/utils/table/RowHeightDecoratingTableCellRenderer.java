@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.view.utils;
+package com.blackberry.jwteditor.view.utils.table;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -30,7 +30,7 @@ public record RowHeightDecoratingTableCellRenderer(TableCellRenderer tableCellRe
         Component component = tableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         int componentHeight = component.getPreferredSize().height;
 
-        if (table.getRowHeight() != componentHeight + ADDITIONAL_HEIGHT_PIXELS) {
+        if (table.getRowHeight() < componentHeight + ADDITIONAL_HEIGHT_PIXELS) {
             table.setRowHeight(componentHeight + ADDITIONAL_HEIGHT_PIXELS);
         }
 

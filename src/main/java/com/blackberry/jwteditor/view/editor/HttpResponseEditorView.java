@@ -24,15 +24,20 @@ import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpResponseEditor;
 import com.blackberry.jwteditor.model.keys.KeysRepository;
+import com.blackberry.jwteditor.model.tokens.TokenIdGenerator;
+import com.blackberry.jwteditor.model.tokens.TokenRepository;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 
 import static burp.api.montoya.internal.ObjectFactoryLocator.FACTORY;
+import static com.blackberry.jwteditor.model.jose.JOSEObjectFinder.containsJOSEObjects;
 
 public class HttpResponseEditorView extends HttpEditorView implements ExtensionProvidedHttpResponseEditor {
 
     public HttpResponseEditorView(
             KeysRepository keysRepository,
+            TokenRepository tokenRepository,
+            TokenIdGenerator tokenIdGenerator,
             RstaFactory rstaFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
             HexCodeAreaFactory hexAreaCodeFactory,
@@ -42,6 +47,8 @@ public class HttpResponseEditorView extends HttpEditorView implements ExtensionP
             boolean isProVersion) {
         super(
                 keysRepository,
+                tokenRepository,
+                tokenIdGenerator,
                 rstaFactory,
                 hexAreaCodeFactory,
                 collaboratorPayloadGenerator,
@@ -53,7 +60,7 @@ public class HttpResponseEditorView extends HttpEditorView implements ExtensionP
     }
 
     @Override
-    public void setRequestResponse(HttpRequestResponse requestResponse) {
+    void setMessage(HttpRequestResponse requestResponse) {
         HttpResponse httpResponse = requestResponse.response();
         presenter.setMessage(httpResponse.toByteArray().toString());
     }
@@ -61,7 +68,7 @@ public class HttpResponseEditorView extends HttpEditorView implements ExtensionP
     @Override
     public boolean isEnabledFor(HttpRequestResponse requestResponse) {
         String content = requestResponse.response().toByteArray().toString();
-        return presenter.isEnabled(content);
+        return containsJOSEObjects(content);
     }
 
     @Override

@@ -3,6 +3,12 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     ignore:
       - dependency-name: "com.nimbusds:nimbus-jose-jwt"
+      - dependency-name: "net.portswigger.burp.extensions:montoya-api"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

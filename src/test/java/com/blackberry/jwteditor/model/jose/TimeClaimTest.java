@@ -18,6 +18,7 @@ limitations under the License.
 
 package com.blackberry.jwteditor.model.jose;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,6 +33,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class TimeClaimTest {
+
+    @BeforeAll
+    static void setTimeZone() {
+        System.setProperty("user.timezone", "UTC");
+    }
 
     @EnumSource(TimeClaimType.class)
     @ParameterizedTest
@@ -61,8 +67,8 @@ class TimeClaimTest {
 
     static Stream<Arguments> isoDateTimes() {
         return Stream.of(
-                arguments("1985-04-12T23:20:50.52Z", "Fri Apr 12 1985 23:20:50"),
-                arguments("1996-12-19T16:39:57-08:00", "Thu Dec 19 1996 16:39:57")
+                arguments("1985-04-12T23:20:50.52Z", "Fri Apr 12 1985 23:20:50 GMT"),
+                arguments("1996-12-19T16:39:57-08:00", "Fri Dec 20 1996 00:39:57 GMT")
         );
     }
 
@@ -82,8 +88,8 @@ class TimeClaimTest {
 
     static Stream<Arguments> epochDateTimes() {
         return Stream.of(
-                arguments(482196050L, "Fri Apr 12 1985 23:20:50"),
-                arguments(851042397L, "Fri Dec 20 1996 00:39:57")
+                arguments(482196050L, "Fri Apr 12 1985 23:20:50 GMT"),
+                arguments(851042397L, "Fri Dec 20 1996 00:39:57 GMT")
         );
     }
 

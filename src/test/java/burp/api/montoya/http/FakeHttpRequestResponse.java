@@ -59,6 +59,7 @@ public class FakeHttpRequestResponse implements HttpRequestResponse {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("removal")
     @Override
     public String url() {
         throw new UnsupportedOperationException();
@@ -74,11 +75,13 @@ public class FakeHttpRequestResponse implements HttpRequestResponse {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("removal")
     @Override
     public ContentType contentType() {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("removal")
     @Override
     public short statusCode() {
         throw new UnsupportedOperationException();

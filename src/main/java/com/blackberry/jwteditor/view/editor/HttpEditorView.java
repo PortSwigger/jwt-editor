@@ -19,16 +19,26 @@ limitations under the License.
 package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
+import burp.api.montoya.http.HttpService;
+import burp.api.montoya.http.message.HttpRequestResponse;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedEditor;
 import com.blackberry.jwteditor.model.keys.KeysRepository;
+import com.blackberry.jwteditor.model.tokens.TokenIdGenerator;
+import com.blackberry.jwteditor.model.tokens.TokenRepository;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 
 abstract class HttpEditorView extends EditorView implements ExtensionProvidedEditor {
+    volatile HttpService httpService;
+
+    private volatile String path;
 
     HttpEditorView(
             KeysRepository keysRepository,
+            TokenRepository tokenRepository,
+            TokenIdGenerator tokenIdGenerator,
             RstaFactory rstaFactory,
             HexCodeAreaFactory hexAreaCodeFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
@@ -38,6 +48,8 @@ abstract class HttpEditorView extends EditorView implements ExtensionProvidedEdi
             boolean isProVersion) {
         super(
                 keysRepository,
+                tokenRepository,
+                tokenIdGenerator,
                 rstaFactory,
                 hexAreaCodeFactory,
                 collaboratorPayloadGenerator,
@@ -46,5 +58,26 @@ abstract class HttpEditorView extends EditorView implements ExtensionProvidedEdi
                 editable,
                 isProVersion
         );
+    }
+
+    abstract void setMessage(HttpRequestResponse requestResponse);
+
+    @Override
+    public void setRequestResponse(HttpRequestResponse requestResponse) {
+        HttpRequest httpRequest = requestResponse.request();
+        httpService = httpRequest.httpService();
+        path = httpRequest.path();
+
+        setMessage(requestResponse);
+    }
+
+    @Override
+    public String getHost() {
+        return httpService.host();
+    }
+
+    @Override
+    public String getPath() {
+        return path;
     }
 }

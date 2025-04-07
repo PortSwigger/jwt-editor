@@ -17,7 +17,6 @@ limitations under the License.
 
 package com.blackberry.jwteditor.view.editor;
 
-import com.blackberry.jwteditor.presenter.EditorPresenter;
 import com.blackberry.jwteditor.utils.Utils;
 
 import static java.awt.event.KeyEvent.*;
@@ -52,17 +51,5 @@ public enum Attack {
 
     int mnemonic() {
         return mnemonic;
-    }
-
-    void performOperation(EditorPresenter presenter) {
-        switch (this) {
-            case EmbedJWK -> presenter.onAttackEmbedJWKClicked();
-            case SignNone -> presenter.onAttackSignNoneClicked();
-            case KeyConfusion -> presenter.onAttackKeyConfusionClicked();
-            case SignEmptyKey -> presenter.onAttackSignEmptyKeyClicked();
-            case SignPsychicSignature -> presenter.onAttackPsychicSignatureClicked();
-            case EmbedCollaboratorPayload -> presenter.onAttackEmbedCollaboratorPayloadClicked();
-            case WeakSymmetricKey -> presenter.onAttackWeakHMACSecret();
-        }
     }
 }

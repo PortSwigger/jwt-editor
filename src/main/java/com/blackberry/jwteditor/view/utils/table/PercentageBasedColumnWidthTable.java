@@ -16,7 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.blackberry.jwteditor.view.utils;
+package com.blackberry.jwteditor.view.utils.table;
+
+import com.blackberry.jwteditor.view.utils.RunEDTActionOnFirstRenderHierarchyListener;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;

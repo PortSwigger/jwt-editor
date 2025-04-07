@@ -19,22 +19,25 @@ limitations under the License.
 package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
-import burp.api.montoya.http.HttpService;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
 import com.blackberry.jwteditor.model.keys.KeysRepository;
+import com.blackberry.jwteditor.model.tokens.TokenIdGenerator;
+import com.blackberry.jwteditor.model.tokens.TokenRepository;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 
 import static burp.api.montoya.internal.ObjectFactoryLocator.FACTORY;
+import static com.blackberry.jwteditor.model.jose.JOSEObjectFinder.containsJOSEObjects;
 
 public class HttpRequestEditorView extends HttpEditorView implements ExtensionProvidedHttpRequestEditor {
-    private volatile HttpService httpService;
 
     public HttpRequestEditorView(
             KeysRepository keysRepository,
+            TokenRepository tokenRepository,
+            TokenIdGenerator tokenIdGenerator,
             RstaFactory rstaFactory,
             CollaboratorPayloadGenerator collaboratorPayloadGenerator,
             HexCodeAreaFactory hexAreaCodeFactory,
@@ -44,6 +47,8 @@ public class HttpRequestEditorView extends HttpEditorView implements ExtensionPr
             boolean isProVersion) {
         super(
                 keysRepository,
+                tokenRepository,
+                tokenIdGenerator,
                 rstaFactory,
                 hexAreaCodeFactory,
                 collaboratorPayloadGenerator,
@@ -55,16 +60,15 @@ public class HttpRequestEditorView extends HttpEditorView implements ExtensionPr
     }
 
     @Override
-    public void setRequestResponse(HttpRequestResponse requestResponse) {
+    void setMessage(HttpRequestResponse requestResponse) {
         HttpRequest httpRequest = requestResponse.request();
-        httpService = httpRequest.httpService();
         presenter.setMessage(httpRequest.toByteArray().toString());
     }
 
     @Override
     public boolean isEnabledFor(HttpRequestResponse requestResponse) {
         String content = requestResponse.request().toByteArray().toString();
-        return presenter.isEnabled(content);
+        return containsJOSEObjects(content);
     }
 
     @Override

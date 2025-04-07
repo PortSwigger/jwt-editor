@@ -20,16 +20,25 @@ package com.blackberry.jwteditor.view.editor;
 
 import burp.api.montoya.collaborator.CollaboratorPayloadGenerator;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.ui.contextmenu.WebSocketMessage;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedWebSocketMessageEditor;
 import com.blackberry.jwteditor.model.keys.KeysRepository;
+import com.blackberry.jwteditor.model.tokens.TokenIdGenerator;
+import com.blackberry.jwteditor.model.tokens.TokenRepository;
 import com.blackberry.jwteditor.view.hexcodearea.HexCodeAreaFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 
+import static com.blackberry.jwteditor.model.jose.JOSEObjectFinder.containsJOSEObjects;
+
 public class WebSocketEditorView extends EditorView implements ExtensionProvidedWebSocketMessageEditor {
+    private volatile String host;
+    private volatile String path;
 
     public WebSocketEditorView(KeysRepository keysRepository,
+                               TokenRepository tokenRepository,
+                               TokenIdGenerator tokenIdGenerator,
                                RstaFactory rstaFactory,
                                CollaboratorPayloadGenerator collaboratorPayloadGenerator,
                                HexCodeAreaFactory hexAreaCodeFactory,
@@ -39,6 +48,8 @@ public class WebSocketEditorView extends EditorView implements ExtensionProvided
                                boolean isProVersion) {
         super(
                 keysRepository,
+                tokenRepository,
+                tokenIdGenerator,
                 rstaFactory,
                 hexAreaCodeFactory,
                 collaboratorPayloadGenerator,
@@ -56,12 +67,26 @@ public class WebSocketEditorView extends EditorView implements ExtensionProvided
 
     @Override
     public void setMessage(WebSocketMessage message) {
+        HttpRequest upgradeRequest = message.upgradeRequest();
+        host = upgradeRequest.httpService().host();
+        path = upgradeRequest.path();
+
         presenter.setMessage(message.payload().toString());
     }
 
     @Override
     public boolean isEnabledFor(WebSocketMessage message) {
         String content = message.payload().toString();
-        return presenter.isEnabled(content);
+        return containsJOSEObjects(content);
+    }
+
+    @Override
+    public String getHost() {
+        return host;
+    }
+
+    @Override
+    public String getPath() {
+        return path;
     }
 }
