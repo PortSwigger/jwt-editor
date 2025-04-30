@@ -1,7 +1,41 @@
-<p>JWT Editor is a Burp Suite extension for editing, signing, verifying, encrypting and decrypting JSON Web Tokens (JWTs).</p>
+<p><i>JWT Editor</i> is a comprehensive tool for analyzing and manipulating JSON Web Tokens (JWTs) within Burp. It provides rich editing capabilities for both JSON Web Signatures (JWS) and JSON Web Encryptions (JWE), as well facilitating some of the common attacks on JWS implementations and their use within Burp.
+</p>
 
-<p>It provides automatic detection and in-line editing of JWTs within HTTP requests/responses and web socket messages, signing and encrypting of tokens and automation of several well-known attacks against JWT implementations.</p>
+<h2>Features</h2>
 
-<p>It was written originally by Fraser Winterborn, formerly of BlackBerry Security Research Group. The original source code can be found <a href="https://github.com/blackberry/jwt-editor">here</a>.</p>
+<ul>
+	<li>Top-level <i>JWT Editor</i> tab for managing cryptographic keys, persistent storage of tokens and extension configuration.</li>
+	<li>Custom <i>JSON Web Token</i> tab within HTTP and WebSocket message editors for viewing and modifying JWTs.</li>
+	<li>Automatic JWT detection and highlighting in HTTP and WebSocket Proxy History.</li>
+	<li>Support for signing, verifying, encrypting and decrypting JWTs using stored keys.</li>
+	<li>Support for a range of common attacks on JWS.</li>
+	<li>Intruder payload provider for fuzzing within JWS.</li>
+	<li>Scanner insertion point provider to allow Burp's Scanner to insert payloads within JWS headers.</li>
+</ul>
 
-<p>For further information, check out the repository <a href="https://github.com/PortSwigger/jwt-editor">here</a>.</p>
+<h2>Usage</h2>
+
+<p>The <i>JWT Editor</i> tab allows you to manage keys, store interesting tokens and configure the extension. Configured keys are then available for use throughout the extension.</p>
+
+<p>In the message editor, the <i>JSON Web Token</i> tab is enabled when a JWT is detected within the corresponding message. The editor switches between JWS and JWE modes depending on the token type and editing views for each token component.</p>
+
+<p><strong>Sign:</strong> Resigns the JWS and optionally updates the JWS header.</p>
+
+<p><strong>Verify:</strong> Attempts to verify the JWS signature using available verification keys.</p>
+
+<p><strong>Encrypt:</strong> Encrypts a JWS into a JWE. The editor then switches to JWE mode.</p>
+
+<p><strong>Decrypt:</strong> Decrypts a JWE back into a JWS. The editor then switches to JWS mode.</p>
+
+<p>The Attack feature facilitates several known attacks on JWS, including:</p>
+
+<ul>
+	<li>'none' Signing Algorithm</li>
+	<li>HMAC Key Confusion</li>
+	<li>Embedded JWK</li>
+	<li>Signing with an empty HMAC key</li>
+	<li>Psychic signature attack (CVE-2022-21449)</li>
+	<li>Collaborator payload injection via x5u or jku headers (Burp Suite Professional only)</li>
+	<li>Brute-forcing weak HMAC secrets</li>
+	<li>Embedding of Collaborator payloads within jku or x5u to check for servers potentially loading remote JWKS</li>
+</ul>
