@@ -1,0 +1,31 @@
+[versions]
+bouncycastle = "1.83"
+deltahex = "0.1.2"
+intellij = "261.22158.340"
+json = "20251224"
+montoya = "2026.2"
+nimbus = "9.21"
+rsyntax = "3.6.2"
+junit = "6.0.3"
+assertj = "3.27.7"
+mockito = "5.23.0"
+
+[libraries]
+intellij-java-compiler-ant = { module = "com.jetbrains.intellij.java:java-compiler-ant-tasks", version.ref = "intellij" }
+intellij-gui-forms = { module = "com.jetbrains.intellij.java:java-gui-forms-rt", version.ref = "intellij" }
+
+montoya-api = { module = "net.portswigger.burp.extensions:montoya-api", version.ref = "montoya" }
+
+bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+bcpkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+
+nimbus-jose-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
+deltahex = { module = "org.exbin.deltahex:deltahex-swing", version.ref = "deltahex" }
+rsyntaxtextarea = { module = "com.fifesoft:rsyntaxtextarea", version.ref = "rsyntax" }
+json = { module = "org.json:json", version.ref = "json" }
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }

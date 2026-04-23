@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.blackberry"
-version = "2.6"
+version = "2.6.1"
 description = "jwt-editor"
 
 repositories {
@@ -28,26 +28,26 @@ configurations {
 }
 
 dependencies {
-    "guiGenerationTask"("com.jetbrains.intellij.java:java-compiler-ant-tasks:243.26053.57")
+    add("guiGenerationTask", libs.intellij.java.compiler.ant)
 
-    compileOnly("org.bouncycastle:bcprov-jdk18on:1.80")
-    compileOnly("org.bouncycastle:bcpkix-jdk18on:1.80")
-    compileOnly("net.portswigger.burp.extensions:montoya-api:2024.7")
+    compileOnly(libs.montoya.api)
 
-    implementation("com.jetbrains.intellij.java:java-gui-forms-rt:251.21223")
-    implementation("com.nimbusds:nimbus-jose-jwt:9.21")
-    implementation("org.exbin.deltahex:deltahex-swing:0.1.2")
-    implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
-    implementation("org.json:json:20250107")
+    implementation(libs.bcprov)
+    implementation(libs.bcpkix)
+    implementation(libs.intellij.gui.forms)
+    implementation(libs.nimbus.jose.jwt)
+    implementation(libs.deltahex)
+    implementation(libs.rsyntaxtextarea)
+    implementation(libs.json)
 
-    testImplementation("org.bouncycastle:bcprov-jdk18on:1.80")
-    testImplementation("org.bouncycastle:bcpkix-jdk18on:1.80")
-    testImplementation("net.portswigger.burp.extensions:montoya-api:2024.7")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.12.1")
-    testImplementation("org.assertj:assertj-core:3.27.3")
-    testImplementation("org.mockito:mockito-core:5.17.0")
+    testImplementation(libs.bcprov)
+    testImplementation(libs.bcpkix)
+    testImplementation(libs.montoya.api)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.mockito.core)
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.withType<Checkstyle> {
@@ -105,6 +105,8 @@ tasks.named<Jar>("jar") {
                         "org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler\$BinaryDataClipboardData.class",
                         "org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler\$ClipboardData.class",
                         "org/exbin/deltahex/swing/DefaultCodeAreaCommandHandler\$CodeDataClipboardData.class",
+                        "META-INF/BC2048KE.DSA",
+                        "META-INF/BC2048KE.SF",
                         "META-INF/LICENSE"
                     )
                 }

@@ -46,7 +46,7 @@ public class KeyConfusionAttackPanel extends OperationPanel<JWS, JWS> {
     private JCheckBox checkBoxTrailingNewline;
 
     public KeyConfusionAttackPanel(List<Key> signingKeys, LastSigningKeys lastSigningKeys) {
-        super("key_confusion_attack_dialog_title", new Dimension(575, 275));
+        super("key_confusion_attack_dialog_title", new Dimension(650, 350));
 
         this.lastSigningKeys = lastSigningKeys;
 

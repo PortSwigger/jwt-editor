@@ -16,11 +16,10 @@ Additionally it facilitates several well-known attacks against JWT implementatio
 
 
 ## Recent Changes
-The last release was tagged [2.6](https://github.com/DolphFlynn/jwt-editor/releases/tag/2.6) on 2025-04-05 and included
+The last release was tagged [2.6.1](https://github.com/DolphFlynn/jwt-editor/releases/tag/2.6.1) on 2026-04-19 and included
 the following changes:
-- Add Tokens view and ability to store interesting JWS within project file.
-- Display JWS TimeClaims in default time zone (Thanks again to [@Nirusu](https://github.com/Nirusu)).
-- Remember last used signing key within Attack dialogs.
+- Fix classloader issue with the BouncyCastle (Thanks to [@b0x-Protector](https://github.com/b0x-Protector) for reporting this).
+- Small UI improvements.
 
 The complete changelog, which also includes prior versions, can be found [here](https://github.com/DolphFlynn/jwt-editor/blob/main/CHANGELOG.md).
 
@@ -123,7 +122,7 @@ This option is automatically enabled if it is detected that the original JWT did
 *JWT Editor* can be built from source.
 * Ensure that Java JDK 21 or newer is installed
 * From root of project, run the command `./gradlew jar`
-* This should place the JAR file `jwt-editor-2.6.jar` within the `build/libs` directory
+* This should place the JAR file `jwt-editor-2.6.1.jar` within the `build/libs` directory
 * This can be loaded into Burp Suite by navigating to the `Extensions` tab, `Installed` sub-tab, clicking `Add` and loading the JAR file
 * This BApp is using the newer Montoya API so it's best to use the latest version of Burp Suite (try the earlier adopter channel if there are issues with the latest stable release)
 
@@ -182,5 +181,5 @@ If you have found a bug or think that a particular feature is missing, please ra
 
 ## Useful Links
 * PortSwigger's JWT [Learning Material](https://portswigger.net/web-security/jwt) and associated [labs](https://portswigger.net/web-security/all-labs#jwt).
-* BlackBerry's [blog post](https://blogs.blackberry.com/en/2022/09/secure-json-web-tokens-free-tool-from-blackberry-product-security) for the original release.
+* BlackBerry's [blog post](https://web.archive.org/web/20250118113009/https://blogs.blackberry.com/en/2022/09/secure-json-web-tokens-free-tool-from-blackberry-product-security) for the original release.
 * [JWT4B](https://github.com/ozzi-/JWT4B) is an another Burp Suite extension providing JWT support.

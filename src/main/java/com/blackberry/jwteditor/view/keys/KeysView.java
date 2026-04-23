@@ -25,7 +25,6 @@ import com.blackberry.jwteditor.presenter.KeysPresenter;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.dialog.keys.KeysDialogFactory;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
-import com.blackberry.jwteditor.view.utils.table.AlternateRowBackgroundDecoratingTableCellRenderer;
 import com.blackberry.jwteditor.view.utils.table.PercentageBasedColumnWidthTable;
 import com.blackberry.jwteditor.view.utils.table.RowHeightDecoratingTableCellRenderer;
 
@@ -183,10 +182,6 @@ public class KeysView {
                 }
             }
         });
-
-        // Decorate existing BooleanRenderer to perform alternateRow highlighting
-        TableCellRenderer booleanCellRender = tableKeys.getDefaultRenderer(Boolean.class);
-        tableKeys.setDefaultRenderer(Boolean.class, new AlternateRowBackgroundDecoratingTableCellRenderer(booleanCellRender));
 
         // Decorate existing renderer to add additional row height
         TableCellRenderer stringCellRender = tableKeys.getDefaultRenderer(String.class);

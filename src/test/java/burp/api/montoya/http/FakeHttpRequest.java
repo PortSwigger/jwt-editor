@@ -130,6 +130,16 @@ public class FakeHttpRequest implements HttpRequest {
     }
 
     @Override
+    public ParsedHttpParameter parameter(String s) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String parameterValue(String s) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean hasParameter(String name, HttpParameterType type) {
         throw new UnsupportedOperationException();
     }

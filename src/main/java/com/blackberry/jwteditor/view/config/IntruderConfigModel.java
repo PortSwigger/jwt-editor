@@ -105,8 +105,9 @@ class IntruderConfigModel {
 
     JWSAlgorithm signingAlgorithm() {
         JWSAlgorithm signingAlgorithm = intruderConfig.signingAlgorithm();
+        JWSAlgorithm[] signingAlgorithms = signingAlgorithms();
 
-        return signingAlgorithm == null && hasSigningKeys() ? signingAlgorithms()[0] : signingAlgorithm;
+        return signingAlgorithm == null && hasSigningKeys() && signingAlgorithms.length > 0 ? signingAlgorithms[0] : signingAlgorithm;
     }
 
     void setSigningAlgorithm(JWSAlgorithm signingAlgorithm) {

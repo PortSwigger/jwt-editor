@@ -23,7 +23,7 @@ import java.awt.*;
 abstract class OperationPanel<T, U> extends JPanel implements Operation<T, U> {
     protected static final String VALIDITY_EVENT = "validityEvent";
 
-    private static final Dimension DEFAULT_DIMENSION = new Dimension(324, 184);
+    private static final Dimension DEFAULT_DIMENSION = new Dimension(524, 184);
 
     private final Dimension dimension;
     private final String titleResourceId;

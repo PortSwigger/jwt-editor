@@ -52,8 +52,8 @@ public class SigningPanel extends OperationPanel<JWS, JWS> {
 
         Dimension dimension() {
             return switch (this) {
-                case NORMAL -> new Dimension(500, 375);
-                case EMBED_JWK -> new Dimension(500, 250);
+                case NORMAL -> new Dimension(600, 375);
+                case EMBED_JWK -> new Dimension(600, 250);
             };
         }
     }

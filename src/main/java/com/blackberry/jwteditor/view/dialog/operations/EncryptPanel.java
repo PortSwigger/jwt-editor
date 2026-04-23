@@ -39,7 +39,7 @@ public class EncryptPanel extends OperationPanel<JWE, JWS> {
     private JComboBox<Key> comboBoxEncryptionKey;
 
     public EncryptPanel(List<Key> encryptionKeys) {
-        super("encrypt_dialog_title", new Dimension(600, 325));
+        super("encrypt_dialog_title", new Dimension(650, 325));
 
         // Convert encryptionKeys List to Array
         Key[] encryptionKeysArray = new Key[encryptionKeys.size()];

@@ -1,4 +1,8 @@
 # Changelog
+## [2.6.1](https://github.com/DolphFlynn/jwt-editor/releases/tag/2.6.1) 2026-04-19
+- Fix classloader issue with the BouncyCastle (Thanks to [@b0x-Protector](https://github.com/b0x-Protector) for reporting this).
+- Small UI improvements.
+
 ## [2.6](https://github.com/DolphFlynn/jwt-editor/releases/tag/2.6) 2025-04-05
 - Add Tokens view and ability to store interesting JWS within project file.
 - Display JWS TimeClaims in default time zone (Thanks again to [@Nirusu](https://github.com/Nirusu)).
