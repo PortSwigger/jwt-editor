@@ -18,7 +18,6 @@ limitations under the License.
 
 package com.blackberry.jwteditor.operations;
 
-import com.blackberry.jwteditor.exceptions.PemException;
 import com.blackberry.jwteditor.exceptions.SigningException;
 import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
 import com.blackberry.jwteditor.model.jose.JWS;
@@ -26,7 +25,6 @@ import com.blackberry.jwteditor.model.jose.JWSFactory;
 import com.blackberry.jwteditor.model.keys.JWKKey;
 import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.blackberry.jwteditor.model.keys.Key;
-import com.blackberry.jwteditor.utils.PEMUtils;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.jwk.JWK;
@@ -38,7 +36,6 @@ import java.lang.reflect.Field;
 import java.util.Set;
 
 import static com.blackberry.jwteditor.model.jose.JWSFactory.jwsFromParts;
-import static com.blackberry.jwteditor.utils.ByteArrayUtils.trimTrailingBytes;
 import static com.nimbusds.jose.HeaderParameterNames.*;
 import static com.nimbusds.jose.JOSEObjectType.JWT;
 import static com.nimbusds.jose.JWSAlgorithm.*;
@@ -54,42 +51,6 @@ public class Attacks {
     private static final byte ASN1_INTEGER_TYPE = 0x2;
     private static final String X5U_TEMPLATE = "https://%s/cert.pem";
     private static final String JWK_TEMPLATE = "https://%s/jwks.json";
-
-    /**
-     * Perform a HMAC key confusion attack
-     * Method based on <a href="https://www.nccgroup.com/ae/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/">this post</a>.
-     *
-     * @param jws the JWS to sign
-     * @param key the public key to use for the attack
-     * @param algorithm the HMAC algorithm to sign with
-     * @param stripTrailingNewlines remove trailing '/n' characters from the public key
-     * @return a JWS signed using HMAC with the RSA public key
-     * @throws PemException if the RSA public key is not a valid PEM
-     * @throws UnsupportedKeyException if HMAC key creation fails
-     * @throws SigningException if signing fails
-     */
-    public static JWS hmacKeyConfusion(JWS jws, JWKKey key, JWSAlgorithm algorithm, boolean stripTrailingNewlines) throws PemException, UnsupportedKeyException, SigningException {
-
-        // Convert the key to its public key in PEM format
-        byte[] pemBytes = PEMUtils.jwkToPem(key.getJWK().toPublicJWK()).getBytes();
-
-        // Remove any trailing /n (0xOA) characters from the PEM
-        if (stripTrailingNewlines) {
-            pemBytes = trimTrailingBytes(pemBytes, (byte) 0x0A);
-        }
-
-        // Build a new header for the chosen HMAC algorithm
-        JWSHeader signingInfo = new JWSHeader.Builder(algorithm).type(JWT).build();
-
-        // Construct a HMAC signing key from the PEM bytes
-        JWKKey signingKey = JWKKeyFactory.from(new OctetSequenceKey.Builder((pemBytes)).build());
-
-        // Sign and return the new JWS
-        Base64URL header = signingInfo.toBase64URL();
-        Base64URL payload = jws.claims().encoded();
-
-        return JWSFactory.sign(signingKey, header, payload, signingInfo);
-    }
 
     /**
      * Remove the signature from a JWS

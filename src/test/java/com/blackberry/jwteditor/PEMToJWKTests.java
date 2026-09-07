@@ -19,7 +19,7 @@ limitations under the License.
 package com.blackberry.jwteditor;
 
 import com.blackberry.jwteditor.exceptions.PemException;
-import com.blackberry.jwteditor.pem.JWKToPemConverterFactory;
+import com.blackberry.jwteditor.pem.PemKeyFactory;
 import com.blackberry.jwteditor.utils.PEMUtils;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
@@ -160,18 +160,7 @@ class PEMToJWKTests {
 
         assertThat(jwk).isInstanceOf(OctetKeyPair.class);
         OctetKeyPair octetKeyPair = (OctetKeyPair) jwk;
-        String newPem = octetKeyPairToPem(octetKeyPair);
+        String newPem = PemKeyFactory.jwkToPemKey(octetKeyPair).toString();
         assertThat(pem).isEqualTo(newPem);
-    }
-
-    /**
-     * Convert an OKP to PEM
-     *
-     * @param octetKeyPair the OKP
-     * @return a PEM string
-     * @throws PemException if PEM conversion fails
-     */
-    private static String octetKeyPairToPem(OctetKeyPair octetKeyPair) throws PemException {
-        return JWKToPemConverterFactory.converterFor(octetKeyPair).convertToPem();
     }
 }

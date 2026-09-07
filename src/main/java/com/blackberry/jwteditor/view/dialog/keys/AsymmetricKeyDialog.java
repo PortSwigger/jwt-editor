@@ -23,8 +23,8 @@ import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
 import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.model.keys.KeysModel;
+import com.blackberry.jwteditor.pem.PemKeyFactory;
 import com.blackberry.jwteditor.utils.JSONUtils;
-import com.blackberry.jwteditor.utils.PEMUtils;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.rsta.RstaFactory;
 import com.blackberry.jwteditor.view.utils.DebouncingDocumentAdapter;
@@ -234,7 +234,7 @@ public class AsymmetricKeyDialog extends KeyDialog {
                     // Store a temporary copy of the JWK as setting the first field will overwrite the stored JWK
                     JWK tempJWK = jwk;
                     textFieldKeyId.setText(tempJWK.getKeyID());
-                    textAreaKey.setText(PEMUtils.jwkToPem(tempJWK));
+                    textAreaKey.setText(PemKeyFactory.jwkToPemKey(tempJWK).toString());
                 } catch (PemException e) {
                     textFieldKeyId.setText("");
                     textAreaKey.setText("");
@@ -273,7 +273,7 @@ public class AsymmetricKeyDialog extends KeyDialog {
                     // Set the key text fields based on whether JWK/PEM is selected in the radio button
                     String keyData = radioButtonJWK.isSelected()
                             ? JSONUtils.prettyPrintJSON(jwk.toJSONString())
-                            : PEMUtils.jwkToPem(jwk);
+                            : PemKeyFactory.jwkToPemKey(jwk).toString();
 
                     invokeLater(() -> {
                         textFieldKeyId.setText(jwk.getKeyID());

@@ -1,4 +1,8 @@
 # Changelog
+
+## [2.6.2](https://github.com/DolphFlynn/jwt-editor/releases/tag/2.6.2) 2026-09-04
+- Handle Windows line separators within key confusion attack (Thanks to [RivenX173](https://github.com/RivenX173) for collaborating on this).
+
 ## [2.6.1](https://github.com/DolphFlynn/jwt-editor/releases/tag/2.6.1) 2026-04-19
 - Fix classloader issue with the BouncyCastle (Thanks to [@b0x-Protector](https://github.com/b0x-Protector) for reporting this).
 - Small UI improvements.

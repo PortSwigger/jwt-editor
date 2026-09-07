@@ -53,7 +53,7 @@ public class Utils {
      * @param string string to check
      * @return true if the string contains a valid sequence of hex characters
      */
-    public static boolean isHex(String string){
+    public static boolean isHex(String string) {
         return HEX_PATTERN.matcher(string).matches();
     }
 
@@ -63,7 +63,7 @@ public class Utils {
      * @param string string to check
      * @return true if the string contains a valid sequence of characters that may be base64url encoded
      */
-    public static boolean isBase64URL(String string){
+    public static boolean isBase64URL(String string) {
         return BASE64_PATTERN.matcher(string).matches();
     }
 
@@ -73,7 +73,7 @@ public class Utils {
      * @param id resource bundle id
      * @return corresponding string
      */
-    public static String getResourceString(String id){
+    public static String getResourceString(String id) {
         return ResourceBundle.getBundle(RESOURCE_BUNDLE).getString(id);
     }
 
@@ -83,7 +83,7 @@ public class Utils {
      * @param codeArea CodeArea to extract bytes from
      * @return byte[] contents of the CodeArea
      */
-    public static byte[] getCodeAreaData(CodeArea codeArea){
+    public static byte[] getCodeAreaData(CodeArea codeArea) {
         BinaryData binaryData = codeArea.getData();
         int size = (int) binaryData.getDataSize();
         byte[] data = new byte[size];

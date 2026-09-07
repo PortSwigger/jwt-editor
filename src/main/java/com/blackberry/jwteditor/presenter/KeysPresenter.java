@@ -22,7 +22,7 @@ import com.blackberry.jwteditor.exceptions.PemException;
 import com.blackberry.jwteditor.model.jose.JWKSet;
 import com.blackberry.jwteditor.model.keys.*;
 import com.blackberry.jwteditor.model.persistence.KeysModelPersistence;
-import com.blackberry.jwteditor.utils.PEMUtils;
+import com.blackberry.jwteditor.pem.PemKeyFactory;
 import com.blackberry.jwteditor.utils.Utils;
 import com.blackberry.jwteditor.view.dialog.jwks.JWKSImportDialog;
 import com.blackberry.jwteditor.view.dialog.keys.KeyDialog;
@@ -256,7 +256,7 @@ public class KeysPresenter {
         JWKKey jwkKey = (JWKKey) model.getKey(row);
         JWK jwk = jwkKey.getJWK();
         try {
-            Utils.copyToClipboard(PEMUtils.jwkToPem(jwk));
+            Utils.copyToClipboard(PemKeyFactory.jwkToPemKey(jwk).toString());
         } catch (PemException e) {
             throw new IllegalStateException("Shouldn't happen - call canCopyPEM first");
         }
@@ -282,7 +282,7 @@ public class KeysPresenter {
         JWKKey jwkKey = (JWKKey) model.getKey(row);
         JWK jwk = jwkKey.getJWK().toPublicJWK();
         try {
-            Utils.copyToClipboard(PEMUtils.jwkToPem(jwk));
+            Utils.copyToClipboard(PemKeyFactory.jwkToPemKey(jwk).toString());
         } catch (PemException e) {
             throw new IllegalStateException("Shouldn't happen - call canCopyPEM first");
         }

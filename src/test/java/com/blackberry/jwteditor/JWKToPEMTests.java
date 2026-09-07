@@ -23,11 +23,8 @@ import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
 import com.blackberry.jwteditor.model.keys.JWKKeyFactory;
 import com.blackberry.jwteditor.model.keys.Key;
 import com.blackberry.jwteditor.model.keys.PasswordKey;
-import com.blackberry.jwteditor.utils.PEMUtils;
-import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.OctetKeyPair;
-import com.nimbusds.jose.jwk.OctetSequenceKey;
-import com.nimbusds.jose.jwk.RSAKey;
+import com.blackberry.jwteditor.pem.PemKeyFactory;
+import com.nimbusds.jose.jwk.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -52,7 +49,7 @@ class JWKToPEMTests {
         ECKey ecKey = ECKey.parse(jwkString);
         assertThat(ecKey.isPrivate()).isTrue();
 
-        String pem = PEMUtils.jwkToPem(ecKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) ecKey).toString();
         assertThat(pem).isNotEmpty();
     }
 
@@ -66,7 +63,7 @@ class JWKToPEMTests {
         ECKey ecKey = ECKey.parse(jwkString);
         assertThat(ecKey.isPrivate()).isFalse();
 
-        String pem = PEMUtils.jwkToPem(ecKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) ecKey).toString();
         assertThat(pem).isNotEmpty();
     }
 
@@ -90,7 +87,7 @@ class JWKToPEMTests {
         RSAKey rsaKey = RSAKey.parse(jwkString);
         assertThat(rsaKey.isPrivate()).isTrue();
 
-        String pem = PEMUtils.jwkToPem(rsaKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) rsaKey).toString();
         assertThat(pem).isNotEmpty();
     }
 
@@ -104,7 +101,7 @@ class JWKToPEMTests {
         RSAKey rsaKey = RSAKey.parse(jwkString);
         assertThat(rsaKey.isPrivate()).isFalse();
 
-        String pem = PEMUtils.jwkToPem(rsaKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) rsaKey).toString();
         assertThat(pem).isNotEmpty();
     }
 
@@ -128,7 +125,7 @@ class JWKToPEMTests {
         OctetKeyPair octetKeyPair = OctetKeyPair.parse(jwkString);
         assertThat(octetKeyPair.isPrivate()).isTrue();
 
-        String pem = PEMUtils.jwkToPem(octetKeyPair);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) octetKeyPair).toString();
         assertThat(pem).isNotEmpty();
     }
 
@@ -142,7 +139,7 @@ class JWKToPEMTests {
         OctetKeyPair octetKeyPair = OctetKeyPair.parse(jwkString);
         assertThat(octetKeyPair.isPrivate()).isFalse();
 
-        String pem = PEMUtils.jwkToPem(octetKeyPair);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) octetKeyPair).toString();
         assertThat(pem).isNotEmpty();
     }
 

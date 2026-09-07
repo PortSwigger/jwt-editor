@@ -19,7 +19,6 @@ limitations under the License.
 package com.blackberry.jwteditor.utils;
 
 import com.blackberry.jwteditor.exceptions.PemException;
-import com.blackberry.jwteditor.pem.JWKToPemConverterFactory;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
@@ -35,9 +34,11 @@ import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.util.io.pem.PemWriter;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -53,16 +54,6 @@ import java.util.Map;
  * Class containing utilities to convert between PEM and nimbus-jose JWK formats
  */
 public class PEMUtils {
-    /**
-     * Convert a JWK object to its PEM representation
-     * @param jwk JWK to convert
-     * @return a PEM string
-     * @throws PemException if PEM conversion fails
-     */
-    public static String jwkToPem(JWK jwk) throws PemException {
-        return JWKToPemConverterFactory.converterFor(jwk).convertToPem();
-    }
-
     /**
      * Update the 'kid' header in a JWK
      * @param jwk the JWK to update
@@ -256,20 +247,5 @@ public class PEMUtils {
         } catch (ClassCastException e){
             throw new PemException("Invalid ASN1");
         }
-    }
-
-    /**
-     * Convert a BouncyCastle PemObject to its String representation
-     * @param pemObject the PemObject
-     * @return a PEM string
-     * @throws IOException if conversion fails
-     */
-    public static String pemObjectToString(PemObject pemObject) throws IOException {
-        StringWriter stringWriter = new StringWriter();
-        PemWriter pemWriter = new PemWriter(stringWriter);
-        pemWriter.writeObject(pemObject);
-        pemWriter.close();
-        stringWriter.close();
-        return stringWriter.toString();
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 package com.blackberry.jwteditor;
 
 import com.blackberry.jwteditor.exceptions.PemException;
+import com.blackberry.jwteditor.pem.PemKeyFactory;
 import com.blackberry.jwteditor.utils.PEMUtils;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
@@ -42,7 +43,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.PEMToJWKTests#rsaPrivateValidPEMs")
     void privateRsaPEMtoJWK(String pem) throws PemException {
         JWK rsaKey = PEMUtils.pemToRSAKey(pem);
-        String newPem = PEMUtils.jwkToPem(rsaKey);
+        String newPem = PemKeyFactory.jwkToPemKey(rsaKey).toString();
         assertThat(pem).isEqualTo(newPem);
     }
 
@@ -50,7 +51,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.PEMToJWKTests#rsaPublicValidPEMs")
     void publicRsaPEMtoJWK(String pem) throws PemException {
         JWK rsaKey = PEMUtils.pemToRSAKey(pem);
-        String newPem = PEMUtils.jwkToPem(rsaKey);
+        String newPem = PemKeyFactory.jwkToPemKey(rsaKey).toString();
         assertThat(pem).isEqualTo(newPem);
     }
 
@@ -58,7 +59,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.JWKToPEMTests#rsaPrivateValidJWKs")
     void privateRsaJWKtoPEM(String jwkString) throws PemException, ParseException {
         RSAKey rsaKey = RSAKey.parse(jwkString);
-        String pem = PEMUtils.jwkToPem(rsaKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) rsaKey).toString();
 
         JWK jwk = PEMUtils.pemToRSAKey(pem);
         assertEqualsIgnoringWhitespaceAndKid(jwk.toJSONString(), jwkString);
@@ -68,7 +69,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.JWKToPEMTests#rsaPublicValidJWKs")
     void publicRsaJWKtoPEM(String jwkString) throws PemException, ParseException {
         RSAKey rsaKey = RSAKey.parse(jwkString);
-        String pem = PEMUtils.jwkToPem(rsaKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) rsaKey).toString();
 
         JWK jwk = PEMUtils.pemToRSAKey(pem);
         assertEqualsIgnoringWhitespaceAndKid(jwk.toJSONString(), jwkString);
@@ -80,7 +81,7 @@ class KeyToPemRoundTripTests {
         JWK ecKey = PEMUtils.pemToECKey(pem);
 
         // Keys have been converted to PKCS#8 so PEM serialization is different
-        String newPem = PEMUtils.jwkToPem(ecKey);
+        String newPem = PemKeyFactory.jwkToPemKey(ecKey).toString();
         JWK ecKey2 = PEMUtils.pemToECKey(newPem);
 
         assertThat(ecKey2).isEqualTo(ecKey);
@@ -90,7 +91,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.PEMToJWKTests#ecPublicValidPEMs")
     void publicEcKeyPEMtoJWK(String pem) throws PemException {
         JWK ecKey = PEMUtils.pemToECKey(pem);
-        String newPem = PEMUtils.jwkToPem(ecKey);
+        String newPem = PemKeyFactory.jwkToPemKey(ecKey).toString();
         assertThat(newPem).isEqualTo(pem);
     }
 
@@ -98,7 +99,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.JWKToPEMTests#ecPrivateValidJWKs")
     void privateEcJWKtoPEM(String jwkString) throws PemException, ParseException {
         ECKey ecKey = ECKey.parse(jwkString);
-        String pem = PEMUtils.jwkToPem(ecKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) ecKey).toString();
         JWK newKey = PEMUtils.pemToECKey(pem);
         assertEqualsIgnoringWhitespaceAndKid(newKey.toJSONString(), jwkString);
     }
@@ -107,7 +108,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.JWKToPEMTests#ecPublicValidJWKs")
     void publicEcJWKtoPEM(String jwkString) throws PemException, ParseException {
         ECKey ecKey = ECKey.parse(jwkString);
-        String pem = PEMUtils.jwkToPem(ecKey);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) ecKey).toString();
         JWK newKey = PEMUtils.pemToECKey(pem);
         assertEqualsIgnoringWhitespaceAndKid(newKey.toJSONString(), jwkString);
     }
@@ -116,7 +117,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.PEMToJWKTests#ocpPrivateValidPEMs")
     void privateOctetKeyPairPEMtoJWK(String pem) throws PemException {
         JWK octetKeyPair = PEMUtils.pemToOctetKeyPair(pem);
-        String newPem = PEMUtils.jwkToPem(octetKeyPair);
+        String newPem = PemKeyFactory.jwkToPemKey(octetKeyPair).toString();
         assertEqualsIgnoringPemHeaderAndFooter(newPem, pem);
     }
 
@@ -125,7 +126,7 @@ class KeyToPemRoundTripTests {
     void publicOctetKeyPairPEMtoJWK(String pem) throws PemException {
 
         JWK octetKeyPair = PEMUtils.pemToOctetKeyPair(pem);
-        String newPem = PEMUtils.jwkToPem(octetKeyPair);
+        String newPem = PemKeyFactory.jwkToPemKey(octetKeyPair).toString();
         assertEqualsIgnoringPemHeaderAndFooter(newPem, pem);
     }
 
@@ -133,7 +134,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.JWKToPEMTests#ocpPrivateValidJWKs")
     void privateOctetKeyPairJWKtoPEM(String jwkString) throws PemException, ParseException {
         OctetKeyPair octetKeyPair = OctetKeyPair.parse(jwkString);
-        String pem = PEMUtils.jwkToPem(octetKeyPair);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) octetKeyPair).toString();
         JWK newKey = PEMUtils.pemToOctetKeyPair(pem);
         assertEqualsIgnoringWhitespaceAndKid(newKey.toJSONString(), jwkString);
     }
@@ -142,7 +143,7 @@ class KeyToPemRoundTripTests {
     @MethodSource("com.blackberry.jwteditor.JWKToPEMTests#ocpPublicValidJWKs")
     void publicOctetKeyPairJWKtoPEM(String jwkString) throws PemException, ParseException {
         OctetKeyPair octetKeyPair = OctetKeyPair.parse(jwkString);
-        String pem = PEMUtils.jwkToPem(octetKeyPair);
+        String pem = PemKeyFactory.jwkToPemKey((JWK) octetKeyPair).toString();
         JWK newKey = PEMUtils.pemToOctetKeyPair(pem);
         assertEqualsIgnoringWhitespaceAndKid(newKey.toJSONString(), jwkString);
     }

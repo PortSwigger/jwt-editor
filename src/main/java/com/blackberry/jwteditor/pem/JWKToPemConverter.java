@@ -7,9 +7,7 @@ import org.bouncycastle.util.io.pem.PemObject;
 
 import java.io.IOException;
 
-import static com.blackberry.jwteditor.utils.PEMUtils.pemObjectToString;
-
-public abstract class JWKToPemConverter {
+abstract class JWKToPemConverter {
     static final String PUBLIC_KEY_PEM_LABEL = "PUBLIC KEY"; //NON-NLS
 
     private final JWK jwk;
@@ -22,10 +20,10 @@ public abstract class JWKToPemConverter {
 
     abstract PemObject encodePrivateKey() throws JOSEException, IOException;
 
-    public String convertToPem() throws PemException {
+    PemKey convertToPem() throws PemException {
         try {
             PemObject pemObject = jwk.isPrivate() ? encodePrivateKey() : encodePublicKey();
-            return pemObjectToString(pemObject);
+            return new PemKey(pemObject);
         } catch (JOSEException | IOException e) {
             throw new PemException("PEM conversion error");
         }

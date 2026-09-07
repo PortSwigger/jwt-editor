@@ -24,16 +24,19 @@ import com.blackberry.jwteditor.exceptions.UnsupportedKeyException;
 import com.blackberry.jwteditor.model.jose.JWS;
 import com.blackberry.jwteditor.model.keys.JWKKey;
 import com.blackberry.jwteditor.model.keys.Key;
-import com.blackberry.jwteditor.operations.Attacks;
+import com.blackberry.jwteditor.operations.HmacKeyConfusionAttack;
+import com.blackberry.jwteditor.pem.PemKey.NewLineStrategy;
 import com.nimbusds.jose.JWSAlgorithm;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import static com.blackberry.jwteditor.pem.PemKey.NewLineStrategy.SYSTEM_DEFAULT;
 import static com.blackberry.jwteditor.view.dialog.operations.LastSigningKeys.Signer.KEY_CONFUSION;
 import static com.nimbusds.jose.JWSAlgorithm.*;
 import static java.awt.BorderLayout.CENTER;
+import static java.util.Arrays.stream;
 
 public class KeyConfusionAttackPanel extends OperationPanel<JWS, JWS> {
     private static final JWSAlgorithm[] ALGORITHMS = {HS256, HS384, HS512};
@@ -43,7 +46,7 @@ public class KeyConfusionAttackPanel extends OperationPanel<JWS, JWS> {
     private JPanel panel;
     private JComboBox<Key> comboBoxSigningKey;
     private JComboBox<JWSAlgorithm> comboBoxSigningAlgorithm;
-    private JCheckBox checkBoxTrailingNewline;
+    private JComboBox<NewLineStrategy> comboBoxNewLineStrategy;
 
     public KeyConfusionAttackPanel(List<Key> signingKeys, LastSigningKeys lastSigningKeys) {
         super("key_confusion_attack_dialog_title", new Dimension(650, 350));
@@ -58,6 +61,9 @@ public class KeyConfusionAttackPanel extends OperationPanel<JWS, JWS> {
 
         comboBoxSigningAlgorithm.setModel(new DefaultComboBoxModel<>(ALGORITHMS));
 
+        NewLineStrategy[] newLineStrategies = stream(NewLineStrategy.values()).filter(s -> s != SYSTEM_DEFAULT).toArray(NewLineStrategy[]::new);
+        comboBoxNewLineStrategy.setModel(new DefaultComboBoxModel<>(newLineStrategies));
+
         add(panel, CENTER);
     }
 
@@ -65,14 +71,14 @@ public class KeyConfusionAttackPanel extends OperationPanel<JWS, JWS> {
     public JWS performOperation(JWS originalJwt) throws SigningException, PemException, UnsupportedKeyException {
         JWKKey selectedKey = (JWKKey) comboBoxSigningKey.getSelectedItem();
         JWSAlgorithm selectedAlgorithm = (JWSAlgorithm) comboBoxSigningAlgorithm.getSelectedItem();
+        NewLineStrategy selectedNewLineStrategy = (NewLineStrategy) comboBoxNewLineStrategy.getSelectedItem();
 
         lastSigningKeys.recordKeyUse(KEY_CONFUSION, selectedKey);
 
-        return Attacks.hmacKeyConfusion(
-                originalJwt,
+        return HmacKeyConfusionAttack.attack(originalJwt,
                 selectedKey,
                 selectedAlgorithm,
-                checkBoxTrailingNewline.isSelected()
+                selectedNewLineStrategy
         );
     }
 
