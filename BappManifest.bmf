@@ -2,12 +2,12 @@ Uuid: 26aaa5ded2f74beea19e2ed8345a93dd
 ExtensionType: 1
 Name: JWT Editor
 RepoName: jwt-editor
-ScreenVersion: 2.6.1
-SerialVersion: 21
+ScreenVersion: 2.6.2
+SerialVersion: 22
 MinPlatformVersion: 16
 ProOnly: False
 Author: Dolph Flynn, Fraser Winterborn
 ShortDescription: Edit, sign, verify, encrypt and decrypt JSON Web Tokens (JWTs).
-EntryPoint: jwt-editor-2.6.1.jar
+EntryPoint: jwt-editor-2.6.2.jar
 BuildCommand: ./gradlew jar
 SupportedProducts: Pro, Community
